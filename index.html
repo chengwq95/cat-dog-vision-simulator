@@ -611,6 +611,45 @@ ball(.035,-4.82,1.6,.78,altarBulb.material,{cast:false}); cyl(.05,.04,.07,-4.82,
 // 纸箱（开口朝客厅）
 Sd(3.38,3.4,0,.5,.35,1.0,M.card); Sd(2.75,3.4,0,.5,.35,.37,M.card); Sd(2.75,3.4,0,.5,.98,1.0,M.card); Sd(2.75,3.4,.48,.5,.35,1.0,M.card);
 (function(){ const f=D(2.6,2.76,.485,.5,.36,.99,M.card); f.rotation.z=.5; f.position.y=.53; })();
+
+/* === VISUAL UPGRADE 2026: furniture cosmetics, collision envelopes unchanged === */
+(function enhanceFurnishings(){
+  const brass=mat(0xbfa170,{metalness:.63,roughness:.38}),
+        linen=mat(0xd8cbbc,{map:rep(texFabric,2,2),roughness:.92}),
+        piping=mat(0x73899a,{roughness:.94}),
+        knit=mat(0x354e6e,{map:texFabric,roughness:.95}),
+        walnut=mat(0x69432d,{map:texWood,roughness:.58});
+  const detail=(g,m,x,y,z)=>{
+    const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=false;
+    o.receiveShadow=true;world.add(o);return o;
+  };
+  // Sofa: cushion piping, button tufting, folded throw.
+  for(let i=0;i<3;i++){
+    const z=2.5+i*.7;
+    [-1,1].forEach(s=>detail(new THREE.BoxGeometry(.76,.008,.008),piping,-1.43,.463,z+s*.3));
+    detail(new THREE.SphereGeometry(.017,9,7),brass,-1.012,.686,z);
+  }
+  const throwP=detail(pillowGeo(.43,.026,.66,.82),knit,-1.72,.49,3.5);throwP.rotation.y=-.13;
+  detail(new THREE.BoxGeometry(.42,.006,.013),brass,-1.72,.51,3.78);
+  // Coffee table inset wood tray and narrow brass pulls.
+  detail(rboxGeo(.46,.018,.31,.014),walnut,-2.91,.432,3.28);
+  [-.15,.15].forEach(x=>detail(new THREE.BoxGeometry(.073,.012,.013),brass,-2.91+x,.447,3.28));
+  // Dining table: textured placemats and metal utensils.
+  for(const x of [-2.77,-1.65])for(const z of [-2.08,-1.55]){
+    detail(rboxGeo(.29,.005,.23,.008),linen,x,.766,z);
+    detail(new THREE.BoxGeometry(.007,.003,.13),brass,x+.17,.772,z);
+  }
+  // Kitchen doors gain handles and a recessed kickboard.
+  D(-4.9,1.1,.07,.115,-5.348,-5.337,M.dark,{cast:false,col:false});
+  for(let i=0;i<9;i++){
+    const x=-4.61+i*.605;
+    D(x-.065,x+.065,.60,.613,-5.334,-5.326,brass,{cast:false,col:false});
+  }
+  // Upstairs upholstered headboard and bedside-drawer pull.
+  for(let i=0;i<5;i++)
+    detail(pillowGeo(.035,.66,.31,.8),linen,-4.842,F2+.63,2.57+i*.37);
+  detail(new THREE.BoxGeometry(.13,.014,.014),brass,-4.72,F2+.33,4.908);
+})();
 // --- 饭厅 ---
 Sd(-3.1,-1.3,.7,.76,-2.3,-1.3,M.wood,{round:.018}); D(-3.02,-1.38,.63,.705,-2.22,-1.38,M.teak);
 [[-3.0,-2.2],[-1.4,-2.2],[-3.0,-1.4],[-1.4,-1.4]].forEach(p=>{ cyl(.056,.032,.7,p[0],.35,p[1],M.teak,4).rotation.y=Math.PI/4; });   // 方形收分桌腿
@@ -824,7 +863,36 @@ let tvScreen;
     P(Cy(.018,.018,.5,8),M.steel,.1,.27,-.12).rotation.x=Math.PI/2; P(Cy(.04,.052,.5,12),M.steel,.13,.36,-.62).rotation.x=Math.PI/2+.18; P(Cy(.012,.012,.44,6),sm,0,.25,-.02).rotation.z=Math.PI/2;
     P(rboxGeo(.03,.09,.52,.012),sm,-.085,.32,-.36); P(new THREE.BoxGeometry(.02,.04,.5),eng,.085,.3,-.38);
     P(rboxGeo(.1,.05,.04,.012),tl,0,.72,-.88); P(new THREE.BoxGeometry(.17,.11,.008),M.white,0,.56,-.9).rotation.x=.2; P(new THREE.TorusGeometry(.11,.008,6,14,Math.PI),M.steel,0,.86,-.72).rotation.x=-Math.PI/2;
-    P(Cy(.008,.008,.3,5),M.steel,-.12,.15,-.05).rotation.z=-.5; col(-2.82,-2.38,0,.82,7.0,8.8); col(-2.8,-2.4,.82,1.1,8.2,8.8); }
+    
+    /* === VISUAL UPGRADE 2026: kapcai motorcycle details === */
+    const chrome=mat(0xc5cfd8,{metalness:.86,roughness:.22}),
+          rubber=mat(0x22232a,{roughness:.96}),
+          pearl=mat(0xe7eaed,{metalness:.14,roughness:.33});
+    // Re-profiled seat, stitching and leg shield, without touching its collision envelope.
+    P(pillowGeo(.22,.035,.63,.72),rubber,0,.852,-.36);
+    P(new THREE.BoxGeometry(.009,.005,.42),chrome,0,.875,-.37);
+    P(pillowGeo(.31,.39,.07,.67),pearl,0,.67,.44).rotation.x=-.26;
+    P(pillowGeo(.13,.28,.025,.7),red,0,.685,.49).rotation.x=-.26;
+    // Visible engine cover, muffler, rear shocks and hub.
+    P(new THREE.CylinderGeometry(.09,.09,.035,18),chrome,.1,.36,-.07).rotation.z=Math.PI/2;
+    const exhaust=P(new THREE.CylinderGeometry(.058,.068,.61,12),chrome,.19,.34,-.39);
+    exhaust.rotation.x=Math.PI/2;
+    P(new THREE.CylinderGeometry(.055,.055,.014,12),rubber,.19,.34,-.71).rotation.x=Math.PI/2;
+    [-.11,.11].forEach(x=>{
+      P(new THREE.CylinderGeometry(.016,.016,.36,8),chrome,x,.51,-.56).rotation.x=-.24;
+      for(let j=0;j<5;j++)P(new THREE.TorusGeometry(.022,.004,5,9),chrome,x,.4+j*.044,-.58+j*.012).rotation.x=Math.PI/2;
+    });
+    P(new THREE.TorusGeometry(.15,.011,8,24),chrome,.056,.3,.62).rotation.y=Math.PI/2;
+    // Rear tail, indicators and correctly oriented mirrors.
+    P(pillowGeo(.21,.09,.24,.68),red,0,.72,-.71);
+    [-1,1].forEach(s=>{
+      P(new THREE.SphereGeometry(.022,9,7),amber,s*.15,.55,-.75).scale.set(.55,1,.4);
+      const stem=P(new THREE.CylinderGeometry(.006,.006,.23,6),chrome,s*.23,1.17,.45);
+      stem.rotation.z=-s*.26;
+      P(new THREE.SphereGeometry(.065,12,8),rubber,s*.27,1.285,.45).scale.set(1.05,.7,.35);
+      P(new THREE.SphereGeometry(.059,12,8),chrome,s*.27,1.285,.465).scale.set(.99,.63,.16);
+    });
+P(Cy(.008,.008,.3,5),M.steel,-.12,.15,-.05).rotation.z=-.5; col(-2.82,-2.38,0,.82,7.0,8.8); col(-2.8,-2.4,.82,1.1,8.2,8.8); }
   Sd(3.95,4.45,0,.9,10.1,10.6,grnP,{round:.03}); D(3.93,4.47,.9,.95,10.08,10.62,grnP,{round:.02}); [4.0,4.4].forEach(x=>cyl(.08,.08,.05,x,.08,10.1,rub,12).rotation.z=Math.PI/2);
   cyl(.012,.012,.1,-4.95,.62,8.2,M.steel,6).rotation.z=Math.PI/2; D(-4.92,-4.89,.56,.62,8.19,8.21,M.steel); [0,.03].forEach(o=>{ const h=new THREE.Mesh(new THREE.TorusGeometry(.17-o,.022,8,22),grnP); h.rotation.y=Math.PI/2; h.position.set(-4.94+o,.38,8.75); world.add(h); });
   [-.95,-.78].forEach((x,i)=>{ const m=D(x,x+.1,0,.03,6.3,6.56,bluP,{round:.012}); m.rotation.y=i?.25:-.1; });
@@ -863,6 +931,44 @@ function buildCar(paint){ const g=new THREE.Group(), P=(geo,m,x,y,z)=>{ const o=
     P(rboxGeo(.07,.09,.17,.025),paint,x*1.62,.95,.7); P(new THREE.BoxGeometry(.02,.07,1.36),M.black,x*1.52,.3,0); [-.4,.55].forEach(z=>P(new THREE.BoxGeometry(.004,.5,.008),M.black,x*1.522,.58,z).castShadow=false); [-.56,.38].forEach(z=>P(new THREE.BoxGeometry(.014,.028,.12),M.steel,x*1.525,.74,z).castShadow=false); });
   P(rboxGeo(.5,.1,.04,.015),M.black,0,.6,1.79); P(rboxGeo(1.64,.17,.14,.045),M.black,0,.33,1.72); P(rboxGeo(1.64,.17,.14,.045),M.black,0,.34,-1.73); P(new THREE.BoxGeometry(.42,.11,.01),M.white,0,.44,1.795).castShadow=false; P(new THREE.BoxGeometry(.42,.11,.01),M.white,0,.56,-1.815).castShadow=false;
   P(new THREE.BoxGeometry(.5,.025,.02),M.steel,0,.8,-1.8); P(new THREE.CylinderGeometry(.03,.03,.14,10),M.steel,.45,.26,-1.78).rotation.x=Math.PI/2; P(new THREE.CylinderGeometry(.004,.004,.22,5),M.black,0,1.42,-1.0).rotation.x=-.5;
+
+  /* === VISUAL UPGRADE 2026: car body trim, lighting and wheel finishes === */
+  const chrome=mat(0xb4bfc8,{metalness:.83,roughness:.24}),
+        darkGlass=mat(0x18232b,{roughness:.22,metalness:.16}),
+        amber=mat(0xf3a546,{emissive:C(0xf3a546),emissiveIntensity:.18,roughness:.25}),
+        rubber=mat(0x15191c,{roughness:.95});
+  [-.8,.8].forEach(x=>{
+    // Subtle door seams and handles; mirrors project from the original roofline.
+    [-.51,.26].forEach(z=>{
+      P(new THREE.BoxGeometry(.008,.018,.62),chrome,x,.865,z);
+      P(rboxGeo(.12,.022,.022,.008),chrome,x*1.025,.78,z+.26);
+    });
+    P(new THREE.BoxGeometry(.013,.042,1.85),rubber,x*1.01,.385,0);
+    P(pillowGeo(.115,.074,.17,.72),paint,x*1.025,.92,.6);
+    P(pillowGeo(.11,.052,.14,.72),darkGlass,x*1.1,.92,.6);
+    P(new THREE.BoxGeometry(.012,.01,.72),chrome,x*.66,1.314,-.34);
+  });
+  // Sculpted grille, badge, turn signals and rear diffuser.
+  P(rboxGeo(.69,.16,.018,.027),darkGlass,0,.53,1.813);
+  for(let i=0;i<7;i++)P(new THREE.BoxGeometry(.076,.009,.015),chrome,-.277+i*.092,.53,1.83);
+  P(new THREE.SphereGeometry(.038,11,8),chrome,0,.71,1.787).scale.set(1,.65,.22);
+  [-.65,.65].forEach(x=>{
+    P(rboxGeo(.13,.034,.018,.009),amber,x,.58,1.817);
+    P(rboxGeo(.23,.025,.018,.009),darkGlass,x,.465,-1.823);
+  });
+  P(rboxGeo(.45,.095,.016,.016),darkGlass,0,.45,-1.834);
+  // Seven-spoke wheel face for all three cars created by buildCar().
+  [-.75,.75].forEach(x=>[-1.05,1.05].forEach(z=>{
+    const faceX=x+(x<0?-.118:.118);
+    P(new THREE.CylinderGeometry(.205,.205,.013,24),darkGlass,faceX,.31,z).rotation.z=Math.PI/2;
+    P(new THREE.CylinderGeometry(.052,.052,.015,14),chrome,faceX+(x<0?-.007:.007),.31,z).rotation.z=Math.PI/2;
+    for(let k=0;k<7;k++){
+      const a=k*Math.PI*2/7;
+      const spoke=P(new THREE.BoxGeometry(.013,.025,.145),chrome,faceX,.31+Math.sin(a)*.085,z+Math.cos(a)*.085);
+      spoke.rotation.x=a;
+    }
+  }));
+
   return g; }
 { const car=buildCar(M.carPaint); car.position.set(2.05,0,8.45); world.add(car); col(1.2,2.9,0,.86,6.65,10.25); col(1.3,2.8,.86,1.35,7.15,8.6); col(1.3,2.8,.86,1.1,8.6,9.05); }
 // --- 房屋外观与街景 ---
@@ -1016,6 +1122,62 @@ const dogRig = (function(){ const DG={ t:C(0xcf8a45), d:C(0xa4662e), w:C(0xf7ecd
   const tail=[]; let parent=model; for(let i=0;i<8;i++){ const g=new THREE.Group(); if(i===0) g.position.set(0,.25,-.2); else g.position.set(0,.04,0); parent.add(g);
     const r=.03-i*.0016; part(new THREE.SphereGeometry(r,10,8),tan,0,.02,-.004,g).scale.set(1,1.25,1); part(new THREE.SphereGeometry(r*.8,10,8),cream,0,.02,.01,g).scale.set(.9,1.2,.9); tail.push(g); parent=g; }
   return { model, body, head, legs, tail, eyes, tb:-.25, curl:.42 }; })();
+
+/* === VISUAL UPGRADE 2026: characters / furniture / vehicles === */
+(function enhancePetCharacters(){
+  const f=h=>mat(h,{roughness:.96}), catCream=f(0xfff5e8),catOrange=f(0xeaa05a),
+        catStripe=f(0xa85e30), dogTan=f(0xcf8a45),dogCream=f(0xffefda),
+        dogShadow=f(0xa3663a), pink=mat(0xd77b8e,{roughness:.7}),
+        black=mat(0x27211e,{roughness:.3}),steel=mat(0xf2f3f3,{roughness:.12});
+  function oval(parent,m,x,y,z,w,h,d){
+    const o=part(new THREE.SphereGeometry(1,18,12),m,x,y,z,parent);
+    o.scale.set(w,h,d);return o;
+  }
+  function stroke(parent,m,pts,r=.0018){
+    const c=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)));
+    const o=part(new THREE.TubeGeometry(c,Math.max(6,pts.length*4),r,5,false),m,0,0,0,parent);
+    o.castShadow=false;return o;
+  }
+  // Orange-and-white CAT: distinct cheeks, muzzle, brows and articulated feet.
+  [-1,1].forEach(s=>{
+    oval(catRig.head,catCream,s*.059,-.033,.057,.042,.030,.038);
+    oval(catRig.head,catCream,s*.025,-.046,.095,.028,.021,.024);
+    stroke(catRig.head,catStripe,[[s*.017,.036,.073],[s*.035,.044,.080],[s*.055,.031,.067]],.0022);
+    for(let k=-1;k<=1;k++)
+      stroke(catRig.head,catCream,[[s*.05,-.026+k*.008,.112],[s*.095,-.019+k*.016,.137],[s*.151,-.015+k*.02,.106]],.0010);
+    const tuft=part(new THREE.ConeGeometry(.015,.051,7),catCream,s*.079,-.046,.04,catRig.head);
+    tuft.rotation.z=s*.55;
+  });
+  oval(catRig.head,catCream,0,-.053,.081,.039,.022,.031);
+  oval(catRig.head,pink,0,-.011,.117,.014,.009,.008);
+  catRig.legs.forEach(leg=>{
+    oval(leg,catCream,0,-.123,.028,.028,.019,.037);
+    for(let k=-1;k<=1;k++)
+      stroke(leg,catOrange,[[k*.011,-.133,.050],[k*.011,-.130,.058]],.0010);
+  });
+  // Shiba DOG: broaden muzzle and cheek ruff, give it a thicker chest and paws.
+  [-1,1].forEach(s=>{
+    oval(dogRig.head,dogCream,s*.060,-.022,.068,.055,.040,.051);
+    oval(dogRig.head,dogCream,s*.029,-.040,.101,.031,.029,.031);
+    oval(dogRig.head,dogTan,s*.052,.025,.032,.028,.040,.04);
+    stroke(dogRig.head,dogShadow,[[s*.012,.045,.078],[s*.032,.052,.075],[s*.052,.044,.063]],.002);
+    oval(dogRig.body,dogTan,s*.067,.014,.115,.043,.077,.073);
+    const fluff=part(new THREE.ConeGeometry(.025,.066,8),dogCream,s*.082,-.005,.137,dogRig.body);
+    fluff.rotation.z=s*.6; fluff.rotation.x=.4;
+  });
+  oval(dogRig.head,dogCream,0,-.03,.093,.054,.037,.043);
+  oval(dogRig.head,black,0,-.01,.135,.024,.013,.017);
+  oval(dogRig.body,dogCream,0,.02,.184,.089,.107,.07);
+  dogRig.legs.forEach(leg=>{
+    oval(leg,dogCream,0,-.123,.028,.033,.02,.041);
+    for(let k=-1;k<=1;k++)stroke(leg,dogTan,[[k*.012,-.135,.05],[k*.012,-.13,.065]],.0011);
+  });
+  // Volume follows existing eight articulated curled-tail joints.
+  dogRig.tail.forEach((bone,i)=>{
+    const radius=Math.max(.012,.03-i*.0022);
+    oval(bone,i>5?dogCream:dogTan,0,.026,.005,radius*1.1,radius*1.4,radius);
+  });
+})();
 const RIGS = { cat:catRig, dog:dogRig };
 // 每种动物的尺寸：碰撞半径、身高、头尾探测距离、眼睛高度、速度、起跳速度、尾巴摆幅
 const ANIMALS = { cat:{ sc:1, r:.16, h:.32, nose:.21, rump:.15, pr:.085, eye:.27, walk:2.5, run:4.6, jump:6.1, wag:1, wagF:2.2, fov:88, cam:1, ps:.3, tb:-1.0, curl:0 },
