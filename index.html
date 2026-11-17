@@ -163,6 +163,7 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 /* ============ 中英文切换：界面文字在显示时翻译，切换后立刻生效 ============ */
 const I18N_EN = {"3D 引擎加载失败，请检查网络后刷新页面。": "The 3D engine failed to load. Check your connection and refresh the page.", "这台设备的浏览器不支持 WebGL，无法显示 3D 画面。": "This browser does not support WebGL, so the 3D scene cannot be shown.", "<b>CCTV</b>：主人正在手机上看监控。移动方向以监控画面为准。": "<b>CCTV</b>: your owner is watching the camera feed. Movement follows the camera view.", "<b>人类眼中的夜晚</b>：关灯后只剩神台红灯和窗外路灯。": "<b>Night for humans</b>: with the lights off, only the red altar lamp and the street light remain.", "<b>人类视觉</b>：全彩、清晰，但视野窄，夜里几乎看不见。": "<b>Human vision</b>: full colour and sharp, but a narrow field of view and almost blind at night.", "<b>全部完成！</b>今天也是称职的一天，主人回家会很“惊喜”。": "<b>All done!</b> Another productive day. Your owner is in for a “surprise”.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是狗狗视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, dog vision on the right.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是猫咪视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, cat vision on the right.", "<b>狗狗的夜视</b>：狗也有照膜，比人亮得多，但不如猫。": "<b>Dog night vision</b>: dogs have a tapetum too. Much brighter than a human sees, but not as bright as a cat.", "<b>狗狗视觉</b>：同样分不清红绿，但比猫看得清楚一些，视野更宽；半米以内对不上焦。": "<b>Dog vision</b>: red and green also merge, but it is a little sharper than a cat and wider; nothing closer than half a metre is in focus.", "<b>猫咪的夜视</b>：照膜把路灯和神台的微光放大，屋里轮廓清晰可见。": "<b>Cat night vision</b>: the tapetum amplifies the faint street light and altar lamp, so the room is clearly visible.", "<b>猫咪视觉</b>：红绿坍缩成黄褐色，远处发糊，视野更宽。看看沙发上的四个抱枕。": "<b>Cat vision</b>: red and green collapse into yellow-brown, distance is blurry, the view is wider. Look at the four cushions on the sofa.", "壁虎断尾逃上了天花板！断掉的尾巴还在地上扭。过一会儿它会回来。": "The gecko dropped its tail and fled to the ceiling! The tail is still wriggling on the floor. It will be back in a while.", "切到「关灯夜晚」，人类视觉几乎全黑，猫咪视觉靠照膜把微光放大。": "Switch to “Lights off”: human vision is almost black, while cat vision amplifies faint light with the tapetum.", "狗也只有两种视锥细胞，红和绿都偏黄褐；蓝和黄看得最清楚。": "Dogs also have only two cone types. Red and green both look yellow-brown; blue and yellow are clearest.", "狗也有照膜，暗处比人亮得多，但不如猫。": "Dogs have a tapetum too: far brighter in the dark than a human sees, but less than a cat.", "狗的视力约为人的 1/4，远处细节发糊；半米以内反而对不上焦，要靠鼻子。": "A dog sees about a quarter as sharply as a human, so distant detail blurs; closer than half a metre it cannot focus and relies on its nose.", "狗的视野约 240°，比猫和人都宽。": "A dog sees about 240° around it, wider than both cats and humans.", "猫只有两种视锥细胞。沙发上的红、绿抱枕会变成相近的黄褐色，蓝和黄依然分明。": "Cats have only two cone types. The red and green cushions on the sofa turn a similar yellow-brown, while blue and yellow stay distinct.", "猫的视力约为人的 1/6，几米外的细节会散开；贴到鼻子前的东西也对不上焦。": "A cat sees about a sixth as sharply as a human. Detail a few metres away smears, and things right at its nose are out of focus too.", "猫的视野约 200°，画面边缘会被拉进来。": "A cat sees about 200° around it, so the edges of the picture are pulled in.", "眼睛离地约 50 厘米，是猫的两倍；但钻不进纸箱，也跳不上车顶。": "Eyes about 50 cm off the ground, twice a cat’s; but you cannot fit in the box or jump onto the car roof.", "停下不动时，吊扇、壁虎、小鸟会微微发亮。": "When you hold still, the ceiling fan, the gecko and the bird glow slightly.", "已切换到流畅模式（关闭阴影、降低分辨率）": "Switched to Smooth mode (shadows off, lower resolution)", "已切换到高画质": "Switched to High quality", "主人放下菜刀，弯腰摸了摸你。": "Your owner puts down the knife and bends over to pet you. ", "还顺手把碗添满了。": "They also topped up your bowl.", "路人停下来，朝你挥了挥手。": "The passer-by stops and waves at you.", "点击画面后移动鼠标环顾，Esc 释放": "Click the scene, then move the mouse to look around; Esc releases", "挥爪互动，没东西可玩时喵一声": "Swipe a paw to interact; meow when there is nothing to play with", "伸爪互动，没东西可玩时汪两声": "Reach out a paw to interact; bark when there is nothing to play with", "走动（按住 Shift 奔跑）": "Walk (hold Shift to run)", "跳上沙发、餐桌、床、车顶": "Jump onto the sofa, table, bed and car roof", "走动，推到底奔跑": "Walk; push all the way to run", "🐈 今天，你是一只橘白猫": "🐈 Today you are an orange-and-white cat", "🐕 今天，你是一只柴犬": "🐕 Today you are a Shiba Inu", "蹭蹭主人，讨个摸摸": "Rub against your owner for a pet", "到大门口跟路人打招呼": "Greet the passer-by at the gate", "把 3 样东西推下桌": "Knock 3 things off the table", "骑上扫地机器人兜风": "Ride the robot vacuum", "跳上车顶巡视领地": "Survey your territory from the car roof", "在主人床上打个盹": "Take a nap on your owner’s bed", "抓到墙上的壁虎": "Catch the gecko on the wall", "上二楼窗台看鸟": "Watch the bird from the upstairs windowsill", "拍一下毛线球": "Bat the ball of yarn", "在沙发上磨爪": "Scratch the sofa", "吃几口猫粮": "Eat some kibble", "钻进纸箱": "Crawl into the cardboard box", "比猫清楚，比人模糊": "Sharper than a cat, blurrier than a human", "切换猫 / 狗（Q）": "Switch cat / dog (Q)", "在猫和狗之间切换": "Switch between cat and dog", "猫狗视觉模拟器": "Cat & Dog Vision Simulator", "猫咪眼中的世界": "The world through a cat’s eyes", "狗狗眼中的世界": "The world through a dog’s eyes", "CAM 02 饭厅厨房": "CAM 02 DINING / KITCHEN", "CAM 03 主人房": "CAM 03 MASTER BEDROOM", "CAM 01 客厅": "CAM 01 LIVING ROOM", "CAM 04 车房": "CAM 04 CAR PORCH", "白天 / 关灯夜晚": "Day / lights off", "跳跃 / 挥爪互动": "Jump / paw", "盯住会动的东西": "Locks onto movement", "夜里也看得见": "Sees at night too", "夜里看得见": "Sees at night", "看远处是糊的": "Distance is blurry", "红绿分不清": "Red and green merge", "视野很宽": "Very wide view", "视野更宽": "Even wider view", "个头更高": "Taller", "朝路人喵一声": "Meow at the passer-by", "朝路人汪两声": "Bark at the passer-by", "把它推下去": "Knock it off", "拍毛线球": "Bat the yarn", "蹭蹭主人": "Rub your owner", "吃猫粮": "Eat kibble", "扑壁虎": "Pounce on the gecko", "打个盹": "Take a nap", "磨爪子": "Scratch", "关灯夜晚": "Lights off", "出发巡逻": "Start patrol", "开始巡视": "Start exploring", "CCTV 监控": "CCTV camera", "今日待办": "To-do today", "左下摇杆": "Left stick", "滑动画面": "Swipe", "环顾四周": "Look around", "第一人称": "1st person", "第三人称": "3rd person", "左右对比": "Side by side", "选择动物": "Choose animal", "猫咪视觉": "Cat vision", "狗狗视觉": "Dog vision", "人类视觉": "Human vision", "高画质": "High quality", "怎么玩": "How to play", "换成狗": "Be the dog", "换成猫": "Be the cat", "🐈 当猫": "🐈 Cat", "🐕 当狗": "🐕 Dog", "完成：<b>": "Done: <b>", "对比": "Compare", "下雨": "Rain", "白天": "Day", "画质": "Quality", "说明": "Help", "视角": "View", "视觉": "Vision", "鼠标": "Mouse", "空格": "Space", "流畅": "Smooth", "互动": "Paw", "跳跃": "Jump", "在家里走走看看，随时切换猫咪视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成狗。": "Wander around the house and switch between cat vision and human vision to see how different the same home looks. Press Q while playing to become the dog.", "在家里走走看看，随时切换狗狗视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成猫。": "Wander around the house and switch between dog vision and human vision to see how different the same home looks. Press Q while playing to become the cat.", "语言": "Language"};
@@ -590,15 +591,19 @@ colliders.push({x0:-4.95,x1:-4.45,y0:0,y1:.5,z0:2.0,z1:4.4}); D(-4.95,-4.45,.1,.
 [[-4.88,2.08],[-4.52,2.08],[-4.88,4.32],[-4.52,4.32]].forEach(p=>cyl(.025,.018,.1,p[0],.05,p[1],M.dark,8)); D(-4.9,-4.82,.5,.57,2.75,3.65,M.black,{round:.02});
 D(-4.97,-4.9,.9,1.8,2.4,4.0,M.black); D(-4.96,-4.9,.87,1.83,2.37,4.03,M.metal);       // 电视
 D(-3.9,-1.9,0,.012,2.0,4.4,mat(0xffffff,{map:wrapClamp(rep(texRug,1,1)),roughness:1}),{cast:false});               // 地毯
+const coffeeLegacyStart=world.children.length;
 Sd(-3.3,-2.5,.34,.4,2.5,3.9,M.wood,{round:.02});                                      // 茶几
 [[-3.24,2.56],[-2.56,2.56],[-3.24,3.84],[-2.56,3.84]].forEach(p=>{ cyl(.036,.02,.34,p[0],.17,p[1],M.dark,4).rotation.y=Math.PI/4; });
 D(-3.24,-2.56,.12,.14,2.56,3.84,M.wood,{round:.008}); D(-3.14,-2.86,.4,.418,2.68,2.9,mat(0x2c4a6e),{round:.006}); D(-3.12,-2.88,.418,.432,2.7,2.9,mat(0xd9c7a0),{round:.005}); D(-2.78,-2.73,.4,.416,3.02,3.18,M.black,{round:.006});
+const coffeeLegacy=world.children.slice(coffeeLegacyStart);
+const sofaLegacyStart=world.children.length;
 (function(){ // 沙发：底座、三块坐垫、三块靠垫、圆扶手、木脚
   [[-1.85,-.95,0,.42,2.15,4.25],[-1.05,-.7,0,.86,1.9,4.5],[-1.85,-.95,0,.62,1.9,2.15],[-1.85,-.95,0,.62,4.25,4.5]].forEach(b=>colliders.push({x0:b[0],x1:b[1],y0:b[2],y1:b[3],z0:b[4],z1:b[5]}));
   D(-1.84,-.72,.09,.3,1.92,4.48,M.sofa,{round:.04}); D(-.9,-.7,.2,.84,1.92,4.48,M.sofa,{round:.06});
   for(let i=0;i<3;i++){ const z0=2.16+i*.7; soft(-1.9,-.98,.24,.47,z0-.004,z0+.704,M.sofa,.4); soft(-1.16,-.84,.38,.92,z0,z0+.7,M.sofa,.45).rotation.z=-.1; }
   [2.03,4.37].forEach(z=>{ D(-1.86,-.74,.2,.56,z-.12,z+.12,M.sofa,{round:.08}); cyl(.125,.125,1.1,-1.3,.54,z,M.sofa,16).rotation.z=Math.PI/2; });
   [[-1.78,2.0],[-1.78,4.4],[-.78,2.0],[-.78,4.4]].forEach(p=>cyl(.03,.022,.1,p[0],.05,p[1],M.dark,8)); })();
+const sofaLegacy=world.children.slice(sofaLegacyStart);
 [[M.red,2.42,.1],[M.green,2.94,-.14],[M.blue,3.46,.12],[M.yellow,3.98,-.08]].forEach(c=>{ const m=soft(-1.47,-1.19,.43,.86,c[1]-.22,c[1]+.22,c[0],.55); m.rotation.z=-.24; m.rotation.y=c[2]; });
 // 吊扇
 const fan = new THREE.Group(); fan.position.set(-2.6,2.72,3.2); world.add(fan);
@@ -612,45 +617,8 @@ ball(.035,-4.82,1.6,.78,altarBulb.material,{cast:false}); cyl(.05,.04,.07,-4.82,
 Sd(3.38,3.4,0,.5,.35,1.0,M.card); Sd(2.75,3.4,0,.5,.35,.37,M.card); Sd(2.75,3.4,0,.5,.98,1.0,M.card); Sd(2.75,3.4,.48,.5,.35,1.0,M.card);
 (function(){ const f=D(2.6,2.76,.485,.5,.36,.99,M.card); f.rotation.z=.5; f.position.y=.53; })();
 
-/* === VISUAL UPGRADE 2026: furniture cosmetics, collision envelopes unchanged === */
-(function enhanceFurnishings(){
-  const brass=mat(0xbfa170,{metalness:.63,roughness:.38}),
-        linen=mat(0xd8cbbc,{map:rep(texFabric,2,2),roughness:.92}),
-        piping=mat(0x73899a,{roughness:.94}),
-        knit=mat(0x354e6e,{map:texFabric,roughness:.95}),
-        walnut=mat(0x69432d,{map:texWood,roughness:.58});
-  const detail=(g,m,x,y,z)=>{
-    const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=false;
-    o.receiveShadow=true;world.add(o);return o;
-  };
-  // Sofa: cushion piping, button tufting, folded throw.
-  for(let i=0;i<3;i++){
-    const z=2.5+i*.7;
-    [-1,1].forEach(s=>detail(new THREE.BoxGeometry(.76,.008,.008),piping,-1.43,.463,z+s*.3));
-    detail(new THREE.SphereGeometry(.017,9,7),brass,-1.012,.686,z);
-  }
-  const throwP=detail(pillowGeo(.43,.026,.66,.82),knit,-1.72,.49,3.5);throwP.rotation.y=-.13;
-  detail(new THREE.BoxGeometry(.42,.006,.013),brass,-1.72,.51,3.78);
-  // Coffee table inset wood tray and narrow brass pulls.
-  detail(rboxGeo(.46,.018,.31,.014),walnut,-2.91,.432,3.28);
-  [-.15,.15].forEach(x=>detail(new THREE.BoxGeometry(.073,.012,.013),brass,-2.91+x,.447,3.28));
-  // Dining table: textured placemats and metal utensils.
-  for(const x of [-2.77,-1.65])for(const z of [-2.08,-1.55]){
-    detail(rboxGeo(.29,.005,.23,.008),linen,x,.766,z);
-    detail(new THREE.BoxGeometry(.007,.003,.13),brass,x+.17,.772,z);
-  }
-  // Kitchen doors gain handles and a recessed kickboard.
-  D(-4.9,1.1,.07,.115,-5.348,-5.337,M.dark,{cast:false,col:false});
-  for(let i=0;i<9;i++){
-    const x=-4.61+i*.605;
-    D(x-.065,x+.065,.60,.613,-5.334,-5.326,brass,{cast:false,col:false});
-  }
-  // Upstairs upholstered headboard and bedside-drawer pull.
-  for(let i=0;i<5;i++)
-    detail(pillowGeo(.035,.66,.31,.8),linen,-4.842,F2+.63,2.57+i*.37);
-  detail(new THREE.BoxGeometry(.13,.014,.014),brass,-4.72,F2+.33,4.908);
-})();
 // --- 饭厅 ---
+const diningLegacyStart=world.children.length;
 Sd(-3.1,-1.3,.7,.76,-2.3,-1.3,M.wood,{round:.018}); D(-3.02,-1.38,.63,.705,-2.22,-1.38,M.teak);
 [[-3.0,-2.2],[-1.4,-2.2],[-3.0,-1.4],[-1.4,-1.4]].forEach(p=>{ cyl(.056,.032,.7,p[0],.35,p[1],M.teak,4).rotation.y=Math.PI/4; });   // 方形收分桌腿
 [-2.1,-1.9,-1.7,-1.5].forEach(z=>D(-3.07,-1.33,.7602,.7612,z,z+.004,M.dark,{cast:false}));   // 桌面拼板缝
@@ -663,6 +631,7 @@ function chair(x,z,dir){ const bz=z+dir*.19; colliders.push({x0:x-.2,x1:x+.2,y0:
   soft(x-.2,x+.2,.815,.935,bz-.024+dir*.02,bz+.024+dir*.02,M.teak,.5); for(let i=0;i<4;i++) D(x-.135+i*.09-.02,x-.135+i*.09+.02,.47,.84,bz-.007,bz+.007,M.teak);
   D(x-.17,x+.17,.17,.19,z-.008,z+.008,M.teak,{cast:false}); }
 chair(-2.65,-2.65,-1); chair(-1.75,-2.65,-1); chair(-2.65,-.95,1); chair(-1.75,-.95,1);
+const diningLegacy=world.children.slice(diningLegacyStart);
 cyl(.012,.012,.6,-2.2,2.7,-1.8,M.metal,6); cyl(.2,.08,.16,-2.2,2.36,-1.8,M.yellow,16);
 // --- 厨房 ---
 Sd(-4.95,1.2,0,.86,-5.95,-5.35,mat(0x58707a),{round:.02}); Sd(-5,1.25,.86,.9,-6,-5.3,mat(0xdfe3e2,{roughness:.3}));
@@ -686,12 +655,14 @@ cyl(.16,.16,.5,2.9,.25,-5.6,M.red,14); cyl(.06,.06,.12,2.9,.56,-5.6,M.steel,10);
 const bowlFood = cyl(.11,.08,.05,-4.5,.025,-4.4,M.blue,16); const kibble = cyl(.09,.09,.02,-4.5,.05,-4.4,mat(0x8a5a2b),12);
 cyl(.11,.08,.05,-4.1,.025,-4.4,M.blue,16); cyl(.09,.09,.015,-4.1,.047,-4.4,mat(0x9fd3e8,{roughness:.1}),12);
 // --- 二楼卧室 ---
+const bedLegacyStart=world.children.length;
 colliders.push({x0:-4.95,x1:-2.8,y0:F2,y1:F2+.3,z0:2.4,z1:4.2});   // 床架：四条腿、床围、床尾板，床底留空
 D(-4.95,-2.8,F2+.13,F2+.3,2.4,4.2,M.teak,{round:.02,col:false}); D(-4.85,-2.9,F2+.02,F2+.14,2.5,4.1,M.black,{col:false,cast:false}); [[-4.88,2.47],[-2.87,2.47],[-4.88,4.13],[-2.87,4.13]].forEach(p=>{ cyl(.05,.032,.13,p[0],F2+.065,p[1],M.teak,4,{col:false}).rotation.y=Math.PI/4; }); D(-2.86,-2.8,F2+.13,F2+.45,2.4,4.2,M.teak,{round:.015,col:false}); Sd(-4.9,-2.82,F2+.3,F2+.55,2.43,4.17,mat(0xf2f0ea),{round:.06});
 D(-4.95,-4.85,F2,F2+1.0,2.35,4.25,M.teak,{round:.03});
 soft(-4.1,-2.76,F2+.46,F2+.65,2.35,4.25,M.blue,.3); soft(-4.2,-3.92,F2+.5,F2+.67,2.37,4.23,M.white,.4); soft(-3.3,-2.75,F2+.5,F2+.67,2.34,4.26,M.yellow,.35);
 [[2.9,.08],[3.7,-.06]].forEach(p=>{ const m=soft(-4.8,-4.2,F2+.54,F2+.73,p[0]-.34,p[0]+.34,M.white,.5); m.rotation.y=p[1]; });
 for(let i=0;i<3;i++) D(-4.87,-4.8,F2+.52,F2+.98,2.4+i*.6+.01,3.0+i*.6-.01,mat(0xcbbfa8,{map:texFabric,roughness:1}),{round:.03});
+const bedLegacy=world.children.slice(bedLegacyStart);
 Sd(-4.95,-4.45,F2,F2+.5,4.4,4.9,M.teak,{round:.02}); cyl(.05,.07,.2,-4.7,F2+.6,4.65,M.white,10); cyl(.13,.09,.16,-4.7,F2+.78,4.65,M.yellow,12);
 Sd(-4.8,-2.4,F2,F2+2.1,.85,1.45,M.teak,{round:.02}); [-4.2,-3.6,-3.0].forEach(x=>D(x-.004,x+.004,F2+.05,F2+2.05,1.45,1.458,M.dark,{cast:false})); [-4.14,-3.66,-3.54,-3.06].forEach(x=>D(x-.008,x+.008,F2+.95,F2+1.17,1.45,1.476,M.steel,{cast:false}));
 D(-4.98,-4.78,F2+2.2,F2+2.5,2.8,3.8,M.white,{round:.04});                                    // 冷气机
@@ -841,7 +812,7 @@ let tvScreen;
   // 神台供品：三个橘子和三支香
   [[.42,1.535],[.5,1.535],[.46,1.59]].forEach(p=>ball(.035,-4.8,p[1],p[0],orng,{cast:false})); for(let i=0;i<3;i++) cyl(.002,.002,.16,-4.82,1.66,.59+i*.01,redP,4,{cast:false});
   // 车房：摩托车（kapcai）、绿色垃圾桶、水龙头和水管、门口拖鞋
-  { const mg=new THREE.Group(); mg.position.set(-2.6,0,7.9); mg.rotation.z=-.1; world.add(mg);   // 弯梁摩托车（kapcai）：细车架、大辐条轮、跨骑空档、白色护腿板、长座垫
+  { const mg=new THREE.Group(); mg.position.set(-2.6,0,7.9); mg.rotation.z=-.1; mg.userData.legacyVehicle="motorcycle"; world.add(mg);   // 弯梁摩托车（kapcai）：细车架、大辐条轮、跨骑空档、白色护腿板、长座垫
     const P=(geo,m,x,y,z)=>{ const o=new THREE.Mesh(geo,m); o.position.set(x,y,z); o.castShadow=true; mg.add(o); return o; }, Cy=(a,b,h,n)=>new THREE.CylinderGeometry(a,b,h,n||10);
     const red=mat(0xc8242a,{roughness:.25,metalness:.3}), wht=mat(0xf2f2ee,{roughness:.3,metalness:.1}), eng=mat(0x8f959a,{roughness:.45,metalness:.7}), sm=mat(0x17181b,{roughness:.85}), amber=mat(0xf5a524,{roughness:.2}), tl=mat(0xb01818,{roughness:.2}), lens=mat(0xf6f3e6,{roughness:.06,metalness:.2});
     const ext=(pts,w,bev,m)=>{ const sh=new THREE.Shape(); pts.forEach((q,i)=>i?sh.lineTo(q[0],q[1]):sh.moveTo(q[0],q[1])); const g=new THREE.ExtrudeGeometry(sh,{depth:w-2*bev,bevelEnabled:true,bevelThickness:bev,bevelSize:bev,bevelSegments:3}); g.translate(0,0,-(w-2*bev)/2); g.rotateY(-Math.PI/2); return P(g,m,0,0,0); };
@@ -969,7 +940,7 @@ function buildCar(paint){ const g=new THREE.Group(), P=(geo,m,x,y,z)=>{ const o=
     }
   }));
 
-  return g; }
+  g.userData.legacyVehicle="car"; return g; }
 { const car=buildCar(M.carPaint); car.position.set(2.05,0,8.45); world.add(car); col(1.2,2.9,0,.86,6.65,10.25); col(1.3,2.8,.86,1.35,7.15,8.6); col(1.3,2.8,.86,1.1,8.6,9.05); }
 // --- 房屋外观与街景 ---
 (function(){ const tr=M.trim, stone=mat(0x8f8f8a,{map:rep(texTile,3,3),roughness:.9}), conc=mat(0xb9b5ab,{roughness:.95}), gut=mat(0x8d9499,{roughness:.5}), acW=mat(0xeef0ee,{roughness:.4}), dk=mat(0x3a3d42,{roughness:.6}), bark=mat(0x6b4a2e,{roughness:1}), fol=mat(0x3f8a45,{roughness:.9,flatShading:true}), winG=mat(0x4d6577,{roughness:.08,metalness:.55});
@@ -1614,16 +1585,162 @@ function update(dt){
 }
 setInterval(()=>{ tickClock(); $('cam-time').textContent=new Date(Date.now()+8*3600e3).toISOString().slice(0,19).replace('T',' ')+' MYT'; },500);
 
+
+/* ========== External GLB model replacements (CC0 + robust fallback) ==========
+ * Replaces visible legacy meshes only after each GLB has loaded successfully.
+ * Existing colliders, sensors, interactables and the pet state machine remain.
+ * URL param ?legacyModels=1 disables replacements for regression testing.
+ */
+const modelStatus = { mode:'glb', loaded:[], failed:[], pending:[], detail:{} };
+const useImportedModels = !new URLSearchParams(location.search).has('legacyModels');
+const assetUrls = {
+  cat: 'https://cdn.3dassets.dev/assets/20538/v1/model.glb', // Ginger standing cat, static
+  dog: 'models/shiba-animated.glb',                         // Quaternius CC0, rigged
+  car: 'https://cdn.3dassets.dev/assets/32490/v1/model.glb',
+  motorcycle: 'https://cdn.3dassets.dev/assets/18683/v1/model.glb',
+  sofa: 'https://cdn.3dassets.dev/assets/38778/v1/model.glb',
+  coffee: 'models/coffee-table.glb',
+  dining: 'models/dining-table.glb',
+  chair: 'models/dining-chair.glb',
+  bed: 'models/bed-double.glb'
+};
+const petGLBActors = {};
+function modelUrl(name){return assetUrls[name];}
+function registerModel(name,cb) {
+  if (!useImportedModels) { modelStatus.mode='legacy'; return; }
+  if (!THREE.GLTFLoader) { modelStatus.failed.push(name+': GLTFLoader missing'); return; }
+  modelStatus.pending.push(name);
+  const loader=new THREE.GLTFLoader();
+  loader.load(modelUrl(name),gltf=>{
+    try {
+      cb(gltf);
+      modelStatus.loaded.push(name);
+      modelStatus.pending=modelStatus.pending.filter(x=>x!==name);
+    } catch(e) {
+      modelStatus.failed.push(name+': '+(e.message||e));
+      modelStatus.pending=modelStatus.pending.filter(x=>x!==name);
+      console.warn('Model integration failed:',name,e);
+    }
+  },undefined,e=>{
+    modelStatus.failed.push(name+': '+(e&&e.message||'download failed'));
+    modelStatus.pending=modelStatus.pending.filter(x=>x!==name);
+    console.warn('Keeping original mesh, cannot fetch GLB:',name,e);
+  });
+}
+function fitImported(root,sceneNode,targetSize){
+  const box=new THREE.Box3().setFromObject(sceneNode);
+  const size=box.getSize(new THREE.Vector3());
+  if(size.x<.00001||size.y<.00001||size.z<.00001) throw new Error('Empty model bounds');
+  const sx=targetSize[0]/size.x,sy=targetSize[1]/size.y,sz=targetSize[2]/size.z;
+  // Nonuniform scaling is intentional: original game collision envelopes remain unchanged.
+  sceneNode.scale.multiply(new THREE.Vector3(sx,sy,sz));
+  sceneNode.position.x-=((box.min.x+box.max.x)*.5)*sx;
+  sceneNode.position.y-=box.min.y*sy;
+  sceneNode.position.z-=((box.min.z+box.max.z)*.5)*sz;
+  root.add(sceneNode);
+  sceneNode.traverse(n=>{
+    if(n.isMesh){n.castShadow=true;n.receiveShadow=true;n.frustumCulled=true;}
+  });
+  return sceneNode;
+}
+function placeImported(gltf,pos,size,yaw,legacy){
+  const root=new THREE.Group();
+  root.position.set(pos[0],pos[1],pos[2]);
+  root.rotation.y=yaw||0;
+  fitImported(root,gltf.scene,size);
+  world.add(root);
+  (legacy||[]).forEach(n=>n.visible=false);
+  return root;
+}
+function hideOldPetMeshes(rig){
+  rig.model.traverse(n=>{
+    if(n.isMesh)n.visible=false; // retain old rig transforms for game collision/interaction
+  });
+}
+function addPetModel(name,rig,desired) {
+  registerModel(name,gltf=>{
+    const mesh=gltf.scene;
+    const outer=new THREE.Group();
+    fitImported(outer,mesh,desired);
+    // GLB +Z faces forward in the selected assets; game forward is +Z.
+    rig.model.add(outer);
+    hideOldPetMeshes(rig);
+    const mixer=gltf.animations&&gltf.animations.length?new THREE.AnimationMixer(mesh):null;
+    const actions={};
+    if(mixer){
+      const seen=new Set();
+      gltf.animations.forEach(clip=>{
+        const key=clip.name.split('|').pop().toLowerCase();
+        if(seen.has(key))return;seen.add(key);
+        actions[key]=mixer.clipAction(clip);
+      });
+    }
+    petGLBActors[name]={root:outer,mixer,actions,last:'',static:!mixer||!Object.keys(actions).length};
+    modelStatus.detail[name]={animations:Object.keys(actions),animated:!!mixer};
+  });
+}
+function playPetClip(actor,name){
+  if(!actor||!actor.mixer||!actor.actions)return;
+  const choices=name==='gallop'?['gallop','run','walk']:name==='walk'?['walk','gallop']:name==='sit'?['idle_2','idle']:['idle','idle_2','walk'];
+  const key=choices.find(n=>actor.actions[n]);if(!key||key===actor.last)return;
+  if(actor.last&&actor.actions[actor.last])actor.actions[actor.last].fadeOut(.22);
+  const action=actor.actions[key];action.reset().setEffectiveWeight(1).fadeIn(.22).play();
+  actor.last=key;
+}
+function updateImportedPets(dt){
+  for(const name of ['cat','dog']){
+    const actor=petGLBActors[name];if(!actor)continue;
+    const active=S.animal===name;
+    const moving=active&&cat.moving;
+    const speed=Math.hypot(cat.vel.x,cat.vel.z);
+    playPetClip(actor,active?(moving?(speed>3.7?'gallop':'walk'):(cat.sit>.5?'sit':'idle')):'sit');
+    if(actor.mixer) actor.mixer.update(dt);
+    // Subtle torso movement only for the static cat: not a rigged walking cycle.
+    if(actor.static)actor.root.position.y=(moving?Math.abs(Math.sin(cat.walk))*.009:0);
+  }
+}
+// Register after the procedural world/rigs are fully initialized.
+addPetModel('cat',catRig,[.195,.32,.45]);
+addPetModel('dog',dogRig,[.205,.325,.455]);
+registerModel('sofa',gl=>placeImported(gl,[-1.3,0,3.2],[2.58,.87,1.1],-Math.PI/2,sofaLegacy));
+registerModel('coffee',gl=>placeImported(gl,[-2.9,0,3.2],[1.38,.41,.76],Math.PI/2,coffeeLegacy));
+registerModel('dining',gl=>placeImported(gl,[-2.2,0,-1.8],[1.78,.76,.94],0,diningLegacy));
+registerModel('bed',gl=>placeImported(gl,[-3.87,F2,3.3],[1.78,.78,2.12],Math.PI/2,bedLegacy));
+registerModel('chair',gl=>{
+  const spots=[[-2.65,-2.65,0],[-1.75,-2.65,0],[-2.65,-.95,Math.PI],[-1.75,-.95,Math.PI]];
+  const roots=[];
+  spots.forEach(([x,z,yaw])=>{
+    const clone=gl.scene.clone(true);
+    const root=new THREE.Group();root.position.set(x,0,z);root.rotation.y=yaw;
+    fitImported(root,clone,[.41,.93,.4]);world.add(root);roots.push(root);
+  });
+  modelStatus.detail.chair={instances:roots.length};
+});
+registerModel('car',gl=>{
+  const vehicles=world.children.filter(o=>o.userData.legacyVehicle==='car');
+  if(!vehicles.length)throw new Error('No legacy car found');
+  vehicles.forEach(old=>{
+    const clone=gl.scene.clone(true);
+    placeImported({scene:clone},old.position.toArray(),[1.69,1.35,3.5],old.rotation.y,[old]);
+  });
+  modelStatus.detail.car={instances:vehicles.length};
+});
+registerModel('motorcycle',gl=>{
+  const old=world.children.find(o=>o.userData.legacyVehicle==='motorcycle');
+  if(!old)throw new Error('No legacy motorbike found');
+  placeImported(gl,old.position.toArray(),[.72,1.26,1.82],old.rotation.y,[old]);
+});
+
 function frame(){
   requestAnimationFrame(frame);
   { const now=performance.now(), d=now-(frame.t||now); frame.t=now; if(d>0&&d<250){ frame.a=(frame.a||0)+d; frame.n=(frame.n||0)+1; if(frame.n>=90){ const fps=1000*frame.n/frame.a; frame.a=frame.n=0; if(fps<40&&ssK>.45){ ssK*=.8; resize(); } } } }
-  const dt=Math.min(clock.getDelta(),.05); const active=update(dt);
+  const dt=Math.min(clock.getDelta(),.05); const active=update(dt); updateImportedPets(dt);
   renderer.setRenderTarget(rtA); renderer.render(scene,active); renderer.setRenderTarget(null);
   const u=postMat.uniforms; u.tScene.value=rtA.texture; u.tDepth.value=rtA.depthTexture; u.tPrev.value=rtB.texture;
   renderer.render(postScene,postCam);
   const t=rtA; rtA=rtB; rtB=t;
 }
-window.__cat = { S, cat, setView, setVision, credit, interact, robot, gecko, knock, bird, cam, update, switchAnimal, rest, owner, walker, findInteract:()=>current };   // 调试用
+window.__cat = { S, cat, setView, setVision, credit, interact, robot, gecko, knock, bird, cam, update, switchAnimal, rest, owner, walker, modelStatus, petGLBActors, findInteract:()=>current };   // 调试用
 // 电器正面：把细节“画”在贴图上（拉丝不锈钢、门缝、网点玻璃、按键、出风口），贴在机身正面
 function decal(w,h,x,y,z,ry,draw,o){ const m=mat(0xffffff,Object.assign({map:canvasTex(512,draw),roughness:.5},o||{})); const pl=new THREE.Mesh(new THREE.PlaneGeometry(w,h),m); pl.position.set(x,y,z); pl.rotation.y=ry; pl.receiveShadow=true; world.add(pl); return pl; }
 decal(.81,1.76,1.825,.9,-5.1945,0,(c,s)=>{ c.fillStyle='#c4c8cc'; c.fillRect(0,0,s,s); for(let i=0;i<5200;i++){ c.globalAlpha=.03+Math.random()*.05; c.fillStyle=Math.random()<.5?'#fff':'#70767c'; c.fillRect(Math.random()*s-40,Math.random()*s,30+Math.random()*130,1); } c.globalAlpha=1;
