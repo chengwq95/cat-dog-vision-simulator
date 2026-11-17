@@ -624,6 +624,7 @@ Sd(-3.1,-1.3,.7,.76,-2.3,-1.3,M.wood,{round:.018}); D(-3.02,-1.38,.63,.705,-2.22
 [-2.1,-1.9,-1.7,-1.5].forEach(z=>D(-3.07,-1.33,.7602,.7612,z,z+.004,M.dark,{cast:false}));   // 桌面拼板缝
 (function(){ cyl(.14,.07,.06,-2.2,.79,-1.75,M.white,18); [[M.red,-2.25,-1.78],[M.green,-2.15,-1.79],[M.yellow,-2.2,-1.69],[M.red,-2.19,-1.75]].forEach((f,i)=>ball(.042,f[1],i===3?.88:.83,f[2],mat(f[0].color.getHex?0xffffff:0xffffff,{color:f[0].color,roughness:.35})));
   [[-2.65,-2.05],[-1.75,-2.05],[-2.65,-1.55],[-1.75,-1.55]].forEach(p=>D(p[0]-.19,p[0]+.19,.76,.764,p[1]-.13,p[1]+.13,mat(0x5d7b6a,{map:texFabric}),{cast:false})); })();
+const chairsLegacyStart=world.children.length;
 const chairCush = mat(0xd8c9a8,{map:texFabric,roughness:1});
 function chair(x,z,dir){ const bz=z+dir*.19; colliders.push({x0:x-.2,x1:x+.2,y0:.41,y1:.45,z0:z-.2,z1:z+.2},{x0:x-.2,x1:x+.2,y0:.45,y1:.92,z0:bz-.02,z1:bz+.02});
   D(x-.21,x+.21,.4,.45,z-.21,z+.21,M.teak,{round:.02}); soft(x-.19,x+.19,.435,.505,z-.19,z+.19,chairCush,.35);
@@ -631,7 +632,8 @@ function chair(x,z,dir){ const bz=z+dir*.19; colliders.push({x0:x-.2,x1:x+.2,y0:
   soft(x-.2,x+.2,.815,.935,bz-.024+dir*.02,bz+.024+dir*.02,M.teak,.5); for(let i=0;i<4;i++) D(x-.135+i*.09-.02,x-.135+i*.09+.02,.47,.84,bz-.007,bz+.007,M.teak);
   D(x-.17,x+.17,.17,.19,z-.008,z+.008,M.teak,{cast:false}); }
 chair(-2.65,-2.65,-1); chair(-1.75,-2.65,-1); chair(-2.65,-.95,1); chair(-1.75,-.95,1);
-const diningLegacy=world.children.slice(diningLegacyStart);
+const diningLegacy=world.children.slice(diningLegacyStart,chairsLegacyStart);
+const chairsLegacy=world.children.slice(chairsLegacyStart);
 cyl(.012,.012,.6,-2.2,2.7,-1.8,M.metal,6); cyl(.2,.08,.16,-2.2,2.36,-1.8,M.yellow,16);
 // --- 厨房 ---
 Sd(-4.95,1.2,0,.86,-5.95,-5.35,mat(0x58707a),{round:.02}); Sd(-5,1.25,.86,.9,-6,-5.3,mat(0xdfe3e2,{roughness:.3}));
@@ -1662,9 +1664,9 @@ function addPetModel(name,rig,desired) {
     const mesh=gltf.scene;
     const outer=new THREE.Group();
     fitImported(outer,mesh,desired);
-    // GLB +Z faces forward in the selected assets; game forward is +Z.
-    rig.model.add(outer);
+    // Preserve only the imported model mesh; old bones remain for game logic.
     hideOldPetMeshes(rig);
+    rig.model.add(outer);
     const mixer=gltf.animations&&gltf.animations.length?new THREE.AnimationMixer(mesh):null;
     const actions={};
     if(mixer){
@@ -1714,6 +1716,7 @@ registerModel('chair',gl=>{
     const root=new THREE.Group();root.position.set(x,0,z);root.rotation.y=yaw;
     fitImported(root,clone,[.41,.93,.4]);world.add(root);roots.push(root);
   });
+  chairsLegacy.forEach(n=>n.visible=false);
   modelStatus.detail.chair={instances:roots.length};
 });
 registerModel('car',gl=>{
