@@ -37,6 +37,8 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 .btn.tog.on{background:var(--teal); color:#04201c}
 #right{display:flex; gap:6px}
 #right .btn{background:var(--panel); border:1px solid var(--line); border-radius:12px; height:36px}
+@media (max-width:1400px){ #brand b{display:none} }
+@media (max-width:1080px){ .btn .t{display:none} .btn{padding:0 9px; font-size:15px} }
 @media (max-width:760px){ #brand small, .btn .t{display:none} .btn{padding:0 9px; font-size:15px} #brand{padding:7px 10px} }
 
 #todo{position:fixed; z-index:19; right:var(--gr); top:calc(var(--gt) + 52px); width:236px; padding:10px 12px; max-height:60%; overflow:auto}
@@ -109,8 +111,8 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
       <button class="btn" id="v-cctv" title="CCTV camera">📹<span class="t">CCTV</span></button>
     </div>
     <div class="seg" role="group" aria-label="Vision">
-      <button class="btn on" id="e-cat" title="Cat vision">🐱<span class="t">Cat vision</span></button>
-      <button class="btn" id="e-human" title="Human vision">🧑<span class="t">Human vision</span></button>
+      <button class="btn on" id="e-cat" title="Cat vision">🐱<span class="t">Cat</span></button>
+      <button class="btn" id="e-human" title="Human vision">🧑<span class="t">Human</span></button>
       <button class="btn" id="e-split" title="Side by side">◐<span class="t">Compare</span></button>
     </div>
     <button class="btn tog" id="t-night" title="Day / lights off">☀️<span class="t">Day</span></button>
@@ -1145,7 +1147,7 @@ function syncUI(){
   $('split').style.left=(S.split*100)+'%';
   [].forEach.call($('cams').children,(b,i)=>b.classList.toggle('on',i===S.cam)); $('cam-name').textContent=CAMS[S.cam][0];
   catModel.visible = S.view!=='1st';
-  { const dg=S.animal==='dog'; $('e-cat').firstChild.textContent=dg?'🐶':'🐱'; $('e-cat').querySelector('.t').textContent=dg?'Dog vision':'Cat vision'; $('t-animal').firstChild.textContent=dg?'🐱':'🐶'; $('t-animal').querySelector('.t').textContent=dg?'Be the cat':'Be the dog'; }
+  { const dg=S.animal==='dog'; $('e-cat').firstChild.textContent=dg?'🐶':'🐱'; $('e-cat').querySelector('.t').textContent=dg?'Dog':'Cat'; $('t-animal').firstChild.textContent=dg?'🐱':'🐶'; $('t-animal').querySelector('.t').textContent=dg?'Be the cat':'Be the dog'; }
   applyLight();
 }
 function describe(){ const dg=S.animal==='dog'; toast(S.view==='cctv'?DESC.cctv : S.night&&S.vision!=='split' ? DESC['night'+(S.vision==='cat'&&dg?'dog':S.vision)] : DESC[S.vision==='cat'&&dg?'dog':S.vision==='split'&&dg?'splitdog':S.vision]); }

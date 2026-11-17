@@ -4,6 +4,8 @@ A single-file 3D browser toy: walk around a two-storey house as a cat or a dog a
 
 一个单文件的 3D 网页小玩具：扮成猫或狗在两层楼的家里走动，随时切换动物视觉和人类视觉（二色视觉、远处模糊、宽视野、夜视）。使用 Three.js，仅支持电脑浏览器。
 
+Play online · 在线试玩: https://chengwq95.github.io/cat-dog-vision-simulator/ (中文) · https://chengwq95.github.io/cat-dog-vision-simulator/en.html (English)
+
 - `index.html` — 中文版
 - `en.html` — English version
 
