@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover">
+<title>Cat & Dog Vision · V3 Playable Room</title>
+<style>
+:root{color-scheme:dark;--ink:#f6f3ec;--muted:#c1c8ca;--stroke:rgba(255,255,255,.18);--glass:rgba(17,24,29,.77);--accent:#d7b27b}
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#151a1d;color:var(--ink);font:14px/1.4 system-ui,-apple-system,"PingFang SC","Noto Sans SC",sans-serif}
+button{font:inherit;border:1px solid var(--stroke);border-radius:11px;background:rgba(255,255,255,.07);color:var(--ink);padding:10px 13px;cursor:pointer}
+button:hover{border-color:var(--accent);background:rgba(255,255,255,.13)}
+button[aria-pressed="true"]{border-color:var(--accent);background:rgba(207,164,100,.24)}
+button:disabled{cursor:not-allowed;opacity:.44}
+#canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#veil{position:fixed;inset:0;background:linear-gradient(145deg,rgba(10,17,23,.91),rgba(12,17,20,.64) 60%,rgba(11,20,27,.87));display:flex;justify-content:center;align-items:center;z-index:20;transition:opacity .4s}
+#veil.hidden{opacity:0;pointer-events:none}
+.welcome{width:min(510px,calc(100vw - 35px));padding:32px;border:1px solid rgba(255,255,255,.16);border-radius:24px;background:rgba(9,17,22,.82);box-shadow:0 25px 80px #0008;backdrop-filter:blur(18px)}
+.eyebrow{letter-spacing:.21em;font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase}
+.welcome h1{font-weight:550;line-height:1.06;letter-spacing:-.045em;font-size:clamp(35px,6vw,58px);margin:15px 0}
+.welcome p{color:var(--muted);max-width:400px}
+.welcome strong{color:#fff;font-weight:600}
+button.primary{background:var(--accent);color:#152029;border:0;font-weight:750;padding:14px 18px;width:100%;margin:20px 0 8px}
+#hud{position:fixed;left:18px;right:18px;top:16px;pointer-events:none;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.glass{background:var(--glass);border:1px solid var(--stroke);backdrop-filter:blur(18px);border-radius:16px;box-shadow:0 8px 24px #0004}
+#identity{padding:13px 17px;max-width:330px}
+#identity strong{display:block;letter-spacing:-.01em;font-size:16px}
+#identity span{font-size:12px;color:var(--muted)}
+#controls{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;pointer-events:auto;max-width:550px}
+#controls button{padding:9px 12px;backdrop-filter:blur(12px);background:var(--glass);font-size:12px}
+#controls button[aria-pressed="true"]{background:rgba(201,151,91,.36)}
+#bottom{position:fixed;left:18px;right:18px;bottom:16px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;pointer-events:none}
+#help{padding:12px 16px;font-size:12px;line-height:1.65;color:var(--muted);max-width:520px}
+#help strong{color:#fff}
+#asset{padding:12px 16px;max-width:440px;text-align:right;font-size:12px;line-height:1.5;color:var(--muted)}
+#asset a{color:#e6c899}
+#fps{color:#e1c48a;font-weight:650}
+#toast{position:fixed;bottom:140px;left:50%;transform:translateX(-50%);padding:10px 15px;text-align:center;min-width:190px;max-width:calc(100vw - 24px);opacity:0;transition:opacity .2s;pointer-events:none;font-size:12px}
+#toast.show{opacity:1}
+#crosshair{position:fixed;left:50%;top:50%;width:7px;height:7px;border:1.5px solid #fff;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 5px #0008}
+#touch{display:none;position:fixed;bottom:85px;left:20px;gap:5px;grid-template-columns:repeat(3,46px);pointer-events:auto}
+#touch button{background:var(--glass);padding:12px;border-radius:10px;touch-action:none}
+#touch .up{grid-column:2;grid-row:1}#touch .left{grid-column:1;grid-row:2}#touch .down{grid-column:2;grid-row:2}#touch .right{grid-column:3;grid-row:2}
+body.mobile #touch{display:grid}
+@media(max-width:750px){#hud{flex-direction:column;left:10px;right:10px;top:10px}#identity{padding:8px 11px}#controls{justify-content:flex-start;gap:4px}#controls button{padding:7px 8px}#bottom{bottom:8px;left:10px;right:10px}#help{display:none}#asset{font-size:10px;max-width:210px}.welcome{padding:24px}}
+</style>
+</head>
+<body>
+<canvas id="canvas" aria-label="3D free roam room"></canvas>
+<div id="crosshair" aria-hidden="true"></div>
+<div id="veil"><section class="welcome">
+<div class="eyebrow">Cat & Dog Vision Simulator / V3 · Alpha</div>
+<h1>进入它们眼中的世界。</h1>
+<p>第一阶段是<strong>可自由探索的单一客厅</strong>：双眼视觉模式、日夜光线、实时阴影、家具 GLB 加载以及 WASD 运动。模型质量尚未通过最终验收。</p>
+<button class="primary" id="start">进入客厅 · Enter</button>
+<p style="font-size:12px">桌面建议 Chrome / Edge / Safari。没有安装步骤。点击画面后拖动鼠标转向。</p>
+</section></div>
+<header id="hud">
+<div class="glass" id="identity"><div class="eyebrow">Playable room / Asset-gated alpha</div><strong id="mode">橘猫视觉 · CAT</strong><span id="micro">真实动物骨骼动画未完成 · 请勿视为最终画质</span></div>
+<nav id="controls">
+<button id="cat" aria-pressed="true">🐈 猫视角</button>
+<button id="dog" aria-pressed="false">🐕 狗视角</button>
+<button id="human" aria-pressed="false">人眼</button>
+<button id="compare" aria-pressed="false">视觉对比</button>
+<button id="night" aria-pressed="false">夜间</button>
+<button id="third" aria-pressed="false">第三人称</button>
+<button id="quality" aria-pressed="false">流畅模式</button>
+</nav>
+</header>
+<footer id="bottom">
+<div class="glass" id="help"><strong>W A S D</strong> 移动　<strong>Shift</strong> 奔跑　<strong>Space</strong> 跳跃　<strong>鼠标拖动</strong> 转向
+<br><strong>Q</strong> 猫 / 狗　<strong>V</strong> 视角　<strong>N</strong> 夜间　<strong>C</strong> 对比　<strong>Esc</strong> 释放鼠标</div>
+<div class="glass" id="asset"><span id="assetProgress">资源准备中…</span><br><span id="fps">— FPS</span> · 本版本没有合并到正式游戏<br><a href="README.md" target="_blank" rel="noopener">透明的进度与资源说明</a></div>
+</footer>
+<div id="toast" class="glass" role="status" aria-live="polite"></div>
+<div id="touch">
+<button class="up" data-key="KeyW">↑</button><button class="left" data-key="KeyA">←</button><button class="down" data-key="KeyS">↓</button><button class="right" data-key="KeyD">→</button>
+</div>
+<script type="importmap">
+{"imports":{"three":"https://esm.sh/three@0.161.0","three/addons/":"https://esm.sh/three@0.161.0/examples/jsm/"}}
+</script>
+<script type="module" src="./game.js"></script>
+</body>
+</html>
