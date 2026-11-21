@@ -6,6 +6,10 @@ A static, single-page 3D toy for seeing the world the way a pet does. Walk aroun
 
 ## Preview
 
+The orange-and-white tabby and Shiba Inu, before and after the model rebuild. Each row shows the same animal from the same camera angle.
+
+![Previous and rebuilt 3D models of the cat and dog](docs/pet-models.jpg)
+
 **Side by side** — drag the handle: human vision on the left, cat vision on the right. The red and green cushions collapse into a similar yellow-brown for the cat; blue and yellow stay distinct.
 
 ![Human vision and cat vision side by side](docs/compare.jpg)
