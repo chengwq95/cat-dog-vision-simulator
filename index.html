@@ -96,6 +96,42 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 #modal .pick button.on{background:var(--amber); color:var(--amber-ink); border-color:transparent}
 #modal .go{margin-top:18px; width:100%; height:44px; border-radius:12px; background:var(--amber); color:var(--amber-ink); font-weight:800; font-size:15px}
 #err{position:fixed; inset:0; z-index:40; display:grid; place-items:center; padding:24px; text-align:center; background:var(--bg); color:var(--fg)}
+
+.touch-ui{--stick-size:clamp(96px,min(31vw,32vh),124px); --bar-gap:6px}
+.touch-ui #topbar{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:var(--bar-gap)}
+.touch-ui #brand{justify-self:start; max-width:100%; overflow:hidden; white-space:nowrap; pointer-events:none}
+.touch-ui #right{grid-column:2; grid-row:1; gap:4px}
+.touch-ui #right .btn{justify-content:center; min-width:44px; height:44px; padding:0 7px}
+.touch-ui #t-controls .t{display:inline; font-size:12px}
+.touch-ui #controls{display:none; position:absolute; top:calc(100% + var(--bar-gap)); right:0; width:max-content; max-width:100%; max-height:calc(100dvh - var(--gt) - var(--gb) - 56px); overflow-y:auto; overscroll-behavior:contain; gap:4px; padding:6px}
+.touch-ui #topbar.options-open #controls{display:flex}
+.touch-ui #controls .seg{max-width:100%}
+.touch-ui #controls .btn,.touch-ui #cams .btn{min-width:44px; min-height:44px; justify-content:center}
+.touch-ui #controls .btn{padding:0 7px; gap:3px}
+.touch-ui #controls .t{display:inline; font-size:12px}
+.touch-ui #todo,.touch-ui #cams{top:calc(var(--gt) + 44px + var(--bar-gap))}
+.touch-ui #todo{max-height:calc(100% - var(--gt) - var(--gb) - 60px - var(--stick-size)); overscroll-behavior:contain}
+.touch-ui #cams{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); width:max-content; max-width:calc(100% - var(--gl) - var(--gr))}
+.touch-ui #cams .btn{padding:2px 6px; height:auto; white-space:normal; line-height:1.15}
+.touch-ui #topbar.options-open ~ #cams,.touch-ui #todo:not([hidden]) ~ #cams{display:none}
+.touch-ui #toast{top:calc(var(--gt) + 54px); width:max-content}
+.touch-ui #cams:not([hidden]) ~ #toast{top:calc(var(--gt) + 112px)}
+.touch-ui #topbar.options-open ~ #toast,.touch-ui #todo:not([hidden]) ~ #toast{z-index:15}
+.touch-ui #joy{width:var(--stick-size); height:var(--stick-size)}
+.touch-ui #joy,.touch-ui #acts button{background:rgba(17,27,35,.58); border-color:rgba(255,255,255,.65); box-shadow:0 1px 6px rgba(0,0,0,.22)}
+.touch-ui #joy i{background:rgba(255,255,255,.78)}
+.touch-ui #acts{pointer-events:none}
+.touch-ui #acts button{pointer-events:auto}
+.touch-ui #acts button:active{background:var(--amber); color:var(--amber-ink)}
+.touch-ui #prompt{bottom:calc(var(--gb) + var(--stick-size) + 14px); max-width:calc(100% - var(--gl) - var(--gr)); min-height:44px; white-space:normal}
+.touch-ui #cctv .tl,.touch-ui #split .lab{bottom:calc(var(--gb) + var(--stick-size) + 12px); pointer-events:none}
+.touch-ui #split{pointer-events:none}
+.touch-ui #split .knob{pointer-events:auto; touch-action:none; width:44px; height:44px; margin-top:-22px}
+.touch-ui #modal{display:flex; padding:var(--gt) var(--gr) var(--gb) var(--gl); overflow:hidden}
+.touch-ui #modal .card{display:flex; flex-direction:column; max-height:100%; margin:auto; padding:16px}
+.touch-ui #modal .intro-copy{min-height:0; overflow-y:auto; overscroll-behavior:contain; touch-action:pan-y}
+.touch-ui #modal .pick,.touch-ui #modal .go{flex-shrink:0}
+@media(max-width:380px){.touch-ui #brand b{display:none}}
 @media (prefers-reduced-motion: reduce){ #cctv .rec{animation:none} #toast,#nap{transition:none} }
 </style>
 
@@ -120,6 +156,7 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
     <button class="btn tog" id="t-q" title="画质">✨<span class="t">高画质</span></button>
   </div>
   <div id="right">
+    <button class="btn" id="t-controls" title="设置" aria-controls="controls" aria-expanded="false" hidden>⚙<span class="t">设置</span></button>
     <button class="btn" id="t-todo" title="今日待办">📋 <span id="todo-count">0/10</span></button>
     <button class="btn" id="t-lang" title="语言 / Language">EN</button>
     <button class="btn" id="t-info" title="说明">❔</button>
@@ -141,22 +178,24 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 <div id="modal">
   <div class="card">
     <div class="pick" role="group" aria-label="选择动物"><button id="pick-cat" class="on">🐈 当猫</button><button id="pick-dog">🐕 当狗</button></div>
-    <h1 id="m-title"></h1>
-    <p class="sub" id="m-sub"></p>
-    <h3 id="m-h3"></h3>
-    <ul id="m-list"></ul>
-    <h3>怎么玩</h3>
-    <div class="keys" id="keys-desktop">
-      <span>W A S D</span><span>走动（按住 Shift 奔跑）</span>
-      <span>鼠标</span><span>点击画面后移动鼠标环顾，Esc 释放</span>
-      <span>空格</span><span>跳上沙发、餐桌、床、车顶</span>
-      <span>E</span><span id="m-e">挥爪互动，没东西可玩时喵一声</span>
-      <span>Q</span><span>在猫和狗之间切换</span>
-    </div>
-    <div class="keys" id="keys-touch" hidden>
-      <span>左下摇杆</span><span>走动，推到底奔跑</span>
-      <span>滑动画面</span><span>环顾四周</span>
-      <span>⤴ / 🐾</span><span>跳跃 / 挥爪互动</span>
+    <div class="intro-copy">
+      <h1 id="m-title"></h1>
+      <p class="sub" id="m-sub"></p>
+      <h3 id="m-h3"></h3>
+      <ul id="m-list"></ul>
+      <h3>怎么玩</h3>
+      <div class="keys" id="keys-desktop">
+        <span>W A S D</span><span>走动（按住 Shift 奔跑）</span>
+        <span>鼠标</span><span>点击画面后移动鼠标环顾，Esc 释放</span>
+        <span>空格</span><span>跳上沙发、餐桌、床、车顶</span>
+        <span>E</span><span id="m-e">挥爪互动，没东西可玩时喵一声</span>
+        <span>Q</span><span>在猫和狗之间切换</span>
+      </div>
+      <div class="keys" id="keys-touch" hidden>
+        <span>左下摇杆</span><span>走动，推到底奔跑</span>
+        <span>滑动画面</span><span>环顾四周</span>
+        <span>⤴ / 🐾</span><span>跳跃 / 挥爪互动</span>
+      </div>
     </div>
     <button class="go" id="go">开始巡视</button>
   </div>
@@ -167,6 +206,7 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 /* ============ 中英文切换：界面文字在显示时翻译，切换后立刻生效 ============ */
 const I18N_EN = {"3D 引擎加载失败，请检查网络后刷新页面。": "The 3D engine failed to load. Check your connection and refresh the page.", "这台设备的浏览器不支持 WebGL，无法显示 3D 画面。": "This browser does not support WebGL, so the 3D scene cannot be shown.", "<b>CCTV</b>：主人正在手机上看监控。移动方向以监控画面为准。": "<b>CCTV</b>: your owner is watching the camera feed. Movement follows the camera view.", "<b>人类眼中的夜晚</b>：关灯后只剩神台红灯和窗外路灯。": "<b>Night for humans</b>: with the lights off, only the red altar lamp and the street light remain.", "<b>人类视觉</b>：全彩、清晰，但视野窄，夜里几乎看不见。": "<b>Human vision</b>: full colour and sharp, but a narrow field of view and almost blind at night.", "<b>全部完成！</b>今天也是称职的一天，主人回家会很“惊喜”。": "<b>All done!</b> Another productive day. Your owner is in for a “surprise”.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是狗狗视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, dog vision on the right.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是猫咪视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, cat vision on the right.", "<b>狗狗的夜视</b>：狗也有照膜，比人亮得多，但不如猫。": "<b>Dog night vision</b>: dogs have a tapetum too. Much brighter than a human sees, but not as bright as a cat.", "<b>狗狗视觉</b>：同样分不清红绿，但比猫看得清楚一些，视野更宽；半米以内对不上焦。": "<b>Dog vision</b>: red and green also merge, but it is a little sharper than a cat and wider; nothing closer than half a metre is in focus.", "<b>猫咪的夜视</b>：照膜把路灯和神台的微光放大，屋里轮廓清晰可见。": "<b>Cat night vision</b>: the tapetum amplifies the faint street light and altar lamp, so the room is clearly visible.", "<b>猫咪视觉</b>：红绿坍缩成黄褐色，远处发糊，视野更宽。看看沙发上的四个抱枕。": "<b>Cat vision</b>: red and green collapse into yellow-brown, distance is blurry, the view is wider. Look at the four cushions on the sofa.", "壁虎断尾逃上了天花板！断掉的尾巴还在地上扭。过一会儿它会回来。": "The gecko dropped its tail and fled to the ceiling! The tail is still wriggling on the floor. It will be back in a while.", "切到「关灯夜晚」，人类视觉几乎全黑，猫咪视觉靠照膜把微光放大。": "Switch to “Lights off”: human vision is almost black, while cat vision amplifies faint light with the tapetum.", "狗也只有两种视锥细胞，红和绿都偏黄褐；蓝和黄看得最清楚。": "Dogs also have only two cone types. Red and green both look yellow-brown; blue and yellow are clearest.", "狗也有照膜，暗处比人亮得多，但不如猫。": "Dogs have a tapetum too: far brighter in the dark than a human sees, but less than a cat.", "狗的视力约为人的 1/4，远处细节发糊；半米以内反而对不上焦，要靠鼻子。": "A dog sees about a quarter as sharply as a human, so distant detail blurs; closer than half a metre it cannot focus and relies on its nose.", "狗的视野约 240°，比猫和人都宽。": "A dog sees about 240° around it, wider than both cats and humans.", "猫只有两种视锥细胞。沙发上的红、绿抱枕会变成相近的黄褐色，蓝和黄依然分明。": "Cats have only two cone types. The red and green cushions on the sofa turn a similar yellow-brown, while blue and yellow stay distinct.", "猫的视力约为人的 1/6，几米外的细节会散开；贴到鼻子前的东西也对不上焦。": "A cat sees about a sixth as sharply as a human. Detail a few metres away smears, and things right at its nose are out of focus too.", "猫的视野约 200°，画面边缘会被拉进来。": "A cat sees about 200° around it, so the edges of the picture are pulled in.", "眼睛离地约 50 厘米，是猫的两倍；但钻不进纸箱，也跳不上车顶。": "Eyes about 50 cm off the ground, twice a cat’s; but you cannot fit in the box or jump onto the car roof.", "停下不动时，吊扇、壁虎、小鸟会微微发亮。": "When you hold still, the ceiling fan, the gecko and the bird glow slightly.", "已切换到流畅模式（关闭阴影、降低分辨率）": "Switched to Smooth mode (shadows off, lower resolution)", "已切换到高画质": "Switched to High quality", "主人放下菜刀，弯腰摸了摸你。": "Your owner puts down the knife and bends over to pet you. ", "还顺手把碗添满了。": "They also topped up your bowl.", "路人停下来，朝你挥了挥手。": "The passer-by stops and waves at you.", "点击画面后移动鼠标环顾，Esc 释放": "Click the scene, then move the mouse to look around; Esc releases", "挥爪互动，没东西可玩时喵一声": "Swipe a paw to interact; meow when there is nothing to play with", "伸爪互动，没东西可玩时汪两声": "Reach out a paw to interact; bark when there is nothing to play with", "走动（按住 Shift 奔跑）": "Walk (hold Shift to run)", "跳上沙发、餐桌、床、车顶": "Jump onto the sofa, table, bed and car roof", "走动，推到底奔跑": "Walk; push all the way to run", "🐈 今天，你是一只橘白猫": "🐈 Today you are an orange-and-white cat", "🐕 今天，你是一只柴犬": "🐕 Today you are a Shiba Inu", "蹭蹭主人，讨个摸摸": "Rub against your owner for a pet", "到大门口跟路人打招呼": "Greet the passer-by at the gate", "把 3 样东西推下桌": "Knock 3 things off the table", "骑上扫地机器人兜风": "Ride the robot vacuum", "跳上车顶巡视领地": "Survey your territory from the car roof", "在主人床上打个盹": "Take a nap on your owner’s bed", "抓到墙上的壁虎": "Catch the gecko on the wall", "上二楼窗台看鸟": "Watch the bird from the upstairs windowsill", "拍一下毛线球": "Bat the ball of yarn", "在沙发上磨爪": "Scratch the sofa", "吃几口猫粮": "Eat some cat food", "钻进纸箱": "Crawl into the cardboard box", "比猫清楚，比人模糊": "Sharper than a cat, blurrier than a human", "切换猫 / 狗（Q）": "Switch cat / dog (Q)", "在猫和狗之间切换": "Switch between cat and dog", "猫狗视觉模拟器": "Cat & Dog Vision Simulator", "猫咪眼中的世界": "The world through a cat’s eyes", "狗狗眼中的世界": "The world through a dog’s eyes", "CAM 02 饭厅厨房": "CAM 02 DINING / KITCHEN", "CAM 03 主人房": "CAM 03 MASTER BEDROOM", "CAM 01 客厅": "CAM 01 LIVING ROOM", "CAM 04 车房": "CAM 04 CAR PORCH", "白天 / 关灯夜晚": "Day / lights off", "跳跃 / 挥爪互动": "Jump / paw", "盯住会动的东西": "Locks onto movement", "夜里也看得见": "Sees at night too", "夜里看得见": "Sees at night", "看远处是糊的": "Distance is blurry", "红绿分不清": "Red and green merge", "视野很宽": "Very wide view", "视野更宽": "Even wider view", "个头更高": "Taller", "朝路人喵一声": "Meow at the passer-by", "朝路人汪两声": "Bark at the passer-by", "把它推下去": "Knock it off", "拍毛线球": "Bat the yarn", "蹭蹭主人": "Rub your owner", "吃猫粮": "Eat cat food", "扑壁虎": "Pounce on the gecko", "打个盹": "Take a nap", "磨爪子": "Scratch", "关灯夜晚": "Lights off", "出发巡逻": "Start patrol", "开始巡视": "Start exploring", "CCTV 监控": "CCTV camera", "今日待办": "To-do today", "左下摇杆": "Left stick", "滑动画面": "Swipe", "环顾四周": "Look around", "第一人称": "1st person", "第三人称": "3rd person", "左右对比": "Side by side", "选择动物": "Choose animal", "猫咪视觉": "Cat vision", "狗狗视觉": "Dog vision", "人类视觉": "Human vision", "高画质": "High quality", "怎么玩": "How to play", "换成狗": "Be the dog", "换成猫": "Be the cat", "🐈 当猫": "🐈 Cat", "🐕 当狗": "🐕 Dog", "完成：<b>": "Done: <b>", "对比": "Compare", "下雨": "Rain", "白天": "Day", "画质": "Quality", "说明": "Help", "视角": "View", "视觉": "Vision", "鼠标": "Mouse", "空格": "Space", "流畅": "Smooth", "互动": "Paw", "跳跃": "Jump", "在家里走走看看，随时切换猫咪视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成狗。": "Wander around the house and switch between cat vision and human vision to see how different the same home looks. Press Q while playing to become the dog.", "在家里走走看看，随时切换狗狗视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成猫。": "Wander around the house and switch between dog vision and human vision to see how different the same home looks. Press Q while playing to become the cat.", "语言": "Language"};
 Object.assign(I18N_EN,{'吃狗粮':'Eat dog food','吃几口狗粮':'Eat some dog food','碗空了，找主人添粮':'Empty bowl · visit your owner','白天去厨房蹭蹭主人，主人会帮你添粮。':'Nuzzle your owner in the kitchen during the day for a refill.'});
+Object.assign(I18N_EN,{'设置':'Settings','在家里走走看看，用「设置」切换猫狗和视觉。':'Explore the house. Open Settings to switch animals or change vision.'});
 const I18N_KEYS = Object.keys(I18N_EN).sort((a,b)=>b.length-a.length), I18N_CJK=/[\u4e00-\u9fff（）：]/;
 let LANG = (()=>{ try{ const q=new URLSearchParams(location.search).get('lang'); if(q==='zh'||q==='en') return q; const v=localStorage.getItem('cdvs-lang'); if(v==='zh'||v==='en') return v; }catch(_){} return /^zh/i.test(navigator.language||'')?'zh':'en'; })();
 function tr(v){ if(LANG!=='en'||typeof v!=='string'||!I18N_CJK.test(v)) return v; for(const k of I18N_KEYS) if(v.indexOf(k)>=0) v=v.split(k).join(I18N_EN[k]); return v.replace(/（/g,' (').replace(/）/g,')').replace(/：/g,': '); }
@@ -187,8 +227,10 @@ const $ = id => document.getElementById(id);
 if (!window.THREE) { const d=document.createElement('div'); d.id='err'; d.textContent='3D 引擎加载失败，请检查网络后刷新页面。'; document.body.appendChild(d); return; }
 
 /* ============ 1. 状态 ============ */
-const isTouch = matchMedia('(pointer: coarse)').matches;
-const S = { view:'1st', vision:'cat', night:false, rain:false, hq:!isTouch, split:0.5, cam:0,
+const coarsePointer=matchMedia('(pointer: coarse)').matches;
+const isTouch=coarsePointer || navigator.maxTouchPoints>0 || matchMedia('(any-pointer: coarse)').matches;
+document.documentElement.classList.toggle('touch-ui',isTouch);
+const S = { view:'1st', vision:'cat', night:false, rain:false, hq:!coarsePointer, split:0.5, cam:0,
             yaw:Math.PI, pitch:-0.05, keys:{}, joy:{x:0,y:0}, lock:0, started:false };
 
 /* ============ 2. 音效 (WebAudio) ============ */
@@ -4352,10 +4394,13 @@ function syncUI(){
   $('t-night').classList.toggle('on',S.night); $('t-night').firstChild.textContent=S.night?'🌙':'☀️'; $('t-night').querySelector('.t').textContent=S.night?'关灯夜晚':'白天';
   $('t-rain').classList.toggle('on',S.rain); $('t-q').classList.toggle('on',S.hq); $('t-q').querySelector('.t').textContent=S.hq?'高画质':'流畅';
   $('cctv').hidden=$('cams').hidden=S.view!=='cctv'; $('split').hidden=!(S.vision==='split'&&S.view!=='cctv');
-  $('split').style.left=(S.split*100)+'%';
+  if($('split').hidden) stopSplit(); else positionSplit();
   [].forEach.call($('cams').children,(b,i)=>b.classList.toggle('on',i===S.cam)); $('cam-name').textContent=CAMS[S.cam][0];
   catModel.visible = S.view!=='1st';
   { const dg=S.animal==='dog'; $('e-cat').firstChild.textContent=dg?'🐶':'🐱'; $('e-cat').querySelector('.t').textContent=LANG==='en'?(dg?'Dog':'Cat'):(dg?'狗狗视觉':'猫咪视觉'); $('e-human').querySelector('.t').textContent=LANG==='en'?'Human':'人类视觉'; $('t-animal').firstChild.textContent=dg?'🐱':'🐶'; $('t-animal').querySelector('.t').textContent=dg?'换成猫':'换成狗'; }
+  const petVision=S.animal==='dog'?'狗狗视觉':'猫咪视觉';
+  $('e-cat').title=tr(petVision);
+  $('split').querySelector('.lab.r').textContent=(S.animal==='dog'?'🐶 ':'🐱 ')+petVision;
   applyLight();
 }
 function describe(){ const dg=S.animal==='dog'; toast(S.view==='cctv'?DESC.cctv : S.night&&S.vision!=='split' ? DESC['night'+(S.vision==='cat'&&dg?'dog':S.vision)] : DESC[S.vision==='cat'&&dg?'dog':S.vision==='split'&&dg?'splitdog':S.vision]); }
@@ -4367,8 +4412,20 @@ $('t-animal').onclick=()=>switchAnimal(); $('e-cat').onclick=()=>setVision('cat'
 $('t-night').onclick=()=>{ S.night=!S.night; sfx.ui(); syncUI(); describe(); };
 $('t-rain').onclick=()=>{ S.rain=!S.rain; sfx.ui(); sfx.rain(S.rain); syncUI(); };
 $('t-q').onclick=()=>{ S.hq=!S.hq; sfx.ui(); resize(); syncUI(); toast(S.hq?'已切换到高画质':'已切换到流畅模式（关闭阴影、降低分辨率）'); };
-$('t-todo').onclick=()=>{ $('todo').hidden=!$('todo').hidden; };
-$('t-info').onclick=()=>{ $('modal').hidden=false; if(document.pointerLockElement) document.exitPointerLock(); };
+function setOptions(open){
+  $('topbar').classList.toggle('options-open',open);
+  $('t-controls').setAttribute('aria-expanded',String(open));
+  if(open) $('todo').hidden=true;
+}
+$('t-controls').onclick=()=>setOptions($('t-controls').getAttribute('aria-expanded')!=='true');
+if(isTouch){
+  $('controls').addEventListener('click',e=>{if(e.target.closest('button')) setOptions(false);});
+  document.addEventListener('pointerdown',e=>{
+    if($('topbar').classList.contains('options-open')&&!e.target.closest('#controls,#t-controls')) setOptions(false);
+  },true);
+}
+$('t-todo').onclick=()=>{ setOptions(false); $('todo').hidden=!$('todo').hidden; };
+$('t-info').onclick=()=>{ resetInput(); setOptions(false); $('modal').hidden=false; if(document.pointerLockElement) document.exitPointerLock(); };
 $('go').onclick=()=>{ $('modal').hidden=true; audio(); if(!S.started){ S.started=true; (S.animal==='dog'?sfx.bark:sfx.meow)(); describe(); } };
 const INTRO = {
   cat:{ title:'🐈 今天，你是一只橘白猫', h3:'猫咪眼中的世界', e:'挥爪互动，没东西可玩时喵一声', list:[
@@ -4385,14 +4442,14 @@ const INTRO = {
     ['盯住会动的东西','停下不动时，吊扇、壁虎、小鸟会微微发亮。'],
     ['个头更高','眼睛离地约 50 厘米，是猫的两倍；但钻不进纸箱，也跳不上车顶。']] } };
 function fillIntro(){ const d=INTRO[S.animal], dg=S.animal==='dog'; $('m-title').textContent=d.title; $('m-h3').textContent=d.h3; $('m-e').textContent=d.e;
-  $('m-sub').textContent='在家里走走看看，随时切换'+(dg?'狗狗视觉':'猫咪视觉')+'和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成'+(dg?'猫':'狗')+'。';
+  $('m-sub').textContent=isTouch?'在家里走走看看，用「设置」切换猫狗和视觉。':'在家里走走看看，随时切换'+(dg?'狗狗视觉':'猫咪视觉')+'和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成'+(dg?'猫':'狗')+'。';
   const ul=$('m-list'); ul.textContent=''; d.list.forEach(it=>{ const li=document.createElement('li'), b=document.createElement('b'); b.textContent=it[0]+'：'; li.appendChild(b); li.appendChild(document.createTextNode(it[1])); ul.appendChild(li); });
   $('pick-cat').classList.toggle('on',!dg); $('pick-dog').classList.toggle('on',dg); $('go').textContent=dg?'出发巡逻':'开始巡视'; }
 $('pick-cat').onclick=()=>{ if(S.animal!=='cat') switchAnimal(true); }; $('pick-dog').onclick=()=>{ if(S.animal!=='dog') switchAnimal(true); };
 fillIntro();
 $('prompt').onclick=()=>interact();
 $('t-lang').onclick=()=>{ LANG=LANG==='en'?'zh':'en'; try{ localStorage.setItem('cdvs-lang',LANG); }catch(_){} applyLang(); renderTodo(); fillIntro(); syncUI(); $('prompt').dataset.h=''; sfx.ui(); };
-if(isTouch){ $('touch').hidden=false; $('keys-touch').hidden=false; $('keys-desktop').hidden=true; $('todo').hidden=true; }
+if(isTouch){ $('t-controls').hidden=false; $('touch').hidden=false; $('keys-touch').hidden=false; $('keys-desktop').hidden=true; $('todo').hidden=true; }
 
 function applyLight(){
   const n=S.night, r=S.rain;
@@ -4417,25 +4474,83 @@ addEventListener('keydown',e=>{ if(!$('modal').hidden){ if(e.code==='Enter'||e.c
   if(e.code==='KeyQ') switchAnimal(); if(e.code==='Digit1') setView('1st'); if(e.code==='Digit2') setView('3rd'); if(e.code==='Digit3') setView('cctv');
   if(e.code==='KeyC') setVision(S.vision==='cat'?'human':S.vision==='human'?'split':'cat'); if(e.code==='KeyN') $('t-night').click(); });
 addEventListener('keyup',e=>{ S.keys[e.code]=false; });
-addEventListener('blur',()=>{ S.keys={}; });
-let lookId=null, lx=0, ly=0;
+// Each drag keeps its original finger until release. Other controls can be used at the same time.
+function bindDrag(element,start,move,finish){
+  let pointer=null;
+  function stop(){
+    if(pointer===null) return;
+    const id=pointer;
+    pointer=null;
+    if(element.hasPointerCapture && element.hasPointerCapture(id)) element.releasePointerCapture(id);
+    if(finish) finish();
+  }
+  function end(e){ if(e.pointerId===pointer) stop(); }
+  element.addEventListener('pointerdown',e=>{
+    if(pointer!==null || e.button!==0 || !$('modal').hidden) return;
+    pointer=e.pointerId;
+    try{ element.setPointerCapture(pointer); }catch(_){ /* Pointer lock can own a mouse drag. */ }
+    start(e);
+  });
+  // WebKit can deliver the first move to the element under the finger before capture takes effect.
+  window.addEventListener('pointermove',e=>{ if(e.pointerId===pointer) move(e); });
+  element.addEventListener('lostpointercapture',e=>{ if(e.target===element) end(e); });
+  window.addEventListener('pointerup',end);
+  window.addEventListener('pointercancel',end);
+  return stop;
+}
+let lx=0,ly=0;
 function look(dx,dy,k){ if(S.view==='cctv') return; S.yaw-=dx*k; const lim=S.view==='1st'?1.2:.9; S.pitch=Math.max(-lim,Math.min(lim,S.pitch-dy*k)); }
-canvas.addEventListener('pointerdown',e=>{ audio(); lookId=e.pointerId; lx=e.clientX; ly=e.clientY; try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
-  if(e.pointerType==='mouse' && S.view!=='cctv' && canvas.requestPointerLock){ try{ const p=canvas.requestPointerLock(); if(p&&p.catch) p.catch(()=>{}); }catch(_){} } });
-canvas.addEventListener('pointermove',e=>{ if(document.pointerLockElement===canvas){ look(e.movementX||0,e.movementY||0,.0024); }
-  else if(e.pointerId===lookId){ look(e.clientX-lx,e.clientY-ly,e.pointerType==='mouse'?.005:.0062); lx=e.clientX; ly=e.clientY; } });
-const endLook=e=>{ if(e.pointerId===lookId) lookId=null; }; canvas.addEventListener('pointerup',endLook); canvas.addEventListener('pointercancel',endLook);
+const stopLook=bindDrag(canvas,e=>{
+  audio(); lx=e.clientX; ly=e.clientY;
+  if(e.pointerType==='mouse' && S.view!=='cctv' && canvas.requestPointerLock){
+    try{ const p=canvas.requestPointerLock(); if(p&&p.catch) p.catch(()=>{}); }catch(_){}
+  }
+},e=>{
+  if(document.pointerLockElement===canvas) return;
+  look(e.clientX-lx,e.clientY-ly,e.pointerType==='mouse'?.005:.0062);
+  lx=e.clientX; ly=e.clientY;
+});
+canvas.addEventListener('pointermove',e=>{
+  if(e.pointerType==='mouse' && document.pointerLockElement===canvas && $('modal').hidden) look(e.movementX,e.movementY,.0024);
+});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
-(function(){ const joy=$('joy'), knob=joy.firstElementChild; let id=null;
-  function set(e){ const r=joy.getBoundingClientRect(); let x=(e.clientX-r.left-r.width/2)/(r.width/2), y=(e.clientY-r.top-r.height/2)/(r.height/2); const l=Math.hypot(x,y); if(l>1){ x/=l; y/=l; } S.joy.x=x; S.joy.y=y; knob.style.transform=`translate(${x*36}px,${y*36}px)`; }
-  joy.addEventListener('pointerdown',e=>{ audio(); id=e.pointerId; try{ joy.setPointerCapture(id); }catch(_){} set(e); });
-  joy.addEventListener('pointermove',e=>{ if(e.pointerId===id) set(e); });
-  const end=e=>{ if(e.pointerId===id){ id=null; S.joy.x=S.joy.y=0; knob.style.transform=''; } }; joy.addEventListener('pointerup',end); joy.addEventListener('pointercancel',end);
-  $('b-jump').addEventListener('pointerdown',e=>{ e.preventDefault(); audio(); cat.jumpBuf=.15; });
-  $('b-paw').addEventListener('pointerdown',e=>{ e.preventDefault(); audio(); interact(); }); })();
-(function(){ const sp=$('split'); let id=null; const mv=e=>{ S.split=Math.max(.06,Math.min(.94,e.clientX/innerWidth)); sp.style.left=(S.split*100)+'%'; };
-  sp.addEventListener('pointerdown',e=>{ id=e.pointerId; try{ sp.setPointerCapture(id); }catch(_){} mv(e); }); sp.addEventListener('pointermove',e=>{ if(e.pointerId===id) mv(e); });
-  const end=e=>{ if(e.pointerId===id) id=null; }; sp.addEventListener('pointerup',end); sp.addEventListener('pointercancel',end); })();
+
+const joy=$('joy'),knob=joy.firstElementChild;
+function moveStick(e){
+  const r=joy.getBoundingClientRect();
+  const x=(e.clientX-r.left-r.width/2)/(r.width/2),y=(e.clientY-r.top-r.height/2)/(r.height/2);
+  const scale=Math.max(1,Math.hypot(x,y)),travel=(r.width-knob.offsetWidth)/2;
+  S.joy.x=x/scale; S.joy.y=y/scale;
+  knob.style.transform='translate('+S.joy.x*travel+'px,'+S.joy.y*travel+'px)';
+}
+const stopStick=bindDrag(joy,e=>{ audio(); moveStick(e); },moveStick,()=>{
+  S.joy.x=S.joy.y=0; knob.style.transform='';
+});
+$('b-jump').addEventListener('pointerdown',e=>{ e.preventDefault(); audio(); cat.jumpBuf=.15; });
+$('b-paw').addEventListener('pointerdown',e=>{ e.preventDefault(); audio(); interact(); });
+
+const split=$('split'),splitKnob=split.querySelector('.knob');
+function positionSplit(clientX){
+  const r=stage.getBoundingClientRect();
+  const safe=isTouch?$('topbar').getBoundingClientRect():r,half=isTouch?splitKnob.offsetWidth/2:0;
+  const min=Math.max(.06,(safe.left+half-r.left)/r.width),max=Math.min(.94,(safe.right-half-r.left)/r.width);
+  const value=clientX===undefined?S.split:(clientX-r.left)/r.width;
+  S.split=Math.max(min,Math.min(max,value));
+  split.style.left=(S.split*100)+'%';
+}
+const moveSplit=e=>positionSplit(e.clientX);
+const stopSplit=bindDrag(split,moveSplit,moveSplit);
+window.addEventListener('resize',()=>{ if(!split.hidden) positionSplit(); });
+function resetInput(){
+  stopStick(); stopLook(); stopSplit();
+  S.keys={}; cat.jumpBuf=0;
+}
+window.addEventListener('blur',resetInput);
+window.addEventListener('pagehide',resetInput);
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) resetInput(); });
+const orientationQuery=matchMedia('(orientation: portrait)');
+if(orientationQuery.addEventListener) orientationQuery.addEventListener('change',resetInput);
+else orientationQuery.addListener(resetInput);
 
 /* ============ 14. 互动 ============ */
 let current=null;
