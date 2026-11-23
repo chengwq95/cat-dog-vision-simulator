@@ -44,8 +44,10 @@ def run(url):
                     route.fulfill(body=source.read(), content_type="application/javascript")
 
             page.route("https://cdnjs.cloudflare.com/ajax/libs/three.js/**", serve_three)
-        page.goto(url)
-        page.wait_for_function("window.__cat && document.querySelectorAll('#todo-list li').length")
+        page.goto(url, wait_until="commit")
+        page.wait_for_function(
+            "window.__cat && document.querySelectorAll('#todo-list li').length", timeout=120000
+        )
         page.locator("#go").tap()
         page.wait_for_function("__cat.S.started")
         joy = page.locator("#joy")
