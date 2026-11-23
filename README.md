@@ -66,11 +66,11 @@ The living room TV plays a 16-second wildlife programme during the day. [Watch t
 | **E** | Interact with what's in front of you (meow / bark when there's nothing) |
 | **Q** | Switch between cat and dog |
 
+On a touchscreen, use the left stick to walk or push it to the edge to run. Swipe the scene with another finger to look around. Tap ⤴ to jump or 🐾 to interact. Open **Settings** to switch animals, views or vision modes. In Compare mode, drag the round handle to move the divider.
+
 ## How to use
 
-No install or build step. Open `index.html` in a desktop browser with WebGL, or serve the folder with any static server. Everything is in that one file: the house, animals, people and textures are all generated in code, and sound is made with the Web Audio API. Three.js r128 is loaded from cdnjs, so an internet connection is needed the first time.
-
-Designed for desktop browsers with a keyboard and mouse.
+No install or build step. Open the live site in a phone or desktop browser with WebGL, or serve the folder with any static server. On desktop you can also open `index.html` directly. Everything is in that one file: the house, animals, people and textures are all generated in code, and sound is made with the Web Audio API. Three.js r128 is loaded from cdnjs, so an internet connection is needed the first time.
 
 ## Deploy to GitHub Pages
 
