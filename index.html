@@ -1133,23 +1133,30 @@ function diningChair(g){
     }),wood);
   }
 }
-const diningSeats=[[-2.65,-2.65,Math.PI],[-1.75,-2.65,Math.PI],[-2.65,-.95,0],[-1.75,-.95,0]];
+const diningLayout={x:-2.2,z:-1.8,depth:1,columns:[-.45,.45]};
 let chairTemplate;
-for(const [x,z,yaw] of diningSeats){
-  let g;
-  if(!chairTemplate)g=chairTemplate=furnishing('Wishbone dining chair',x,0,z,yaw,diningChair);
-  else{g=chairTemplate.clone();g.position.set(x,0,z);g.rotation.y=yaw;world.add(g);}
-  furnitureBound(g,-.195,.195,.42,.463,-.18,.18);
-  furnitureBound(g,-.20,.20,.452,.817,.172,.225);
+for(const side of [-1,1])for(const x of diningLayout.columns){
+  let chair;
+  if(chairTemplate){
+    chair=chairTemplate.clone();world.add(chair);
+  }else{
+    chair=furnishing('Wishbone dining chair',0,0,0,0,diningChair);
+    chairTemplate=chair;
+  }
+  // The rear rail is on local +Z. A cloned half-turn can carry X and Z rotations too.
+  chair.rotation.set(0,side<0?Math.PI:0,0);
+  chair.position.set(diningLayout.x+x,0,diningLayout.z+side*(diningLayout.depth/2+.08));
+  furnitureBound(chair,-.195,.195,.42,.463,-.18,.18);
+  furnitureBound(chair,-.20,.20,.452,.817,.172,.225);
   for(const s of [-1,1]){
-    furnitureBound(g,s*.197-.022,s*.197+.022,.45,.744,-.06,.162);
-    for(const t of [-1,1])furnitureBound(g,s*.19-.026,s*.19+.026,0,.425,t*.165-.035,t*.165+.035);
+    furnitureBound(chair,s*.197-.022,s*.197+.022,.45,.744,-.06,.162);
+    for(const t of [-1,1])furnitureBound(chair,s*.19-.026,s*.19+.026,0,.425,t*.165-.035,t*.165+.035);
   }
 }
 (function buildDiningTable(){
-  const g=furnishing('Dining table',-2.2,0,-1.8,0,g=>{
-    board(g,1.8,.045,1,.12,FURN.ash,0,.7375,0);
-    board(g,1.75,.022,.95,.10,FURN.walnut,0,.706,0);
+  const g=furnishing('Dining table',diningLayout.x,0,diningLayout.z,0,g=>{
+    board(g,1.8,.045,diningLayout.depth,.12,FURN.ash,0,.7375,0);
+    board(g,1.75,.022,diningLayout.depth-.05,.10,FURN.walnut,0,.706,0);
     for(const s of [-1,1]){
       board(g,1.47,.074,.033,.007,FURN.walnut,0,.661,s*.352);
       board(g,.033,.074,.70,.007,FURN.walnut,s*.733,.661,0);
@@ -1158,7 +1165,9 @@ for(const [x,z,yaw] of diningSeats){
       }
     }
   });
-  furnitureBound(g,-.83,.83,.705,.76,-.5,.5);furnitureBound(g,-.9,.9,.705,.76,-.43,.43);
+  const halfDepth=diningLayout.depth/2;
+  furnitureBound(g,-.83,.83,.705,.76,-halfDepth,halfDepth);
+  furnitureBound(g,-.9,.9,.705,.76,-halfDepth+.07,halfDepth-.07);
   for(const s of [-1,1]){
     furnitureBound(g,-.75,.75,.62,.71,s*.352-.017,s*.352+.017);
     furnitureBound(g,s*.733-.017,s*.733+.017,.62,.71,-.36,.36);
@@ -1170,13 +1179,13 @@ const plateSection=[[0,.006],[.052,.006],[.053,.002],[.058,.002],[.059,.006],[.0
 (function setDiningTable(){
   const matting=mat(0x889383,{map:texFabric,roughness:.95}), pear=mat(0xb0aa62,{roughness:.64}),
     citrus=mat(0xd58a38,{roughness:.68}), stem=FURN.walnut;
-  furnishing('Stoneware place settings',-2.2,.76,-1.8,0,g=>{
-    for(const x of [-.45,.45])for(const side of [-1,1]){
+  furnishing('Stoneware place settings',diningLayout.x,.76,diningLayout.z,0,g=>{
+    for(const x of diningLayout.columns)for(const side of [-1,1]){
       const z=side*.257;
       board(g,.418,.004,.294,.035,matting,x,.002,z);
       turned(g,plateSection,FURN.chalk,x,.004,z);
       for(const handed of [-1,1]){
-        const dx=x+handed*.157;
+        const dx=x+side*handed*.157;
         board(g,.011,.004,.111,.004,M.steel,dx,.009,z+side*.023);
         if(handed===1){
           const spoon=part(g,new THREE.SphereGeometry(1,12,8),M.steel,dx,.012,z-side*.057);

@@ -10,7 +10,7 @@ The orange-and-white tabby and Shiba Inu, before and after the model rebuild. Ea
 
 ![Previous and rebuilt 3D models of the cat and dog](docs/pet-models.jpg)
 
-The dining room, kitchen sink and bedroom before and after the furniture rebuild, rendered from the same positions in human vision.
+The dining room, kitchen sink and bedroom before and after the furniture rebuild, rendered from the same positions in human vision. [See the dining chair placement from above.](docs/dining-layout.jpg)
 
 ![Original and rebuilt dining set, sink and bed, with the original rooms on the left](docs/interiors.jpg)
 
