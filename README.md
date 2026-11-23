@@ -14,6 +14,12 @@ The dining room, kitchen sink and bedroom before and after the furniture rebuild
 
 ![Original and rebuilt dining set, sink and bed, with the original rooms on the left](docs/interiors.jpg)
 
+The garage motorcycle, the two people, the upstairs rooms and the kitchen feeding station.
+
+![The step-through motorcycle, kitchen owner, neighbour, bookcase, acoustic guitar, drying rack and pet bowls](docs/daily-life.jpg)
+
+The living room TV plays a 16-second wildlife programme during the day. [Watch the egrets and kingfisher sequence.](docs/river-programme.gif)
+
 **Side by side** — drag the handle: human vision on the left, cat vision on the right. The red and green cushions collapse into a similar yellow-brown for the cat; blue and yellow stay distinct.
 
 ![Human vision and cat vision side by side](docs/compare.jpg)
@@ -41,8 +47,9 @@ The dining room, kitchen sink and bedroom before and after the furniture rebuild
 - **Three views**: 1st person, 3rd person (the camera keeps out of walls and furniture) and **CCTV** — four security cameras with a Malaysia-time timestamp and infrared at night.
 - **Compare** mode with a draggable split, **Day / Lights off** and **Rain**.
 - **12 to-dos**: knock things off the table, bat the yarn, scratch the sofa, crawl into the box, eat kibble, catch the gecko, ride the robot vacuum, watch the bird from the upstairs windowsill, nap on the bed, survey from the car roof, rub against your owner, greet the passer-by at the gate.
-- **People**: your owner chops vegetables in the kitchen during the day (walk up and they bend down to pet you and top up the bowl) and sleeps upstairs at night; a passer-by walks along the street and waves back.
-- **Live details**: wall clocks and the LED clock show the real time, and the wall calendar shows today's date.
+- **Feeding** — the cat eats from the shallow green bowl and the dog from the larger terracotta bowl, with water between them. Each animal has its own portions and meal to-do. Press **E** near your bowl to eat or nuzzle the owner in the kitchen during the day for a refill.
+- **People** — the owner cooks in an apron, bends down to pet you and sleeps upstairs at night. Outside, a neighbour in a rust-coloured overshirt walks along the street and waves when you greet them.
+- **Live details** — the living room TV alternates between egrets in flight and a kingfisher diving from its perch. Switching the lights off pauses the programme. The standing fan oscillates upstairs, the clocks show the time and the wall calendar shows today's date.
 - **Collision everywhere**: furniture, small objects, stairs and the car all block the body, head and tail, with an automatic way out if you ever get wedged.
 - **EN / 中文** interface switch in the top bar. It follows your browser language until you choose, and your choice is saved in your browser (`localStorage`). Add `?lang=en` or `?lang=zh` to a link to open it in a given language.
 - **Quality**: **High quality** renders at 2× resolution with sharp shadows; **Smooth** turns shadows off. If the frame rate drops below 40 fps, the page lowers its resolution automatically.
