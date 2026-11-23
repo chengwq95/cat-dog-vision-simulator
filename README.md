@@ -18,6 +18,8 @@ The garage motorcycle, the two people, the upstairs rooms and the kitchen feedin
 
 ![The step-through motorcycle, kitchen owner, neighbour, bookcase, acoustic guitar, drying rack and pet bowls](docs/daily-life.jpg)
 
+The utility area has a bound grass broom, a low-lipped dustpan, a cotton mop with a wringer pail, and a litter tray with a slotted scoop. [Compare the old and new household models from the same positions.](docs/household-tools.jpg)
+
 The living room TV plays a 16-second wildlife programme during the day. [Watch the egrets and kingfisher sequence.](docs/river-programme.gif)
 
 **Side by side** — drag the handle: human vision on the left, cat vision on the right. The red and green cushions collapse into a similar yellow-brown for the cat; blue and yellow stay distinct.
