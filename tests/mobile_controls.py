@@ -48,8 +48,26 @@ def run(url):
         page.wait_for_function(
             "window.__cat && document.querySelectorAll('#todo-list li').length", timeout=120000
         )
+        assert page.locator("#game-title").inner_text() == page.title()
+        assert page.locator("#modal .pick button").count() == 4
         page.locator("#go").tap()
         page.wait_for_function("__cat.S.started")
+        # The old brand was clipped at 393 px and disappeared on smaller phones.
+        for width in (393, 320):
+            page.set_viewport_size({"width": width, "height": 568})
+            for _ in range(2):
+                assert page.locator("#brand b").inner_text() == page.title()
+                assert page.locator("#brand").evaluate("""brand => {
+                    const range = document.createRange();
+                    range.selectNodeContents(brand.querySelector('b'));
+                    const lines = Array.from(range.getClientRects());
+                    const box = brand.getBoundingClientRect();
+                    return lines.length > 0 && lines.every(line =>
+                        line.width > 0 && line.left >= box.left - 0.5 &&
+                        line.right <= box.right + 0.5 && line.bottom <= box.bottom + 0.5
+                    ) && box.right <= document.getElementById('right').getBoundingClientRect().left;
+                }""")
+                page.locator("#t-lang").tap()
         joy = page.locator("#joy")
         x, y = center(joy)
         thumb = (1, x, y - 38)
@@ -82,14 +100,46 @@ def run(url):
         touch("touchEnd")
 
         page.locator("#t-info").tap()
-        for selector in ("#pick-cat", "#pick-dog", "#go"):
+        for selector in ("#pick-cat", "#pick-dog", "#pick-man", "#pick-woman", "#go"):
             assert page.locator(selector).evaluate("""el => {
                 const r = el.getBoundingClientRect();
                 return r.top >= 0 && r.bottom <= innerHeight &&
                     el.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2));
             }"""), selector
+        page.locator("#pick-woman").tap()
         page.locator("#go").tap()
         page.wait_for_function("document.getElementById('modal').hidden")
+        page.wait_for_function("__cat.S.role === 'woman' && __cat.S.vision === 'human'")
+        assert page.locator("#todo-list li").count() == 5
+        x, y = center(joy)
+        start = page.evaluate("[__cat.cat.pos.x, __cat.cat.pos.z]")
+        touch("touchStart", (1, x, y - 35))
+        page.wait_for_function(
+            "p => Math.hypot(__cat.cat.pos.x - p[0], __cat.cat.pos.z - p[1]) > 0.1",
+            arg=start,
+        )
+        touch("touchEnd")
+        # Start beside the resting cat, then use the same on-screen action as the player.
+        page.evaluate("""() => {
+            const {cat, rest} = __cat;
+            cat.pos.set(rest.cat.x + 0.50, rest.cat.y, rest.cat.z);
+            cat.vel.set(0, 0, 0);
+        }""")
+        page.wait_for_function("__cat.findInteract()?.label === '摸摸猫'")
+        page.locator("#b-paw").tap()
+        page.wait_for_function("document.getElementById('todo-count').textContent === '1/5'")
+        page.locator("#t-controls").tap()
+        page.locator("#t-roles").tap()
+        page.locator("#pick-man").tap()
+        page.locator("#go").tap()
+        page.wait_for_function("__cat.S.role === 'man'")
+        assert page.locator("#todo-count").inner_text() == "1/5"
+        page.locator("#t-controls").tap()
+        page.locator("#t-roles").tap()
+        page.locator("#pick-cat").tap()
+        page.locator("#go").tap()
+        page.wait_for_function("__cat.S.role === 'cat'")
+        assert page.locator("#todo-list li").count() == 12
         browser.close()
 
 
