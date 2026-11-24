@@ -20,6 +20,10 @@ The garage motorcycle, the two people, the upstairs rooms and the kitchen feedin
 
 The utility area has a bound grass broom, a low-lipped dustpan, a cotton mop with a wringer pail, and a litter tray with a slotted scoop. [Compare the old and new household models from the same positions.](docs/household-tools.jpg)
 
+The porch and upstairs windows look onto a Malaysian terrace street with rain trees, tropical almond trees, tiled roofs and planted verges. The neighbour follows the dips in the pavement at each driveway. [Compare the street, trees and window view.](docs/street-models.jpg)
+
+Indoors, the family shrine has carved woodwork and red votive lamps, the robot vacuum has a rotating side brush, and the ball of yarn rolls with its wound strands. [Compare the plants, living room, study and kitchen details.](docs/house-details.jpg)
+
 The living room TV plays a 16-second wildlife programme during the day. [Watch the egrets and kingfisher sequence.](docs/river-programme.gif)
 
 **Side by side** — drag the handle: human vision on the left, cat vision on the right. The red and green cushions collapse into a similar yellow-brown for the cat; blue and yellow stay distinct.
