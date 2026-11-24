@@ -5748,7 +5748,10 @@ function applyLight(){
 
 /* ============ 13. 输入 ============ */
 addEventListener('keydown',e=>{ if(!$('modal').hidden){ if(e.code==='Escape'&&S.started){e.preventDefault();setIntro(false);}
-    else if((e.code==='Enter'||e.code==='Space')&&!e.target.closest?.('button')){e.preventDefault();$('go').click();}
+    else if(e.code==='Enter'||e.code==='Space'){
+      const button=e.target.closest?.('button');
+      if(!button||button.id==='pick-'+S.role){e.preventDefault();$('go').click();}
+    }
     return; }
   if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
   S.keys[e.code]=true; if(e.repeat) return; audio();
