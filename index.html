@@ -37,8 +37,8 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 .btn.tog.on{background:var(--teal); color:#04201c}
 #right{display:flex; gap:6px}
 #right .btn{background:var(--panel); border:1px solid var(--line); border-radius:12px; height:36px}
-@media (max-width:1400px){ html[lang="en"] #brand b{display:none} }
-@media (max-width:1080px){ html[lang="en"] .btn .t{display:none} html[lang="en"] .btn{padding:0 9px; font-size:15px} }
+@media (max-width:1400px){ html[lang="en"] #controls .btn{padding-inline:7px} }
+@media (max-width:1250px){ html[lang="en"] .btn .t{display:none} html[lang="en"] .btn{padding:0 9px; font-size:15px} }
 @media (max-width:760px){ #brand small, .btn .t{display:none} .btn{padding:0 9px; font-size:15px} #brand{padding:7px 10px} }
 
 #todo{position:fixed; z-index:19; right:var(--gr); top:calc(var(--gt) + 52px); width:236px; padding:10px 12px; max-height:60%; overflow:auto}
@@ -99,7 +99,11 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 
 .touch-ui{--stick-size:clamp(96px,min(31vw,32vh),124px); --bar-gap:6px}
 .touch-ui #topbar{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:var(--bar-gap)}
-.touch-ui #brand{justify-self:start; max-width:100%; overflow:hidden; white-space:nowrap; pointer-events:none}
+.touch-ui #brand{min-width:0; max-width:100%; justify-self:start; min-height:44px; gap:5px; padding:4px 9px; pointer-events:none}
+html.touch-ui #brand b{display:block; white-space:normal; text-wrap:balance; line-height:1.16; font-size:13px; letter-spacing:0}
+.touch-ui #brand div{min-width:0}
+@media(max-width:480px){.touch-ui #brand{padding-inline:6px}.touch-ui #brand .brand-pet,.touch-ui #right #t-controls .t{display:none}}
+@media(max-width:350px){html.touch-ui #brand b{font-size:12px}}
 .touch-ui #right{grid-column:2; grid-row:1; gap:4px}
 .touch-ui #right .btn{justify-content:center; min-width:44px; height:44px; padding:0 7px}
 .touch-ui #t-controls .t{display:inline; font-size:12px}
@@ -131,15 +135,23 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 .touch-ui #modal .card{display:flex; flex-direction:column; max-height:100%; margin:auto; padding:16px}
 .touch-ui #modal .intro-copy{min-height:0; overflow-y:auto; overscroll-behavior:contain; touch-action:pan-y}
 .touch-ui #modal .pick,.touch-ui #modal .go{flex-shrink:0}
-@media(max-width:380px){.touch-ui #brand b{display:none}}
+body.choosing #topbar,body.choosing #right,body.choosing #touch,body.choosing #todo,body.choosing #cams,body.choosing #toast,body.choosing #prompt,body.choosing #split,body.choosing #cctv{visibility:hidden}
+#modal .card-head{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:10px}
+#modal .card-head strong{font-size:15px; color:var(--fg)}
+#modal .card-head span{font-size:12px; color:var(--dim); flex:none}
+#modal .pick{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:480px) and (min-height:390px){#modal .pick{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}}
+@media(max-height:440px){.touch-ui #modal .card{padding:9px 13px}.touch-ui #modal .pick{margin-bottom:6px}.touch-ui #modal .go{margin-top:6px}.touch-ui #modal .card-head{margin-bottom:5px}}
 @media (prefers-reduced-motion: reduce){ #cctv .rec{animation:none} #toast,#nap{transition:none} }
 </style>
+<body class="choosing">
 
 <div id="stage"></div>
 
 <div id="topbar">
-  <div id="brand" class="panel"><span style="font-size:18px">🐈</span><div><b>猫狗视觉模拟器</b></div></div>
+  <div id="brand" class="panel"><span class="brand-pet" aria-hidden="true" style="font-size:18px">🐈</span><div><b>猫狗视觉模拟器</b></div></div>
   <div id="controls" class="panel">
+    <button class="btn" id="t-roles" title="选择角色" aria-haspopup="dialog">👥<span class="t">角色</span></button>
     <button class="btn tog" id="t-animal" title="切换猫 / 狗（Q）">🐶<span class="t">换成狗</span></button>
     <div class="seg" role="group" aria-label="视角">
       <button class="btn on" id="v-1st" title="第一人称">👁️<span class="t">第一人称</span></button>
@@ -156,14 +168,14 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
     <button class="btn tog" id="t-q" title="画质">✨<span class="t">高画质</span></button>
   </div>
   <div id="right">
-    <button class="btn" id="t-controls" title="设置" aria-controls="controls" aria-expanded="false" hidden>⚙<span class="t">设置</span></button>
-    <button class="btn" id="t-todo" title="今日待办">📋 <span id="todo-count">0/10</span></button>
+    <button class="btn" id="t-controls" title="设置" aria-label="设置" aria-controls="controls" aria-expanded="false" hidden>⚙<span class="t">设置</span></button>
+    <button class="btn" id="t-todo" title="今日待办">📋 <span id="todo-count">0/12</span></button>
     <button class="btn" id="t-lang" title="语言 / Language">EN</button>
     <button class="btn" id="t-info" title="说明">❔</button>
   </div>
 </div>
 
-<div id="todo" class="panel"><h2><span>今日待办</span><span id="todo-count2">0/10</span></h2><ul id="todo-list"></ul></div>
+<div id="todo" class="panel"><h2><span>今日待办</span><span id="todo-count2">0/12</span></h2><ul id="todo-list"></ul></div>
 <div id="cams" class="panel" hidden></div>
 <div id="toast" class="panel"></div>
 <button id="prompt" hidden></button>
@@ -175,9 +187,13 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 </div>
 <div id="nap">💤</div>
 
-<div id="modal">
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="game-title">
   <div class="card">
-    <div class="pick" role="group" aria-label="选择动物"><button id="pick-cat" class="on">🐈 当猫</button><button id="pick-dog">🐕 当狗</button></div>
+    <div class="card-head"><strong id="game-title">猫狗视觉模拟器</strong><span>选择角色</span></div>
+    <div class="pick" role="group" aria-label="选择角色">
+      <button id="pick-cat" class="on">🐈 当猫</button><button id="pick-dog">🐕 当狗</button>
+      <button id="pick-man">👨 男主人</button><button id="pick-woman">👩 女主人</button>
+    </div>
     <div class="intro-copy">
       <h1 id="m-title"></h1>
       <p class="sub" id="m-sub"></p>
@@ -187,14 +203,14 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
       <div class="keys" id="keys-desktop">
         <span>W A S D</span><span>走动（按住 Shift 奔跑）</span>
         <span>鼠标</span><span>点击画面后移动鼠标环顾，Esc 释放</span>
-        <span>空格</span><span>跳上沙发、餐桌、床、车顶</span>
+        <span>空格</span><span id="m-jump">跳上沙发、餐桌、床、车顶</span>
         <span>E</span><span id="m-e">挥爪互动，没东西可玩时喵一声</span>
-        <span>Q</span><span>在猫和狗之间切换</span>
+        <span>Q / R</span><span id="m-switch">切换猫狗 / 选择角色</span>
       </div>
       <div class="keys" id="keys-touch" hidden>
         <span>左下摇杆</span><span>走动，推到底奔跑</span>
         <span>滑动画面</span><span>环顾四周</span>
-        <span>⤴ / 🐾</span><span>跳跃 / 挥爪互动</span>
+        <span id="m-touch-act">⤴ / 🐾</span><span id="m-touch-verb">跳跃 / 挥爪互动</span>
       </div>
     </div>
     <button class="go" id="go">开始巡视</button>
@@ -207,6 +223,49 @@ button:focus-visible{outline:2px solid var(--amber); outline-offset:2px}
 const I18N_EN = {"3D 引擎加载失败，请检查网络后刷新页面。": "The 3D engine failed to load. Check your connection and refresh the page.", "这台设备的浏览器不支持 WebGL，无法显示 3D 画面。": "This browser does not support WebGL, so the 3D scene cannot be shown.", "<b>CCTV</b>：主人正在手机上看监控。移动方向以监控画面为准。": "<b>CCTV</b>: your owner is watching the camera feed. Movement follows the camera view.", "<b>人类眼中的夜晚</b>：关灯后只剩神台红灯和窗外路灯。": "<b>Night for humans</b>: with the lights off, only the red altar lamp and the street light remain.", "<b>人类视觉</b>：全彩、清晰，但视野窄，夜里几乎看不见。": "<b>Human vision</b>: full colour and sharp, but a narrow field of view and almost blind at night.", "<b>全部完成！</b>今天也是称职的一天，主人回家会很“惊喜”。": "<b>All done!</b> Another productive day. Your owner is in for a “surprise”.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是狗狗视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, dog vision on the right.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是猫咪视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, cat vision on the right.", "<b>狗狗的夜视</b>：狗也有照膜，比人亮得多，但不如猫。": "<b>Dog night vision</b>: dogs have a tapetum too. Much brighter than a human sees, but not as bright as a cat.", "<b>狗狗视觉</b>：同样分不清红绿，但比猫看得清楚一些，视野更宽；半米以内对不上焦。": "<b>Dog vision</b>: red and green also merge, but it is a little sharper than a cat and wider; nothing closer than half a metre is in focus.", "<b>猫咪的夜视</b>：照膜把路灯和神台的微光放大，屋里轮廓清晰可见。": "<b>Cat night vision</b>: the tapetum amplifies the faint street light and altar lamp, so the room is clearly visible.", "<b>猫咪视觉</b>：红绿坍缩成黄褐色，远处发糊，视野更宽。看看沙发上的四个抱枕。": "<b>Cat vision</b>: red and green collapse into yellow-brown, distance is blurry, the view is wider. Look at the four cushions on the sofa.", "壁虎断尾逃上了天花板！断掉的尾巴还在地上扭。过一会儿它会回来。": "The gecko dropped its tail and fled to the ceiling! The tail is still wriggling on the floor. It will be back in a while.", "切到「关灯夜晚」，人类视觉几乎全黑，猫咪视觉靠照膜把微光放大。": "Switch to “Lights off”: human vision is almost black, while cat vision amplifies faint light with the tapetum.", "狗也只有两种视锥细胞，红和绿都偏黄褐；蓝和黄看得最清楚。": "Dogs also have only two cone types. Red and green both look yellow-brown; blue and yellow are clearest.", "狗也有照膜，暗处比人亮得多，但不如猫。": "Dogs have a tapetum too: far brighter in the dark than a human sees, but less than a cat.", "狗的视力约为人的 1/4，远处细节发糊；半米以内反而对不上焦，要靠鼻子。": "A dog sees about a quarter as sharply as a human, so distant detail blurs; closer than half a metre it cannot focus and relies on its nose.", "狗的视野约 240°，比猫和人都宽。": "A dog sees about 240° around it, wider than both cats and humans.", "猫只有两种视锥细胞。沙发上的红、绿抱枕会变成相近的黄褐色，蓝和黄依然分明。": "Cats have only two cone types. The red and green cushions on the sofa turn a similar yellow-brown, while blue and yellow stay distinct.", "猫的视力约为人的 1/6，几米外的细节会散开；贴到鼻子前的东西也对不上焦。": "A cat sees about a sixth as sharply as a human. Detail a few metres away smears, and things right at its nose are out of focus too.", "猫的视野约 200°，画面边缘会被拉进来。": "A cat sees about 200° around it, so the edges of the picture are pulled in.", "眼睛离地约 50 厘米，是猫的两倍；但钻不进纸箱，也跳不上车顶。": "Eyes about 50 cm off the ground, twice a cat’s; but you cannot fit in the box or jump onto the car roof.", "停下不动时，吊扇、壁虎、小鸟会微微发亮。": "When you hold still, the ceiling fan, the gecko and the bird glow slightly.", "已切换到流畅模式（关闭阴影、降低分辨率）": "Switched to Smooth mode (shadows off, lower resolution)", "已切换到高画质": "Switched to High quality", "主人放下菜刀，弯腰摸了摸你。": "Your owner puts down the knife and bends over to pet you. ", "还顺手把碗添满了。": "They also topped up your bowl.", "路人停下来，朝你挥了挥手。": "The passer-by stops and waves at you.", "点击画面后移动鼠标环顾，Esc 释放": "Click the scene, then move the mouse to look around; Esc releases", "挥爪互动，没东西可玩时喵一声": "Swipe a paw to interact; meow when there is nothing to play with", "伸爪互动，没东西可玩时汪两声": "Reach out a paw to interact; bark when there is nothing to play with", "走动（按住 Shift 奔跑）": "Walk (hold Shift to run)", "跳上沙发、餐桌、床、车顶": "Jump onto the sofa, table, bed and car roof", "走动，推到底奔跑": "Walk; push all the way to run", "🐈 今天，你是一只橘白猫": "🐈 Today you are an orange-and-white cat", "🐕 今天，你是一只柴犬": "🐕 Today you are a Shiba Inu", "蹭蹭主人，讨个摸摸": "Rub against your owner for a pet", "到大门口跟路人打招呼": "Greet the passer-by at the gate", "把 3 样东西推下桌": "Knock 3 things off the table", "骑上扫地机器人兜风": "Ride the robot vacuum", "跳上车顶巡视领地": "Survey your territory from the car roof", "在主人床上打个盹": "Take a nap on your owner’s bed", "抓到墙上的壁虎": "Catch the gecko on the wall", "上二楼窗台看鸟": "Watch the bird from the upstairs windowsill", "拍一下毛线球": "Bat the ball of yarn", "在沙发上磨爪": "Scratch the sofa", "吃几口猫粮": "Eat some cat food", "钻进纸箱": "Crawl into the cardboard box", "比猫清楚，比人模糊": "Sharper than a cat, blurrier than a human", "切换猫 / 狗（Q）": "Switch cat / dog (Q)", "在猫和狗之间切换": "Switch between cat and dog", "猫狗视觉模拟器": "Cat & Dog Vision Simulator", "猫咪眼中的世界": "The world through a cat’s eyes", "狗狗眼中的世界": "The world through a dog’s eyes", "CAM 02 饭厅厨房": "CAM 02 DINING / KITCHEN", "CAM 03 主人房": "CAM 03 MASTER BEDROOM", "CAM 01 客厅": "CAM 01 LIVING ROOM", "CAM 04 车房": "CAM 04 CAR PORCH", "白天 / 关灯夜晚": "Day / lights off", "跳跃 / 挥爪互动": "Jump / paw", "盯住会动的东西": "Locks onto movement", "夜里也看得见": "Sees at night too", "夜里看得见": "Sees at night", "看远处是糊的": "Distance is blurry", "红绿分不清": "Red and green merge", "视野很宽": "Very wide view", "视野更宽": "Even wider view", "个头更高": "Taller", "朝路人喵一声": "Meow at the passer-by", "朝路人汪两声": "Bark at the passer-by", "把它推下去": "Knock it off", "拍毛线球": "Bat the yarn", "蹭蹭主人": "Rub your owner", "吃猫粮": "Eat cat food", "扑壁虎": "Pounce on the gecko", "打个盹": "Take a nap", "磨爪子": "Scratch", "关灯夜晚": "Lights off", "出发巡逻": "Start patrol", "开始巡视": "Start exploring", "CCTV 监控": "CCTV camera", "今日待办": "To-do today", "左下摇杆": "Left stick", "滑动画面": "Swipe", "环顾四周": "Look around", "第一人称": "1st person", "第三人称": "3rd person", "左右对比": "Side by side", "选择动物": "Choose animal", "猫咪视觉": "Cat vision", "狗狗视觉": "Dog vision", "人类视觉": "Human vision", "高画质": "High quality", "怎么玩": "How to play", "换成狗": "Be the dog", "换成猫": "Be the cat", "🐈 当猫": "🐈 Cat", "🐕 当狗": "🐕 Dog", "完成：<b>": "Done: <b>", "对比": "Compare", "下雨": "Rain", "白天": "Day", "画质": "Quality", "说明": "Help", "视角": "View", "视觉": "Vision", "鼠标": "Mouse", "空格": "Space", "流畅": "Smooth", "互动": "Paw", "跳跃": "Jump", "在家里走走看看，随时切换猫咪视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成狗。": "Wander around the house and switch between cat vision and human vision to see how different the same home looks. Press Q while playing to become the dog.", "在家里走走看看，随时切换狗狗视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成猫。": "Wander around the house and switch between dog vision and human vision to see how different the same home looks. Press Q while playing to become the cat.", "语言": "Language"};
 Object.assign(I18N_EN,{'吃狗粮':'Eat dog food','吃几口狗粮':'Eat some dog food','碗空了，找主人添粮':'Empty bowl · visit your owner','白天去厨房蹭蹭主人，主人会帮你添粮。':'Nuzzle your owner in the kitchen during the day for a refill.'});
 Object.assign(I18N_EN,{'设置':'Settings','在家里走走看看，用「设置」切换猫狗和视觉。':'Explore the house. Open Settings to switch animals or change vision.'});
+Object.assign(I18N_EN,{
+  "选择角色": "Choose a character",
+  "角色": "Character",
+  "👨 男主人": "👨 Male owner",
+  "👩 女主人": "👩 Female owner",
+  "换成女主人": "Play as her",
+  "换成男主人": "Play as him",
+  "切换男女主人（Q）": "Switch between the two owners (Q)",
+  "切换猫狗 / 选择角色": "Switch pets / choose a character",
+  "切换男女主人 / 选择角色": "Switch owners / choose a character",
+  "今天，你是女主人": "Today you are the female owner",
+  "今天，你是男主人": "Today you are the male owner",
+  "和家人一起生活": "Life at home",
+  "走近宠物和家人，看看他们会有什么回应。": "Walk up to a pet or your housemate to interact.",
+  "在家里走走看看，用「设置」选择角色和视觉。": "Explore the house. Open Settings to choose a character or change vision.",
+  "抚摸猫狗、照料食碗或和家人打招呼": "Pet an animal, tend a bowl or greet your housemate",
+  "照顾宠物": "Taking care of the pets",
+  "走近猫或狗，按互动键摸摸它。厨房里的两只食碗可以分别检查和添粮。": "Approach the cat or dog and interact to pet them. Check or refill their individual bowls in the kitchen.",
+  "在家里走走": "Exploring the house",
+  "沿楼梯到二楼，或到车房看看。第三人称能看见你操控的人物，第一人称则从人的眼高看家。": "Take the stairs or explore the car porch. Third person shows your character and first person shows the house at human eye height.",
+  "轻跳 / 互动": "Hop / interact",
+  "轻跳": "Hop",
+  "开始探索": "Start exploring",
+  "继续探索": "Continue exploring",
+  "摸摸猫": "Pet the cat",
+  "摸摸狗": "Pet the dog",
+  "照料猫的食碗": "Tend the cat bowl",
+  "照料狗的食碗": "Tend the dog bowl",
+  "和家人打招呼": "Greet your housemate",
+  "向女主人打招呼": "Greet the female owner",
+  "向男主人打招呼": "Greet the male owner",
+  "给猫添粮": "Refill the cat bowl",
+  "给狗添粮": "Refill the dog bowl",
+  "检查猫碗": "Check the cat bowl",
+  "检查狗碗": "Check the dog bowl",
+  "食碗里还有足够的粮。": "There is plenty of food in the bowl.",
+  "已经把食碗添满了。": "The bowl is full again.",
+  "蹭蹭女主人": "Nuzzle the female owner",
+  "女主人俯身摸了摸你。": "She bends down to pet you. ",
+  "主人俯身摸了摸你。": "He bends down to pet you. ",
+  "去找家里的主人蹭一蹭，或换成主人给食碗添粮。": "Nuzzle one of the owners, or play as an owner and refill the bowl.",
+  "今天的照料都完成了。": "Today's care tasks are complete."
+});
 const I18N_KEYS = Object.keys(I18N_EN).sort((a,b)=>b.length-a.length), I18N_CJK=/[\u4e00-\u9fff（）：]/;
 let LANG = (()=>{ try{ const q=new URLSearchParams(location.search).get('lang'); if(q==='zh'||q==='en') return q; const v=localStorage.getItem('cdvs-lang'); if(v==='zh'||v==='en') return v; }catch(_){} return /^zh/i.test(navigator.language||'')?'zh':'en'; })();
 function tr(v){ if(LANG!=='en'||typeof v!=='string'||!I18N_CJK.test(v)) return v; for(const k of I18N_KEYS) if(v.indexOf(k)>=0) v=v.split(k).join(I18N_EN[k]); return v.replace(/（/g,' (').replace(/）/g,')').replace(/：/g,': '); }
@@ -967,9 +1026,9 @@ function slipper(g,x,y,z,rotation,material){
   }),material,x,y,z);
   upper.rotation.y=rotation;
 }
-function accentChair(){
-  const upholstery=mat(0xc09057,{map:rep(texFabric,3,3),roughness:.95});
-  const g=furnishing('Oak reading chair',-4.41,F2,-1.11,Math.PI/2,g=>{
+function accentChair(name='Oak reading chair',x=-4.41,y=F2,z=-1.11,yaw=Math.PI/2,color=0xc09057){
+  const upholstery=mat(color,{map:rep(texFabric,3,3),roughness:.95});
+  const g=furnishing(name,x,y,z,yaw,g=>{
     const wood=FURN.walnut;
     for(const s of [-1,1]){
       dowel(g,[s*.346,0,-.340],[s*.318,.405,-.225],.028,.039,wood);
@@ -4180,6 +4239,157 @@ const carPlate=mat(0xffffff,{roughness:.44,map:wrapClamp(canvasTex(128,(c,s)=>{
   });
   furnitureBound(shoes,-.122,.122,0,.068,-.138,.138);
 })();
+// The family's hall, tea corner, sewing table and linen bench sit against their room walls.
+(function furnishFamilyRooms(){
+  const indigo=mat(0x657777,{map:texFabric,roughness:.96,side:THREE.DoubleSide}),clay=mat(0xb57b60,{roughness:.38});
+  const teaGreen=mat(0x65867a,{roughness:.31,metalness:.05});
+  function taperedLegs(g,w,d,h,wood){
+    for(const sx of [-1,1])for(const sz of [-1,1]){
+      dowel(g,[sx*(w/2-.037),.006,sz*(d/2-.038)],[sx*(w/2-.064),h,sz*(d/2-.061)],.019,.032,wood,12);
+    }
+  }
+  const hall=furnishing('Cane hall console',4.755,0,3.57,-Math.PI/2,g=>{
+    taperedLegs(g,1.54,.408,.764,FURN.walnut);
+    board(g,1.59,.037,.425,.036,FURN.ash,0,.788,0);
+    board(g,1.456,.169,.323,.019,FURN.walnut,0,.684,0);
+    for(const side of [-1,1]){
+      board(g,.700,.143,.024,.013,FURN.ash,side*.359,.683,.171);
+      panelBox(g,.626,.095,.006,FURN.cane,side*.359,.684,.186);
+      const knob=part(g,new THREE.SphereGeometry(.018,12,8),FURN.brass,side*.359,.684,.202);knob.scale.z=.63;
+    }
+    board(g,1.42,.027,.318,.020,FURN.ash,0,.188,0);
+    for(const side of [-1,1]){
+      const x=side*.34;
+      for(const t of [-1,1]){
+        panelBox(g,.424,.18,.016,FURN.cane,x,.293,t*.112);
+        panelBox(g,.016,.18,.238,FURN.cane,x+t*.206,.293,0);
+        board(g,.445,.021,.019,.006,FURN.walnut,x,.384,t*.116);
+        board(g,.018,.021,.241,.006,FURN.walnut,x+t*.214,.384,0);
+      }
+      panelBox(g,.077,.012,.007,FURN.shadow,x,.329,.125);
+    }
+    turned(g,[[0,0],[.066,0],[.073,.013],[.085,.080],[.062,.139],[.031,.174],[.032,.188],[.025,.190],[.024,.163]],teaGreen,-.54,.807,-.015,32);
+    for(let i=0;i<4;i++){
+      const a=i*2.4,dx=Math.sin(a)*.108,dz=Math.cos(a)*.072,h=.24+.026*(i%3);
+      bentRail(g,[[-.54,.969,-.015],[-.54+dx*.29,1.081,-.015+dz*.30],[-.54+dx,1.007+h,-.015+dz]],.0028,FURN.walnut);
+      for(let j=0;j<4;j++){const t=.42+j*.16;gardenBlade(g,[-.54+dx*t,.986+h*t,-.015+dz*t],a+j*2.37,.063,.016,.66,.45,broadLeaf);}
+    }
+    turned(g,[[0,0],[.078,0],[.102,.011],[.111,.030],[.105,.032],[.077,.013],[0,.012]],clay,.48,.807,.033,30);
+    const ring=part(g,new THREE.TorusGeometry(.018,.0028,5,20),FURN.brass,.465,.823,.031);ring.rotation.x=Math.PI/2;
+    for(const x of [.457,.478]){board(g,.009,.003,.038,.002,brushedMetal,x,.824,.055);board(g,.015,.003,.011,.002,brushedMetal,x+.004,.824,.070);}
+    for(const [i,color] of [FURN.linen,FURN.chalk].entries()){
+      const letter=board(g,.187,.003,.100,.002,color,.061+i*.035,.809+i*.004,.02);letter.rotation.y=-.10+i*.19;
+    }
+  });
+  furnitureBound(hall,-.795,.795,.60,.806,-.211,.213);furnitureBound(hall,-.71,.71,.174,.202,-.159,.159);
+  furnitureBound(hall,-.616,-.464,.806,.995,-.091,.061);
+  for(const s of [-1,1]){
+    furnitureBound(hall,s*.34-.22,s*.34+.22,.202,.393,-.124,.125);
+    for(const z of [-.15,.15])furnitureBound(hall,s*.711-.034,s*.711+.034,0,.60,z-.035,z+.035);
+  }
+  furnishing('Framed indigo batik',4.977,1.39,3.57,-Math.PI/2,g=>{
+    panelBox(g,.978,.737,.029,FURN.walnut,0,.158,0);
+    panelBox(g,.944,.701,.005,FURN.linen,0,.158,.017);
+    facePrint(g,.855,.614,0,.158,.022,(c,w,h)=>{
+      c.fillStyle='#3d6264';c.fillRect(0,0,w,h);
+      const random=seededRandom(193);
+      for(let i=0;i<1350;i++){c.fillStyle=i%2?'rgba(236,216,173,.16)':'rgba(22,46,52,.18)';c.fillRect(random()*w,random()*h,1.5,.65);}
+      for(let row=-1;row<4;row++)for(let k=-1;k<5;k++){
+        const xx=k*65+(row%2)*32,yy=row*58;
+        c.save();c.translate(xx,yy);
+        for(let j=0;j<8;j++){c.rotate(Math.PI/4);c.fillStyle=j%2?'#d2b780':'#b99571';c.beginPath();c.moveTo(0,-3);
+          c.bezierCurveTo(-8,-13,-6,-20,0,-24);c.bezierCurveTo(6,-18,6,-11,0,-3);c.fill();
+          c.beginPath();c.arc(0,-28,1.4,0,Math.PI*2);c.fill();}
+        c.fillStyle='#e1cba0';c.beginPath();c.arc(0,0,3,0,Math.PI*2);c.fill();c.restore();
+      }
+    });
+  });
+  const trolley=furnishing('Brass tea trolley',-2.57,0,-3.39,.025,g=>{
+    for(const sx of [-1,1])for(const sz of [-1,1]){
+      const x=sx*.368,z=sz*.155;
+      const tyre=part(g,new THREE.CylinderGeometry(.040,.040,.027,16),FURN.graphite,x,.040,z);tyre.rotation.z=Math.PI/2;
+      dowel(g,[x,.046,z],[x,.72,z],.010,.012,FURN.brass,12);
+    }
+    for(const h of [.164,.675]){
+      board(g,.802,.024,.372,.032,FURN.walnut,0,h,0);
+      for(const s of [-1,1]){
+        board(g,.805,.041,.015,.007,FURN.ash,0,h+.023,s*.176);
+        board(g,.015,.041,.35,.006,FURN.ash,s*.392,h+.023,0);
+      }
+    }
+    bentRail(g,[[.368,.682,-.154],[.39,.809,-.152],[.39,.831,-.121],[.39,.831,.119],[.39,.809,.152],[.368,.682,.154]],.010,FURN.brass);
+    turned(g,[[0,0],[.054,0],[.076,.019],[.095,.061],[.090,.105],[.067,.125],[.041,.133],[0,.133]],teaGreen,-.171,.688,0,32);
+    turned(g,[[.042,.132],[.053,.136],[.047,.145],[.021,.153],[.010,.158],[.012,.171],[0,.175]],teaGreen,-.171,.688,0,24);
+    bentRail(g,[[-.248,.749,0],[-.281,.754,0],[-.300,.785,0],[-.319,.797,0]],.018,teaGreen);
+    bentRail(g,[[-.091,.788,0],[-.044,.799,0],[-.032,.768,0],[-.047,.739,0],[-.090,.737,0]],.010,teaGreen);
+    for(const [x,z] of [[.056,.067],[.186,-.042]]){
+      turned(g,[[0,0],[.042,0],[.051,.007],[.049,.010],[.034,.006],[0,.005]],FURN.chalk,x,.688,z,24);
+      turned(g,[[0,0],[.024,0],[.029,.008],[.035,.047],[.034,.051],[.030,.050],[.025,.012],[0,.010]],FURN.chalk,x,.697,z,24);
+      bentRail(g,[[x+.03,.739,z],[x+.05,.743,z],[x+.055,.726,z],[x+.031,.715,z]],.004,FURN.chalk);
+    }
+    for(const [i,x] of [-.161,.006,.126].entries()){
+      const h=.13+i*.023;
+      turned(g,[[0,0],[.046,0],[.05,.008],[.05,h],[.046,h+.009],[0,h+.009]],i===1?clay:teaGreen,x,.177,0,20);
+      turned(g,[[.049,h-.001],[.052,h+.003],[.051,h+.013],[0,h+.013]],FURN.brass,x,.177,0,20);
+    }
+  });
+  for(const y of [.164,.675]){
+    furnitureBound(trolley,-.401,.401,y-.012,y+.012,-.186,.186);
+    for(const side of [-1,1]){
+      furnitureBound(trolley,-.402,.402,y+.012,y+.043,side*.176-.007,side*.176+.007);
+      furnitureBound(trolley,side*.392-.007,side*.392+.007,y+.012,y+.043,-.175,.175);
+    }
+  }
+  for(const [x,z] of [[.056,.067],[.186,-.042]])furnitureBound(trolley,x-.035,x+.035,.691,.748,z-.035,z+.035);
+  for(const x of [-.37,.37])for(const z of [-.156,.156])furnitureBound(trolley,x-.03,x+.03,.005,.72,z-.038,z+.038);
+  furnitureBound(trolley,-.33,-.03,.688,.862,-.097,.097);
+  const loom=furnishing('Sewing table and machine',3.18,F2,-1.10,-Math.PI/2,g=>{
+    taperedLegs(g,1.31,.52,.748,FURN.walnut);board(g,1.36,.036,.549,.023,FURN.ash,0,.749,0);
+    for(const s of [-1,1])board(g,.027,.093,.402,.007,FURN.walnut,s*.576,.691,-.004);
+    board(g,1.155,.088,.024,.006,FURN.walnut,0,.689,-.202);
+    board(g,.525,.033,.257,.044,FURN.graphite,0,.785,-.011);
+    board(g,.496,.016,.241,.030,teaGreen,0,.807,-.011);
+    const body=new THREE.Shape();body.moveTo(.073,.811);body.quadraticCurveTo(.098,.851,.086,.940);
+    body.quadraticCurveTo(.083,.967,.045,.970);body.lineTo(-.099,.970);body.lineTo(-.106,.894);body.lineTo(-.158,.894);
+    body.quadraticCurveTo(-.177,.947,-.167,1.012);body.quadraticCurveTo(-.156,1.045,-.118,1.048);
+    body.lineTo(.141,1.048);body.quadraticCurveTo(.207,1.038,.207,.985);body.lineTo(.210,.811);body.closePath();
+    part(g,new THREE.ExtrudeGeometry(body,{depth:.098,bevelEnabled:true,bevelThickness:.006,bevelSize:.006,bevelSegments:2,curveSegments:12}),teaGreen,0,0,-.068);
+    const wheel=part(g,new THREE.TorusGeometry(.058,.007,6,32),FURN.graphite,.232,.987,-.018);wheel.rotation.y=Math.PI/2;
+    for(let i=0;i<5;i++){const a=i*2*Math.PI/5;dowel(g,[.231,.987,-.018],[.231,.987+.053*Math.cos(a),-.018+.053*Math.sin(a)],.003,.003,brushedMetal,6);}
+    dowel(g,[.197,.987,-.018],[.237,.987,-.018],.011,.009,brushedMetal,12);
+    board(g,.108,.002,.101,.010,brushedMetal,-.132,.817,0);
+    dowel(g,[-.134,.899,-.002],[-.134,.828,-.002],.003,.0014,brushedMetal,8);
+    board(g,.019,.005,.035,.005,brushedMetal,-.134,.825,.006);
+    part(g,surfaceGrid(16,14,(u,v)=>[-.273+u*.168,.820+.003*Math.sin(u*15+v*4)-.105*Math.max(0,(v-.71)/.29),.03+v*.292]),indigo);
+    for(const [i,x] of [.345,.407,.463].entries()){
+      const y=.769;
+      for(const h of [.004,.058])turned(g,[[0,h],[.023,h],[.022,h+.006],[0,h+.006]],FURN.walnut,x,y,-.083+i*.028,16);
+      turned(g,[[.018,.009],[.020,.012],[.020,.055],[.019,.059]],i===1?clay:indigo,x,y,-.083+i*.028,16);
+    }
+    const stoolZ=.296;
+    for(const sx of [-1,1])for(const sz of [-1,1])dowel(g,[sx*.159,.004,stoolZ+sz*.123],[sx*.132,.412,stoolZ+sz*.102],.015,.020,FURN.walnut,10);
+    softSeat(g,.371,.074,.278,indigo,0,.414,stoolZ);
+  });
+  furnitureBound(loom,-.68,.68,.731,.767,-.275,.275);furnitureBound(loom,-.266,.264,.767,1.06,-.138,.116);
+  furnitureBound(loom,-.186,.186,.378,.453,.155,.438);
+  for(const x of [-.59,.59])for(const z of [-.200,.200])furnitureBound(loom,x-.046,x+.046,0,.734,z-.028,z+.028);
+  for(const x of [-.145,.145])for(const z of [.180,.407])furnitureBound(loom,x-.021,x+.021,0,.385,z-.019,z+.019);
+  const bench=furnishing('Bedroom linen chest',.41,F2,1.127,0,g=>{
+    for(const x of [-.59,.59])for(const z of [-.164,.164])dowel(g,[x,.004,z],[x,.13,z],.026,.035,FURN.walnut);
+    board(g,1.31,.354,.411,.027,FURN.walnut,0,.282,0);
+    for(const s of [-1,1]){
+      panelBox(g,.603,.267,.016,FURN.ash,s*.318,.286,.209);
+      panelBox(g,.527,.183,.007,FURN.cane,s*.318,.286,.219);
+    }
+    board(g,1.35,.034,.44,.026,FURN.ash,0,.463,0);
+    for(const [i,finish] of [indigo,FURN.linen,indigo].entries())softSeat(g,.438-i*.017,.029,.306-i*.008,finish,-.345,.490+i*.025,-.004);
+    const cushion=softSeat(g,.481,.094,.332,FURN.linen,.268,.529,-.017);cushion.rotation.y=-.049;
+  });
+  furnitureBound(bench,-.667,.667,.100,.484,-.218,.222);furnitureBound(bench,-.565,-.128,.484,.559,-.159,.158);
+  furnitureBound(bench,.018,.521,.480,.577,-.190,.161);
+  for(const x of [-.59,.59])for(const z of [-.163,.163])furnitureBound(bench,x-.034,x+.034,0,.115,z-.034,z+.034);
+  accentChair('Living room lounge chair',-3.68,0,.89,.30,0x70837d);
+})();
 // 吸顶灯
 const lampSpots = [[.6,2.97,3.2],[-1.0,2.97,-4.8],[-1.0,TOP-.03,3.4],[-1.0,TOP-.03,-2.6]];
 lampSpots.forEach(([x,y,z])=>{
@@ -4700,7 +4910,7 @@ const RIGS = { cat:catRig, dog:dogRig };
 // 每种动物的尺寸：碰撞半径、身高、头尾探测距离、眼睛高度、速度、起跳速度、尾巴摆幅
 const ANIMALS = { cat:{ sc:1, r:.16, h:.32, nose:.21, rump:.15, pr:.085, eye:.27, walk:2.5, run:4.6, jump:6.1, wag:1, wagF:2.2, fov:88, cam:1, ps:.3 },
                   dog:{ sc:1.75, r:.24, h:.56, nose:.34, rump:.23, pr:.12, eye:.5, walk:3.0, run:5.8, jump:5.7, wag:.85, wagF:6, fov:98, cam:1.45, ps:.5 } };
-let A = ANIMALS.cat; S.animal='cat';
+let A = ANIMALS.cat; S.role=S.animal='cat';
 const rest = { cat:{x:1.2,y:0,z:4.6,yaw:Math.PI}, dog:{x:2.3,y:0,z:2.3,yaw:-2.4} };
 function useRig(r){ catRig.wrist.visible=r===catRig; dogRig.wrist.visible=r===dogRig; catModel=r.model; cBody=r.body; cHead=r.head; legs=r.legs; eyes=r.eyes; }
 function posePetLegs(r,sit) {
@@ -4726,10 +4936,7 @@ function npcSit(r,p){r.body.rotation.x=-.77;r.body.position.set(0,.192,-.018);r.
   r.legs.forEach(l=>l.rotation.x=0);posePetLegs(r,1);posePetTail(r,1,0,false,0,1);
   r.model.visible=true; r.model.position.set(p.x,p.y,p.z); r.model.rotation.set(0,p.yaw,0); }
 npcSit(dogRig,rest.dog);
-function switchAnimal(force){ if(S.lock>0||!cat.onGround||(force!==true&&!$('modal').hidden)) return; const from=S.animal, to=from==='cat'?'dog':'cat';
-  rest[from]={x:cat.pos.x,y:cat.pos.y,z:cat.pos.z,yaw:cat.yaw}; npcSit(RIGS[from],rest[from]);
-  const r=rest[to]; cat.pos.set(r.x,r.y,r.z); cat.vel.set(0,0,0); cat.yaw=S.yaw=r.yaw; S.pitch=-.05; cat.vis=r.y; cat.pitch=0; cat.sit=0; cat.idle=0; cat.poseT=0; cat.swipe=0; cat.tailK=0;
-  S.animal=to; A=ANIMALS[to]; useRig(RIGS[to]); blob.scale.setScalar(A.sc); if(force!==true){ (to==='dog'?sfx.bark:sfx.meow)(); describe(); } renderTodo(); syncUI(); fillIntro(); }
+function switchAnimal(force){const to=isResident()?(S.role==='man'?'woman':'man'):(S.animal==='cat'?'dog':'cat');chooseRole(to,force===true);}
 // 第一人称的爪子
 const fpPaw = new THREE.Group(); fpPaw.position.set(.11,-.2,-.2); cam.add(fpPaw); fpPaw.visible=false;
 fpPaw.add(catRig.wrist,dogRig.wrist);dogRig.wrist.visible=false;
@@ -4872,10 +5079,13 @@ function buildHuman(o) {
   };
   const joint=(par,x,y,z)=>{const j=new THREE.Group();j.position.set(x,y,z);par.add(j);return j;};
   const cloth=mat(0xffffff,{vertexColors:true,map:rep(texFabric,2,2),roughness:.96});
-  const suit=(rows,base,seam)=>loft(rows,(t,a)=>{
-    const shade=.96+.04*Math.cos(3*a+.7*Math.sin(10*t))-(seam?.10*Math.exp(-(((1-t)*27)**2)):0);
-    return base.clone().multiplyScalar(shade);
-  },32,30);
+  const suit=(rows,base,seam)=>{
+    const small=rows.every(row=>row[2]<.021&&row[3]<.021);
+    return loft(rows,(t,a)=>{
+      const shade=.96+.04*Math.cos(3*a+.7*Math.sin(10*t))-(seam?.10*Math.exp(-(((1-t)*27)**2)):0);
+      return base.clone().multiplyScalar(shade);
+    },small?12:32,small?12:30);
+  };
   const shape=(par,rows,color,x=0,y=0,z=0,material=HM)=>M_(suit(rows,color,material===cloth),par,x,y,z,material);
   const ellipse=(par,x,y,z,w,h,d,color)=>{
     const m=M_(solid(new THREE.SphereGeometry(1,18,14),color),par,x,y,z);m.scale.set(w,h,d);return m;
@@ -4922,7 +5132,7 @@ function buildHuman(o) {
   const torso=[[.000,-.084,.157,.104],[.002,-.066,.175,.119],[.003,.005,.166,.120],
     [-.001,.116,.153,.104],[-.003,.227,.160,.105],[.003,.333,.178,.119],
     [.004,.403,.184,.113],[.000,.447,.174,.099],[-.003,.482,.124,.077],[0,.502,.063,.055]];
-  const inner=o.tail?C(0xe2d4bc):SH;
+  const inner=o.tail?C(0xe2d4bc):SH,closedShirt=o.short||o.woman;
   // Softly interpolate body and face widths through their measured heights.
   function contours(rows,y,height,fields){
     let i=0;while(i<rows.length-2&&y>rows[i+1][height])i++;
@@ -4938,8 +5148,8 @@ function buildHuman(o) {
     const [z,w,d]=section(y);return z+d*Math.sqrt(Math.max(.035,1-(x/w)**2))+pad;
   }
   const shirtOpening=v=>.30+.14*(1-v)+.29*v**5;
-  M_(solid(surfaceGrid(o.short?64:20,54,(u,v)=>{
-    const y=-.084+.586*v,[z,w,d]=section(y),a=o.short?u*Math.PI*2:(u-.5)*2*(shirtOpening(v)+.025);
+  M_(solid(surfaceGrid(closedShirt?64:20,54,(u,v)=>{
+    const y=-.084+.586*v,[z,w,d]=section(y),a=closedShirt?u*Math.PI*2:(u-.5)*2*(shirtOpening(v)+.025);
     return [w*Math.sin(a),y,z+d*Math.cos(a)];
   }),inner),up,0,0,0,cloth);
   const apparel=[];
@@ -4977,6 +5187,17 @@ function buildHuman(o) {
     M_(solid(band,tape),bib,0,0,0,cloth);
     cord(bib,[[-.016,.065,-.123],[-.036,.049,-.132],[-.058,-.029,-.138]],.004,tape);
     cord(bib,[[.012,.065,-.123],[.033,.037,-.140],[.025,-.048,-.142]],.004,tape);
+  }else if(o.woman){
+    // A gathered linen blouse with a piped collar and block-printed hem.
+    const piping=C(0xe5c6a0),print=C(0xdfb28b);
+    const sleeveLine=(a,y,lift)=>{const [z,w,d]=section(y);return [(w+lift)*Math.sin(a),y,z+(d+lift)*Math.cos(a)];};
+    cord(up,Array.from({length:40},(_,i)=>{const a=i*Math.PI/20;return sleeveLine(a,.471-.029*Math.max(0,Math.cos(a))**3,.002);}),.004,piping,true);
+    for(const side of [-1,1])cord(up,[[side*.010,.443,front(side*.010,.443,.002)],[side*.012,.392,front(side*.012,.392,.003)],[side*.006,.338,front(side*.006,.338,.003)]],.0022,piping);
+    for(const y of [.345,.375,.405])ellipse(up,0,y,front(0,y,.005),.0036,.0036,.0018,piping);
+    for(let i=0;i<28;i++){
+      const a=i/28*Math.PI*2;
+      cord(up,[sleeveLine(a-.062,-.046,.0025),sleeveLine(a,-.030,.003),sleeveLine(a+.062,-.046,.0025)],.0028,print);
+    }
   }else{
     const trim=SH.clone().multiplyScalar(.76);
     for(const s of [-1,1]){
@@ -5106,6 +5327,7 @@ function buildHuman(o) {
   }
   function hairline(a){
     const fr=Math.cos(a);
+    if(o.woman)return .053+.098*smooth(-.20,.84,fr)+(.016*Math.exp(-(((a-.32)/.34)**2))-.020*Math.exp(-(((a+.70)/.49)**2)))*smooth(.16,.79,fr);
     return (o.short?.065:.055)+(o.short?.080:.090)*smooth(-.22,.73,fr)
       +(o.short?.011*Math.sin(1.7*a+.4):-.007*Math.cos(2.1*a))*smooth(.10,.80,fr)+.002*Math.sin(a*8);
   }
@@ -5139,6 +5361,29 @@ function buildHuman(o) {
       cord(grooming,[[s*.054,.095,faceZ(s*.054,.095)+.007],[s*.067,.096,.046],[s*.076,.089,.003],[s*.077,.080,-.012]],.0017,metal);
     }
     cord(grooming,[[-.008,.095,faceZ(-.008,.095)+.007],[0,.099,faceZ(0,.099)+.006],[.008,.095,faceZ(.008,.095)+.007]],.0017,metal);
+  }else if(o.woman){
+    const highlight=HR.clone().lerp(C(0x956f59),.23),clip=C(0xc79762);
+    for(const side of [-1,1]){
+      // Side-parted locks sweep from the crown behind each ear, then taper beside the cheek.
+      function swept(u,v){
+        const a=.33+side*(1.71*u+.10*v),rim=hairline(a),width=.016*Math.sin(Math.PI*u);
+        return scalp(a,rim+.040*(1-u)+width*(v-.55),.0026+.0015*Math.sin(v*Math.PI));
+      }
+      M_(solid(surfaceGrid(30,6,swept,side<0),HR),head,0,0,0,hairCloth);
+      for(const v of [.18,.51,.84])cord(head,Array.from({length:20},(_,i)=>swept(.04+.90*i/19,v)),.00085,highlight);
+      const strand=surfaceGrid(8,24,(u,v)=>{
+        const a=side*(1.16+.11*Math.sin(v*5.5)),y=.143-.092*v,p=scalp(a,y,.003);
+        const taper=.011*(1-v**2);return [p[0]+side*.006*Math.sin(Math.PI*v),y,p[2]+(u-.5)*2*taper];
+      },side<0);M_(solid(strand,HR),head,0,0,0,hairCloth);
+    }
+    ellipse(head,0,.090,-.096,.058,.057,.041,HR);
+    const bun=ellipse(head,0,.091,-.133,.051,.044,.036,HR);bun.rotation.z=.27;
+    for(let i=0;i<7;i++){
+      const a=i*.82;cord(head,Array.from({length:14},(_,k)=>{const b=a+k*.15;
+        return [.047*Math.cos(b),.09+.038*Math.sin(b),-.132-.027*Math.sin(k/13*Math.PI)];}),.0018,highlight);
+    }
+    cord(head,[[-.041,.105,-.155],[0,.121,-.166],[.046,.127,-.146]],.0029,clip);
+    for(const side of [-1,1])ellipse(head,side*.076,.056,-.004,.005,.005,.005,clip);
   }else{
     // Swept front pieces, an elastic and a gathered ponytail with a tapered curl.
     for(const side of [-1,1]){
@@ -5178,7 +5423,7 @@ function buildHuman(o) {
   const plant=()=>{let drop=1;for(const l of legs){const a=l.hip.rotation.x,b=a+l.knee.rotation.x;
     l.foot.rotation.x=-b;drop=Math.min(drop,.43*(1-Math.cos(a))+.42*(1-Math.cos(b)));}g.position.y=-drop;};
   const joints=[];g.traverse(n=>{if(n.isGroup)joints.push(n);});joints.forEach(batchFinishes);
-  g.name=o.short?'Kitchen owner':'Passing neighbour';
+  g.name=o.short?'Kitchen owner':o.woman?'Woman of the house':'Passing neighbour';
   function dress(time,sleeping){
     const phase=(time+(o.tail?1.26:0))%(o.tail?4.17:3.69);
     const open=sleeping?.018:Math.max(.035,Math.min(1,Math.abs(phase-.14)/.105));
@@ -5198,6 +5443,138 @@ owner.qS=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBa
   o.knife2=new THREE.Group(); world.add(o.knife2); o.knife2.position.set(-.5,.925,-5.6); o.knife2.rotation.set(Math.PI/2,0,1.2); o.M_(o.solid(new THREE.BoxGeometry(.022,.1,.022),bk),o.knife2,0,.1,0); o.M_(o.solid(new THREE.BoxGeometry(.004,.17,.045),st),o.knife2,0,-.03,0); o.knife2.visible=false;
 }
 const walker = buildHuman({shirt:0xae6047,pants:0x465669,hair:0x302820,skin:0xad795f,tail:true,shoe:0xd4c8ae}); walker.x=-13; walker.dir=1; walker.ph=0; walker.wave=0; walker.g.position.set(-13,nearPathHeight(-13),WALK_Z); walker.g.rotation.y=Math.PI/2;
+// Residents use the same movement solver as the pets, with adult eye and clearance heights.
+const woman=buildHuman({woman:true,shirt:0xad695d,pants:0x56666b,hair:0x39322f,skin:0xb88063,shoe:0xc4ae8e});
+woman.g.scale.set(.94,.97,.95);
+function patternBook(){
+  const g=new THREE.Group();g.name='Open pattern book';g.position.set(0,.202,.295);g.rotation.x=-.46;woman.up.add(g);
+  for(const side of [-1,1]){
+    const cover=board(g,.143,.006,.180,.004,FURN.celadon,side*.072,-.010,0);cover.rotation.z=side*.08;
+    const tex=wrapClamp(canvasTex(128,(c,s)=>{
+      c.fillStyle='#eae1cb';c.fillRect(0,0,s,s);c.strokeStyle='#5b7471';c.lineWidth=2;
+      c.strokeRect(14,14,100,100);c.fillStyle='#7c564c';c.fillRect(22,23,71,4);
+      for(let j=0;j<5;j++)for(let i=0;i<4;i++){
+        c.save();c.translate(28+i*24,42+j*14);c.rotate(.76);c.strokeRect(-3,-3,6,6);c.restore();
+      }
+    }));
+    part(g,surfaceGrid(12,3,(u,v)=>[side*(.002+.137*u),.004+.010*Math.sin(u*Math.PI),(.5-v)*.170],side<0),mat(0xffffff,{map:tex,roughness:.93,side:THREE.DoubleSide}));
+  }
+  batchFinishes(g);return g;
+}
+const readingBook=patternBook();
+
+const residents={
+  man:{rig:owner,body:owner.colK,pose:null,gesture:0},
+  woman:{rig:woman,body:col(0,0,-9,-8,0,0),pose:null,gesture:0}
+};
+const humanBody={sc:1,r:.205,h:1.68,eye:1.55,nose:0,rump:0,pr:.16,ps:.25,walk:1.58,run:3.18,jump:3.0,cam:1.48,fov:65};
+const residentBodies={man:humanBody,woman:{...humanBody,h:1.63,eye:1.51}};
+const isResident=()=>S.role==='man'||S.role==='woman';
+const petIds=Object.keys(ANIMALS);
+const roleIds=[...petIds,'man','woman'];
+let lastPetVision='cat',lastPetView='1st',lastHumanView='3rd';
+const womanHome={x:3.82,y:0,z:3.12,yaw:-.80},womanEvening={x:2.29,y:F2,z:-.98,yaw:Math.PI/2};
+function restPosition(id){
+  if(id==='woman')return S.night?womanEvening:womanHome;
+  return S.night?{x:-2.30,y:F2,z:3.70,yaw:-Math.PI/2}:{x:-.62,y:0,z:-5.10,yaw:Math.PI};
+}
+function locateResident(id){
+  const resident=residents[id],p=resident.rig.g.position;
+  return resident.pose||{x:p.x,y:p.y,z:p.z,yaw:resident.rig.g.rotation.y};
+}
+function setBodyBounds(bounds,p){
+  if(!p){bounds.y0=-9;bounds.y1=-8;return;}
+  Object.assign(bounds,{x0:p.x-.19,x1:p.x+.19,y0:p.y,y1:p.y+1.61,z0:p.z-.16,z1:p.z+.16});
+}
+function humanPose(r,p,pace,phase,reach,wave){
+  const rig=r.rig;
+  let handTarget=reach>0?r.bowl:null;
+  if(reach>0&&r.target){
+    const head=RIGS[r.target].head;head.updateWorldMatrix(true,false);
+    handTarget=head.localToWorld(new THREE.Vector3(0,.059,.014));
+  }
+  const bend=handTarget?reach*THREE.MathUtils.clamp((.87-handTarget.y+p.y)/.50,.08,1.18):0;
+  let yaw=p.yaw;
+  if(handTarget&&r!==residents[S.role])yaw=angLerp(yaw,Math.atan2(handTarget.x-p.x,handTarget.z-p.z),reach);
+  rig.g.rotation.set(0,yaw,0);rig.up.rotation.set(reach*.82+.065*pace,0,0);
+  rig.head.rotation.set(reach*.24+.025*Math.sin(phase*.5),0,0);
+  rig.legs.forEach((l,i)=>{
+    const swing=Math.sin(phase+i*Math.PI),lift=Math.max(0,Math.cos(phase+i*Math.PI));
+    l.hip.rotation.set(-swing*pace*.48-bend*.96,0,0);
+    l.knee.rotation.set((.07+.64*lift)*pace+bend*1.88,0,0);
+    const a=rig.arms[i];
+    a.sh.rotation.set(swing*pace*.41-reach*(i?1.04:.28),0,(i?-1:1)*(.08+.05*pace));
+    a.el.rotation.set(-.11-.19*pace-reach*(i?.26:.16),0,0);
+  });
+  if(wave>0){const arm=rig.arms[1];arm.sh.rotation.set(-.10,0,-.09-wave*2.1);arm.el.rotation.set(-.18-wave*.25,0,Math.sin(time*11)*.23*wave);}
+  rig.plant();rig.g.position.set(p.x,p.y+rig.g.position.y*rig.g.scale.y,p.z);
+  if(handTarget)reachFor(rig,handTarget,reach);
+  rig.dress(time,false);
+}
+// Solve the two arm segments in upper-body space so the palm meets the moving head or bowl.
+function reachFor(rig,point,amount){
+  rig.up.updateWorldMatrix(true,false);
+  const arm=rig.arms[1],toHand=rig.up.worldToLocal(point.clone()).sub(arm.sh.position);
+  const direction=toHand.clone().normalize(),upper=arm.el.position.length(),fore=.296;
+  const length=THREE.MathUtils.clamp(toHand.length(),.09,upper+fore-.001);
+  const along=(upper*upper-fore*fore+length*length)/(2*length);
+  const outward=new THREE.Vector3(-1,0,-.23);
+  outward.addScaledVector(direction,-outward.dot(direction)).normalize();
+  const elbow=direction.clone().multiplyScalar(along).addScaledVector(outward,Math.sqrt(Math.max(0,upper*upper-along*along)));
+  const shoulder=new THREE.Quaternion().setFromUnitVectors(arm.el.position.clone().normalize(),elbow.clone().normalize());
+  arm.sh.quaternion.slerp(shoulder,amount);
+  const forearm=direction.multiplyScalar(length).sub(elbow).normalize().applyQuaternion(shoulder.invert());
+  arm.el.quaternion.slerp(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,-1,0),forearm),amount);
+}
+function chooseRole(id,fromPicker=false){
+  if(!roleIds.includes(id)||id===S.role)return;
+  if(!fromPicker&&(S.lock>0||!cat.onGround||!$('modal').hidden))return;
+  const old=S.role,wasHuman=isResident(),isHuman=!!residents[id];
+  // Keep a stable landing if the role picker was opened mid-jump.
+  const y=cat.onGround?cat.pos.y:supportAt(cat.pos.x,cat.pos.z,cat.pos.y,.10,0);
+  const saved={x:cat.pos.x,y,z:cat.pos.z,yaw:cat.yaw};
+  if(wasHuman){const r=residents[old];r.pose=saved;r.gesture=0;r.rig.g.visible=true;setBodyBounds(r.body,saved);humanPose(r,saved,0,0,0,0);}
+  else {rest[old]=saved;npcSit(RIGS[old],saved);lastPetVision=S.vision;}
+  if(cat.pose==='nap'&&cat.poseT>0){clearTimeout(napTimer);$('nap').classList.remove('show');}
+  if(wasHuman!==isHuman){
+    if(isHuman){lastPetView=S.view;S.view=lastHumanView;}else{lastHumanView=S.view;S.view=lastPetView;}
+  }
+  S.role=id;let p;
+  if(isHuman){
+    const r=residents[id];p=r.pose||restPosition(id);r.pose=null;r.gesture=0;r.rig.g.visible=true;
+    if(id==='man'){owner.sl=false;owner.pet=owner.k=0;owner.knife.visible=false;owner.knife2.visible=true;setBodyBounds(owner.colB,null);}
+    setBodyBounds(r.body,null);A=residentBodies[id];S.vision='human';
+  }else {p=rest[id];S.animal=id;A=ANIMALS[id];useRig(RIGS[id]);S.vision=lastPetVision;}
+  cat.pos.set(p.x,p.y,p.z);cat.vel.set(0,0,0);cat.yaw=S.yaw=p.yaw;cat.vis=camSmooth.y=p.y;fpY=A.eye;S.pitch=-.07;
+  Object.assign(cat,{onGround:true,jumpBuf:0,air:0,pitch:0,sit:0,idle:0,pose:'',poseT:0,poseEnd:null,swipe:0,tailK:0,rear:0,eatK:0,ride:0,free:0,stuckT:0,moving:false,dip:0});
+  S.lock=0;zoneT=0;current=null;$('prompt').hidden=true;resetInput();blob.scale.setScalar(isHuman?1.3:A.sc);
+  if(isHuman){humanPose(residents[id],p,0,0,0,0);if(id==='woman')readingBook.visible=false;fpPaw.visible=false;}
+  renderTodo();fillIntro();syncUI();
+  if(!fromPicker){if(isHuman)sfx.ui();else (id==='dog'?sfx.bark:sfx.meow)();describe();}
+}
+function updateResident(id,dt){
+  const r=residents[id],inControl=S.role===id;
+  r.gesture=Math.max(0,r.gesture-dt);
+  const beat=Math.sin(Math.PI*Math.min(1,r.gesture/1.05));
+  if(id==='woman')readingBook.visible=!inControl&&!r.pose&&!S.night&&r.gesture<=0;
+  if(inControl){
+    const pace=cat.onGround?Math.min(1,Math.hypot(cat.vel.x,cat.vel.z)/2):.15;
+    humanPose(r,{x:cat.pos.x,y:cat.pos.y,z:cat.pos.z,yaw:cat.yaw},pace,cat.walk,r.motion==='reach'?beat:0,r.motion==='wave'?beat:0);
+  }else{
+    const p=r.pose||restPosition(id);
+    humanPose(r,p,0,time*4,r.motion==='reach'?beat:0,r.motion==='wave'?beat:0);
+    if(id==='woman'&&!r.gesture){
+      r.rig.head.rotation.y=.11*Math.sin(time*.43);
+      if(readingBook.visible){
+        r.rig.head.rotation.x=.37+.023*Math.sin(time*.62);
+        r.rig.arms.forEach((arm,i)=>{const side=i?-1:1;
+          arm.sh.rotation.set(-.22,0,-side*.17);arm.el.rotation.set(-1.23-.055*Math.sin(time*.7+i),0,0);
+        });
+      }
+    }
+    setBodyBounds(r.body,p);
+  }
+}
 // 小鸟（停在车房顶棚上）
 const bird = { g:new THREE.Group(), t:0, fly:0, wings:[] }; world.add(bird.g);
 (function(){ const BK=C(0x23252b), WH=C(0xf3f0e8), bm=mat(0x23252b,{roughness:.55}), wm=mat(0xf3f0e8), fm=mat(0xffffff,{vertexColors:true,roughness:.6}), lm=mat(0x3b3430), ey=mat(0x050505,{roughness:.05});
@@ -5220,25 +5597,28 @@ const scratchMarks = []; const SCRATCH_PTS = [[-1.92,2.02],[-1.92,4.38],[-.62,3.
 /* ============ 11. 待办清单与提示 ============ */
 const TASKS = [ ['cups','把 3 样东西推下桌',3], ['ball','拍一下毛线球',1], ['scratch','在沙发上磨爪',1], ['box','钻进纸箱',1], ['eat','吃几口猫粮',1],
   ['gecko','抓到墙上的壁虎',1], ['robot','骑上扫地机器人兜风',1], ['bird','上二楼窗台看鸟',1], ['nap','在主人床上打个盹',1], ['car','跳上车顶巡视领地',1], ['rub','蹭蹭主人，讨个摸摸',1], ['greet','到大门口跟路人打招呼',1] ];
+const familyTasks=[['petCat','摸摸猫',1],['petDog','摸摸狗',1],['careCat','照料猫的食碗',1],['careDog','照料狗的食碗',1],['familyHello','和家人打招呼',1]];
+const activeTasks=()=>isResident()?familyTasks:TASKS;
 const prog={'eat-cat':0,'eat-dog':0};
+for(const [id] of familyTasks)prog[id]=0;
 for(const [id] of TASKS)if(id!=='eat')prog[id]=0;
 const taskKey=id=>id==='eat'?'eat-'+S.animal:id;
 const taskLabel=t=>t[0]==='eat'&&S.animal==='dog'?'吃几口狗粮':t[1];
 function renderTodo(){
   const ul=$('todo-list');ul.textContent='';let done=0;
-  for(const task of TASKS){
+  for(const task of activeTasks()){
     const li=document.createElement('li'),count=prog[taskKey(task[0])],ok=count>=task[2];
     if(ok){li.className='done';done++;}
     li.textContent=taskLabel(task)+(task[2]>1&&!ok?'（'+count+'/'+task[2]+'）':'');
     ul.appendChild(li);
   }
-  $('todo-count').textContent=$('todo-count2').textContent=done+'/'+TASKS.length;return done;
+  $('todo-count').textContent=$('todo-count2').textContent=done+'/'+activeTasks().length;return done;
 }
 function credit(id){
-  const task=TASKS.find(t=>t[0]===id),key=taskKey(id);if(!task||prog[key]>=task[2])return;
+  const tasks=activeTasks(),task=tasks.find(t=>t[0]===id),key=taskKey(id);if(!task||prog[key]>=task[2])return;
   prog[key]++;const done=renderTodo();
   if(prog[key]===task[2]){
-    sfx.done();toast(done===TASKS.length?'<b>全部完成！</b>今天也是称职的一天，主人回家会很“惊喜”。':'完成：<b>'+taskLabel(task)+'</b>（'+done+'/'+TASKS.length+'）');
+    sfx.done();toast(done===tasks.length?(isResident()?'今天的照料都完成了。':'<b>全部完成！</b>今天也是称职的一天，主人回家会很“惊喜”。'):'完成：<b>'+taskLabel(task)+'</b>（'+done+'/'+tasks.length+'）');
   }
 }
 let toastT=0; function toast(html,ms){ const el=$('toast'); el.innerHTML=html; el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),ms||4200); }
@@ -5265,8 +5645,14 @@ function syncUI(){
   $('cctv').hidden=$('cams').hidden=S.view!=='cctv'; $('split').hidden=!(S.vision==='split'&&S.view!=='cctv');
   if($('split').hidden) stopSplit(); else positionSplit();
   [].forEach.call($('cams').children,(b,i)=>b.classList.toggle('on',i===S.cam)); $('cam-name').textContent=CAMS[S.cam][0];
-  catModel.visible = S.view!=='1st';
+  const human=isResident();
+  catModel.visible=human||S.view!=='1st';
+  for(const id of ['man','woman'])residents[id].rig.g.visible=id!==S.role||S.view!=='1st';
+  $('e-cat').hidden=$('e-split').hidden=human;
+  $('b-paw').textContent=human?'✋':'🐾';
   { const dg=S.animal==='dog'; $('e-cat').firstChild.textContent=dg?'🐶':'🐱'; $('e-cat').querySelector('.t').textContent=LANG==='en'?(dg?'Dog':'Cat'):(dg?'狗狗视觉':'猫咪视觉'); $('e-human').querySelector('.t').textContent=LANG==='en'?'Human':'人类视觉'; $('t-animal').firstChild.textContent=dg?'🐱':'🐶'; $('t-animal').querySelector('.t').textContent=dg?'换成猫':'换成狗'; }
+  if(human){const man=S.role==='man';$('t-animal').firstChild.textContent=man?'👩':'👨';$('t-animal').querySelector('.t').textContent=man?'换成女主人':'换成男主人';}
+  $('t-animal').title=tr(human?'切换男女主人（Q）':'切换猫 / 狗（Q）');
   const petVision=S.animal==='dog'?'狗狗视觉':'猫咪视觉';
   $('e-cat').title=tr(petVision);
   $('split').querySelector('.lab.r').textContent=(S.animal==='dog'?'🐶 ':'🐱 ')+petVision;
@@ -5275,12 +5661,21 @@ function syncUI(){
 function describe(){ const dg=S.animal==='dog'; toast(S.view==='cctv'?DESC.cctv : S.night&&S.vision!=='split' ? DESC['night'+(S.vision==='cat'&&dg?'dog':S.vision)] : DESC[S.vision==='cat'&&dg?'dog':S.vision==='split'&&dg?'splitdog':S.vision]); }
 function setView(v){ if(S.view==='cctv'||S.view==='3rd'){ if(v==='1st'){ S.yaw=cat.yaw; S.pitch=-.05; } } if(v==='3rd'&&S.view!=='3rd'){ S.yaw=cat.yaw; S.pitch=-.1; }
   S.view=v; if(document.pointerLockElement&&v==='cctv') document.exitPointerLock(); sfx.ui(); syncUI(); describe(); }
-function setVision(v){ if(S.view==='cctv') S.view='1st'; S.vision=v; sfx.ui(); syncUI(); describe(); }
+function setVision(v){ if(isResident()&&v!=='human')return; if(S.view==='cctv') S.view='1st'; S.vision=v; sfx.ui(); syncUI(); describe(); }
 $('v-1st').onclick=()=>setView('1st'); $('v-3rd').onclick=()=>setView('3rd'); $('v-cctv').onclick=()=>setView('cctv');
 $('t-animal').onclick=()=>switchAnimal(); $('e-cat').onclick=()=>setVision('cat'); $('e-human').onclick=()=>setVision('human'); $('e-split').onclick=()=>setVision('split');
 $('t-night').onclick=()=>{ S.night=!S.night; sfx.ui(); syncUI(); describe(); };
 $('t-rain').onclick=()=>{ S.rain=!S.rain; sfx.ui(); sfx.rain(S.rain); syncUI(); };
 $('t-q').onclick=()=>{ S.hq=!S.hq; sfx.ui(); resize(); syncUI(); toast(S.hq?'已切换到高画质':'已切换到流畅模式（关闭阴影、降低分辨率）'); };
+function setIntro(open){
+  $('modal').hidden=!open;document.body.classList.toggle('choosing',open);
+  for(const id of ['topbar','touch','todo','split','cams','prompt'])$(id).inert=open;
+  if(open){
+    resetInput();setOptions(false);fillIntro();$('modal').querySelector('.intro-copy').scrollTop=0;
+    if(document.pointerLockElement)document.exitPointerLock();
+    $('pick-'+S.role).focus({preventScroll:true});
+  }else if(!isTouch){canvas.tabIndex=-1;canvas.focus({preventScroll:true});}
+}
 function setOptions(open){
   $('topbar').classList.toggle('options-open',open);
   $('t-controls').setAttribute('aria-expanded',String(open));
@@ -5294,8 +5689,11 @@ if(isTouch){
   },true);
 }
 $('t-todo').onclick=()=>{ setOptions(false); $('todo').hidden=!$('todo').hidden; };
-$('t-info').onclick=()=>{ resetInput(); setOptions(false); $('modal').hidden=false; if(document.pointerLockElement) document.exitPointerLock(); };
-$('go').onclick=()=>{ $('modal').hidden=true; audio(); if(!S.started){ S.started=true; (S.animal==='dog'?sfx.bark:sfx.meow)(); describe(); } };
+$('t-info').onclick=$('t-roles').onclick=()=>setIntro(true);
+$('go').onclick=()=>{
+  setIntro(false);audio();
+  if(!S.started){S.started=true;if(!isResident())(S.animal==='dog'?sfx.bark:sfx.meow)();describe();}
+};
 const INTRO = {
   cat:{ title:'🐈 今天，你是一只橘白猫', h3:'猫咪眼中的世界', e:'挥爪互动，没东西可玩时喵一声', list:[
     ['红绿分不清','猫只有两种视锥细胞。沙发上的红、绿抱枕会变成相近的黄褐色，蓝和黄依然分明。'],
@@ -5310,11 +5708,24 @@ const INTRO = {
     ['夜里也看得见','狗也有照膜，暗处比人亮得多，但不如猫。'],
     ['盯住会动的东西','停下不动时，吊扇、壁虎、小鸟会微微发亮。'],
     ['个头更高','眼睛离地约 50 厘米，是猫的两倍；但钻不进纸箱，也跳不上车顶。']] } };
-function fillIntro(){ const d=INTRO[S.animal], dg=S.animal==='dog'; $('m-title').textContent=d.title; $('m-h3').textContent=d.h3; $('m-e').textContent=d.e;
-  $('m-sub').textContent=isTouch?'在家里走走看看，用「设置」切换猫狗和视觉。':'在家里走走看看，随时切换'+(dg?'狗狗视觉':'猫咪视觉')+'和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成'+(dg?'猫':'狗')+'。';
-  const ul=$('m-list'); ul.textContent=''; d.list.forEach(it=>{ const li=document.createElement('li'), b=document.createElement('b'); b.textContent=it[0]+'：'; li.appendChild(b); li.appendChild(document.createTextNode(it[1])); ul.appendChild(li); });
-  $('pick-cat').classList.toggle('on',!dg); $('pick-dog').classList.toggle('on',dg); $('go').textContent=dg?'出发巡逻':'开始巡视'; }
-$('pick-cat').onclick=()=>{ if(S.animal!=='cat') switchAnimal(true); }; $('pick-dog').onclick=()=>{ if(S.animal!=='dog') switchAnimal(true); };
+const familyIntro={
+  h3:'和家人一起生活',e:'抚摸猫狗、照料食碗或和家人打招呼',
+  list:[['照顾宠物','走近猫或狗，按互动键摸摸它。厨房里的两只食碗可以分别检查和添粮。'],
+        ['在家里走走','沿楼梯到二楼，或到车房看看。第三人称能看见你操控的人物，第一人称则从人的眼高看家。']]
+};
+function fillIntro(){
+  const human=isResident(),d=human?familyIntro:INTRO[S.animal],dg=S.animal==='dog';
+  $('m-title').textContent=human?(S.role==='woman'?'今天，你是女主人':'今天，你是男主人'):d.title;
+  $('m-h3').textContent=d.h3;$('m-e').textContent=d.e;
+  $('m-sub').textContent=human?'走近宠物和家人，看看他们会有什么回应。':isTouch?'在家里走走看看，用「设置」选择角色和视觉。':'在家里走走看看，随时切换'+(dg?'狗狗视觉':'猫咪视觉')+'和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成'+(dg?'猫':'狗')+'。';
+  $('m-jump').textContent=human?'轻跳':'跳上沙发、餐桌、床、车顶';
+  $('m-switch').textContent=human?'切换男女主人 / 选择角色':'切换猫狗 / 选择角色';
+  $('m-touch-act').textContent=human?'⤴ / ✋':'⤴ / 🐾';$('m-touch-verb').textContent=human?'轻跳 / 互动':'跳跃 / 挥爪互动';
+  const ul=$('m-list');ul.textContent='';d.list.forEach(([title,copy])=>{const li=document.createElement('li'),b=document.createElement('b');b.textContent=title+'：';li.append(b,document.createTextNode(copy));ul.appendChild(li);});
+  for(const id of roleIds){const selected=id===S.role;const button=$('pick-'+id);button.classList.toggle('on',selected);button.setAttribute('aria-pressed',String(selected));}
+  $('go').textContent=S.started?'继续探索':human?'开始探索':dg?'出发巡逻':'开始巡视';
+}
+for(const id of roleIds)$('pick-'+id).onclick=()=>chooseRole(id,true);
 fillIntro();
 $('prompt').onclick=()=>interact();
 $('t-lang').onclick=()=>{ LANG=LANG==='en'?'zh':'en'; try{ localStorage.setItem('cdvs-lang',LANG); }catch(_){} applyLang(); renderTodo(); fillIntro(); syncUI(); $('prompt').dataset.h=''; sfx.ui(); };
@@ -5336,11 +5747,16 @@ function applyLight(){
 }
 
 /* ============ 13. 输入 ============ */
-addEventListener('keydown',e=>{ if(!$('modal').hidden){ if(e.code==='Enter'||e.code==='Space'){ e.preventDefault(); $('go').click(); } return; }
+addEventListener('keydown',e=>{ if(!$('modal').hidden){ if(e.code==='Escape'&&S.started){e.preventDefault();setIntro(false);}
+    else if(e.code==='Enter'||e.code==='Space'){
+      const button=e.target.closest?.('button');
+      if(!button||button.id==='pick-'+S.role){e.preventDefault();$('go').click();}
+    }
+    return; }
   if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
   S.keys[e.code]=true; if(e.repeat) return; audio();
   if(e.code==='Space') cat.jumpBuf=.15; if(e.code==='KeyE') interact();
-  if(e.code==='KeyQ') switchAnimal(); if(e.code==='Digit1') setView('1st'); if(e.code==='Digit2') setView('3rd'); if(e.code==='Digit3') setView('cctv');
+  if(e.code==='KeyR'){setIntro(true);return;} if(e.code==='KeyQ') switchAnimal(); if(e.code==='Digit1') setView('1st'); if(e.code==='Digit2') setView('3rd'); if(e.code==='Digit3') setView('cctv');
   if(e.code==='KeyC') setVision(S.vision==='cat'?'human':S.vision==='human'?'split':'cat'); if(e.code==='KeyN') $('t-night').click(); });
 addEventListener('keyup',e=>{ S.keys[e.code]=false; });
 // Each drag keeps its original finger until release. Other controls can be used at the same time.
@@ -5424,7 +5840,40 @@ else orientationQuery.addListener(resetInput);
 /* ============ 14. 互动 ============ */
 let current=null;
 const inRect=(x0,x1,z0,z1)=>cat.pos.x>x0&&cat.pos.x<x1&&cat.pos.z>z0&&cat.pos.z<z1;
+function residentAction(){
+  let closest=null,range=Infinity;
+  function offer(p,reach,label,act){
+    const dx=p.x-cat.pos.x,dz=p.z-cat.pos.z,dy=p.y-cat.pos.y,d=Math.hypot(dx,dz);
+    if(Math.abs(dy)>.85||d>=reach||d>=range)return;
+    const vertical=dy-.32,len=Math.hypot(d,vertical);
+    if(len>.28&&rayHit(cat.pos.x,cat.pos.y+.64,cat.pos.z,dx/len,vertical/len,dz/len,len)<len-.28)return;
+    range=d;closest={label,act,pos:[p.x,p.z]};
+  }
+  const actor=residents[S.role];
+  for(const id of petIds){
+    const isCat=id==='cat',pet=rest[id],bowl=feedingStations[id];
+    offer(pet,.98,isCat?'摸摸猫':'摸摸狗',()=>{
+      actor.motion='reach';actor.gesture=1.05;actor.target=id;S.lock=1.05;
+      (isCat?sfx.purr:sfx.bark)();credit(isCat?'petCat':'petDog');
+    });
+    const label=bowl.servings<bowl.layers.length?(isCat?'给猫添粮':'给狗添粮'):(isCat?'检查猫碗':'检查狗碗');
+    offer({x:bowl.x,y:0,z:bowl.z},.94,label,()=>{
+      actor.motion='reach';actor.gesture=1.05;actor.target=null;actor.bowl=new THREE.Vector3(bowl.x,.12,bowl.z);S.lock=1.05;
+      const full=bowl.servings===bowl.layers.length;setServings(bowl,bowl.layers.length);
+      toast(full?'食碗里还有足够的粮。':'已经把食碗添满了。');credit(isCat?'careCat':'careDog');
+    });
+  }
+  const other=S.role==='man'?'woman':'man',r=residents[other];
+  if(other!=='man'||!owner.sl){
+    offer(locateResident(other),1.65,other==='woman'?'向女主人打招呼':'向男主人打招呼',()=>{
+      actor.motion=r.motion='wave';actor.gesture=r.gesture=1.05;actor.target=null;S.lock=1.05;
+      credit('familyHello');
+    });
+  }
+  return closest;
+}
 function findInteract(){
+  if(isResident())return residentAction();
   let best=null, bd=1e9; const hx=cat.pos.x, hy=cat.pos.y+.22, hz=cat.pos.z;
   const consider=(d,label,act,pos)=>{ if(d<bd){ bd=d; best={label,act,pos}; } };
   knock.forEach(k=>{ if(k.state!==0) return; const p=k.mesh.position, d=Math.hypot(p.x-hx,p.y-hy,p.z-hz); if(d<.85) consider(d,'把它推下去',()=>doKnock(k),[p.x,p.z]); });
@@ -5435,12 +5884,16 @@ function findInteract(){
   if(gecko.state!==2){ const d=Math.hypot(-4.98-hx,gecko.v-hy,gecko.u-hz); if(d<1.05) consider(d-.3,'扑壁虎',doGecko,[-4.98,gecko.u]); }
   if(cat.onGround && cat.pos.y>=mattressBounds.y1 && cat.pos.y<mattressBounds.y1+.24 && overlapXZ(mattressBounds,hx,hz,.1))
     consider(.2,'打个盹',doNap);
-  { const p=owner.g.position, d=Math.hypot(p.x-hx,p.z-hz); if(d<.85+A.r&&cat.pos.y<.3&&owner.pet<=0&&!S.night) consider(d,'蹭蹭主人',doRub,[p.x,p.z]); }
+  for(const id of ['man','woman']){
+    const r=residents[id],p=r.rig.g.position,d=Math.hypot(p.x-hx,p.z-hz);
+    if(d<.85+A.r&&Math.abs(cat.pos.y-p.y)<.60&&r.gesture<=0&&(id!=='man'||(!owner.sl&&owner.pet<=0)))
+      consider(d,id==='man'?'蹭蹭主人':'蹭蹭女主人',()=>doRub(id),[p.x,p.z]);
+  }
   if(cat.pos.z>9.2&&cat.pos.y<.3&&walker.wave<=0&&Math.abs(walker.x-hx)<4.5) consider(.6,S.animal==='dog'?'朝路人汪两声':'朝路人喵一声',doGreet,[walker.x,WALK_Z]);
   return best;
 }
 function interact(){ if(S.lock>0||!$('modal').hidden) return; current=findInteract();cat.swipe=.28;cat.idle=0;
-  if(current){ if(current.pos&&S.view!=='1st') cat.yaw=Math.atan2(current.pos[0]-cat.pos.x,current.pos[1]-cat.pos.z); sfx.swipe(); current.act(); } else (S.animal==='dog'?sfx.bark:sfx.meow)(); }
+  if(current){ if(current.pos&&S.view!=='1st') cat.yaw=Math.atan2(current.pos[0]-cat.pos.x,current.pos[1]-cat.pos.z); if(!isResident())sfx.swipe(); current.act(); } else if(!isResident()) (S.animal==='dog'?sfx.bark:sfx.meow)(); }
 function pose(name,dur,end){ cat.pose=name; cat.poseT=cat.poseDur=dur; cat.poseEnd=end||null; S.lock=Math.max(S.lock,dur); cat.swipe=0; cat.vel.x=cat.vel.z=0; }
 function doKnock(k){ const p=k.mesh.position; let dx=p.x-cat.pos.x, dz=p.z-cat.pos.z; const l=Math.hypot(dx,dz); if(l<.05){ dx=Math.sin(cat.yaw); dz=Math.cos(cat.yaw); } else { dx/=l; dz/=l; }
   k.state=3; k.delay=.13; k.push=[dx,dz]; credit('cups'); }
@@ -5448,61 +5901,29 @@ function doYarn(){ const f=S.view==='1st'?S.yaw:cat.yaw; yarn.vel.set(Math.sin(f
 function doScratch(s){ pose('scratch',1.35); sfx.scratch(); setTimeout(sfx.scratch,560); credit('scratch'); if(scratchMarks.length<18){ for(let i=0;i<3;i++){ const m=new THREE.Mesh(new THREE.BoxGeometry(.006,.16,.006),mat(0xdfe3e8)); const side=s[0]<-1.5;
     m.position.set(side?s[0]+.065:s[0]-.075,.3+Math.random()*.08,s[1]+(i-1)*.03+(Math.random()-.5)*.02); m.rotation.z=(Math.random()-.5)*.2; world.add(m); scratchMarks.push(m); } } }
 function doEat(){
-  const bowl=feedingStations[S.animal];if(!bowl.servings){toast('白天去厨房蹭蹭主人，主人会帮你添粮。');return;}
+  const bowl=feedingStations[S.animal];if(!bowl.servings){toast('去找家里的主人蹭一蹭，或换成主人给食碗添粮。');return;}
   pose('eat',1.5);sfx.crunch();setTimeout(sfx.crunch,650);setServings(bowl,bowl.servings-1);credit('eat');
 }
 function doGecko(){ gecko.state=2; gecko.t=18; sfx.squeak(); credit('gecko'); gecko.tail.visible=false; if(cat.onGround){ cat.vel.y=3.3; cat.onGround=false; }
   gecko.drop.position.set(-4.95,gecko.v,gecko.u); gecko.drop.visible=true; gecko.dropT=7; gecko.dropV=0; toast('壁虎断尾逃上了天花板！断掉的尾巴还在地上扭。过一会儿它会回来。'); }
-function doRub(){ owner.pet=3.4; S.lock=Math.max(S.lock,1.2); (S.animal==='dog'?sfx.bark:sfx.purr)(); const bowl=feedingStations[S.animal],fill=bowl.servings<bowl.layers.length;setServings(bowl,bowl.layers.length); credit('rub');
-  setTimeout(()=>toast('主人放下菜刀，弯腰摸了摸你。'+(fill?'还顺手把碗添满了。':'')),600); }
+function doRub(id='man'){
+  const r=residents[id];r.motion='reach';r.gesture=1.05;r.target=S.animal;
+  if(id==='man'&&!r.pose)owner.pet=3.4;
+  S.lock=Math.max(S.lock,1.2);(S.animal==='dog'?sfx.bark:sfx.purr)();
+  const bowl=feedingStations[S.animal],fill=bowl.servings<bowl.layers.length;setServings(bowl,bowl.layers.length);credit('rub');
+  const note=id==='woman'?'女主人俯身摸了摸你。':r.pose?'主人俯身摸了摸你。':'主人放下菜刀，弯腰摸了摸你。';
+  setTimeout(()=>toast(note+(fill?'还顺手把碗添满了。':'')),600);
+}
 function doGreet(){ (S.animal==='dog'?sfx.bark:sfx.meow)(); walker.wave=2.6; credit('greet'); setTimeout(()=>toast('路人停下来，朝你挥了挥手。'),500); }
-function doNap(){ pose('nap',3.2); S.lock=3.2; $('nap').classList.add('show'); sfx.purr(); setTimeout(()=>{ $('nap').classList.remove('show'); credit('nap'); },2600); }
+let napTimer;
+function doNap(){ pose('nap',3.2); S.lock=3.2; $('nap').classList.add('show'); sfx.purr(); napTimer=setTimeout(()=>{ $('nap').classList.remove('show'); credit('nap'); },2600); }
 
 /* ============ 15. 模拟主循环 ============ */
 const cctvT = new THREE.Vector3(); let cctvI=-1;
 const clock = new THREE.Clock(); let time=0, lastEye=new THREE.Vector3(), lastYaw=0, still=0, zoneT=0, camSmooth=new THREE.Vector3(0,2,8), fpY=.27;
 const angLerp=(a,b,t)=>{ let d=b-a; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI; return a+d*t; };
-function update(dt){
-  time+=dt;tvScreen.visible=!S.night;if(tvScreen.visible)riverProgramme.tick(dt);
-  fan.rotation.y+=dt*7.5; fan2.rotation.y+=dt*5; sfan.blades.rotation.z+=dt*24; sfan.head.rotation.y=sfan.yaw+Math.sin(time*.45)*.7; robot.brush.rotation.y+=dt*14;
-  { const d=new Date(), sc=d.getSeconds(), mn=d.getMinutes()+sc/60, hr=d.getHours()%12+mn/60; clocks.forEach(c=>{ c.s.rotation.z=-sc*Math.PI/30; c.m.rotation.z=-mn*Math.PI/30; c.h.rotation.z=-hr*Math.PI/6; }); }
-  puddles.forEach(m=>{ if(m.scale.x<1){ const k=Math.min(1,m.scale.x+dt*.9); m.scale.set(k,k*.8,1); } }); if(S.lock>0) S.lock-=dt;
-  // --- 输入 ---
-  let fw=0, rt=0; const K=S.keys;
-  if(K.KeyW||K.ArrowUp) fw+=1; if(K.KeyS||K.ArrowDown) fw-=1; if(K.KeyD||K.ArrowRight) rt+=1; if(K.KeyA||K.ArrowLeft) rt-=1;
-  fw-=S.joy.y; rt+=S.joy.x; let mag=Math.min(1,Math.hypot(fw,rt)); if(S.lock>0||!$('modal').hidden) mag=0;
-  const run = K.ShiftLeft||K.ShiftRight||Math.hypot(S.joy.x,S.joy.y)>.92;
-  let cy=S.yaw; if(S.view==='cctv'){ const c=CAMS[S.cam]; cy=Math.atan2(c[2][0]-c[1][0],c[2][2]-c[1][2]); }
-  let tx=0,tz=0; if(mag>.05){ const l=Math.hypot(fw,rt); const f=fw/l, r=rt/l; const sp=(run?A.run:A.walk)*mag;
-    tx=(Math.sin(cy)*f-Math.cos(cy)*r)*sp; tz=(Math.cos(cy)*f+Math.sin(cy)*r)*sp; }
-  const acc=Math.min(1,dt*(cat.onGround?12:4)); cat.vel.x+=(tx-cat.vel.x)*acc; cat.vel.z+=(tz-cat.vel.z)*acc;
-  const hs=Math.hypot(cat.vel.x,cat.vel.z); cat.moving=hs>.25;
-  if(S.view==='1st') cat.yaw=S.yaw; else if(mag>.05) cat.yaw=angLerp(cat.yaw,Math.atan2(tx,tz),Math.min(1,dt*10));
-  // --- 水平移动（分步、滑动碰撞） ---
-  const steps=Math.max(1,Math.ceil(hs*dt/.07)), sx=cat.vel.x*dt/steps, sz=cat.vel.z*dt/steps;
-  // 身体一个圆，头和屁股各一个小圆：头不会再伸进墙、显示器或家具里
-  const hfx=Math.sin(cat.yaw), hfz=Math.cos(cat.yaw), npc=rest[S.animal==='cat'?'dog':'cat'], npcR=A.r+(S.animal==='cat'?.22:.15), npcHit=(x,z)=>Math.abs(npc.y-cat.pos.y)<.5&&Math.hypot(x-npc.x,z-npc.z)<npcR, bodyHit=(x,z)=>blocked(x,z,cat.pos.y,A.r,A.h,.3),
-    noseHit=(x,z)=>blocked(x+hfx*A.nose,z+hfz*A.nose,cat.pos.y,A.pr,A.h+.08,A.ps), rumpHit=(x,z)=>blocked(x-hfx*A.rump,z-hfz*A.rump,cat.pos.y,A.pr,A.h-.02,A.ps);
-  const px0=cat.pos.x, pz0=cat.pos.z, canGo=(x,z)=>!bodyHit(x,z) && !(npcHit(x,z)&&!npcHit(cat.pos.x,cat.pos.z)) && !((noseHit(x,z)&&!noseHit(cat.pos.x,cat.pos.z))||(!(cat.free>0)&&rumpHit(x,z)&&!rumpHit(cat.pos.x,cat.pos.z)));
-  for(let i=0;i<steps;i++){
-    const nx=Math.max(-4.84,Math.min(4.84,cat.pos.x+sx)); if(canGo(nx,cat.pos.z)) cat.pos.x=nx; else cat.vel.x=0;
-    const nz=Math.max(-5.84,Math.min(10.82,cat.pos.z+sz)); if(canGo(cat.pos.x,nz)) cat.pos.z=nz; else cat.vel.z=0;
-  }
-  cat.free=(cat.free||0)-dt; if(mag>.05&&Math.hypot(cat.pos.x-px0,cat.pos.z-pz0)<1e-4){ cat.stuckT=(cat.stuckT||0)+dt; if(cat.stuckT>.3){ cat.free=.7; cat.stuckT=0; if(bodyHit(cat.pos.x,cat.pos.z)){ esc: for(let r=.08;r<.9;r+=.08) for(let a=0;a<12;a++){ const ex=cat.pos.x+Math.sin(a*Math.PI/6)*r, ez=cat.pos.z+Math.cos(a*Math.PI/6)*r; if(Math.abs(ex)<4.84&&ez>-5.84&&ez<10.82&&!bodyHit(ex,ez)){ cat.pos.x=ex; cat.pos.z=ez; break esc; } } } } } else cat.stuckT=0;
-  { const nb=noseHit(cat.pos.x,cat.pos.z), rb=rumpHit(cat.pos.x,cat.pos.z);   // 原地转身时头或屁股顶到东西：把身体挤开
-    if(nb!==rb){ const d=dt*1.4*(nb?-1:1), bx=cat.pos.x+hfx*d, bz=cat.pos.z+hfz*d; if(!bodyHit(bx,bz)&&Math.abs(bx)<4.84&&bz>-5.84&&bz<10.82){ cat.pos.x=bx; cat.pos.z=bz; } } }
-  // --- 跳跃与重力 ---
-  cat.jumpBuf-=dt; cat.air = cat.onGround?0:cat.air+dt;
-  if(cat.jumpBuf>0 && cat.air<.12 && S.lock<=0){ cat.vel.y=A.jump; cat.onGround=false; cat.air=1; cat.jumpBuf=0; sfx.jump(); }
-  const y0=cat.pos.y; cat.vel.y-=17*dt; cat.pos.y+=cat.vel.y*dt;
-  if(cat.vel.y>0){ for(let i=0;i<colliders.length;i++){ const b=colliders[i]; if(b.y0>=y0+.3 && b.y0<cat.pos.y+A.h && overlapXZ(b,cat.pos.x,cat.pos.z,.1)){ cat.pos.y=b.y0-A.h; cat.vel.y=0; } } }
-  let sup=supportAt(cat.pos.x,cat.pos.z,Math.max(y0,cat.pos.y),.1,(cat.onGround||cat.vel.y<=0)?.3:0);
-  const rd=Math.hypot(cat.pos.x-robot.x,cat.pos.z-robot.z); const onRobot = S.animal==='cat' && rd<.22 && Math.max(y0,cat.pos.y)<.4; if(onRobot) sup=Math.max(sup,.096);
-  if(cat.pos.y<=sup && cat.vel.y<=0){ if(!cat.onGround && cat.vel.y<-4){ sfx.land(); cat.dip=Math.min(.09,-cat.vel.y*.012); } cat.pos.y=sup; cat.vel.y=0; cat.onGround=true; }
-  else if(cat.pos.y>sup+.02) cat.onGround=false;
-  // --- 动画 ---
-  if(cat.moving&&cat.onGround) cat.walk+=dt*(6+hs*3.2);
-  { const ph=Math.floor(cat.walk/Math.PI); if(ph!==cat.lastPh){ cat.lastPh=ph; if(cat.moving&&cat.onGround) sfx.step(inRect(3.6,5,-2.2,2.05),hs>3.4); } } const sw=cat.moving?Math.sin(cat.walk)*Math.min(.9,.35+hs*.14):0;
+function animatePet(dt,hs,hfx,hfz){
+  const sw=cat.moving?Math.sin(cat.walk)*Math.min(.9,.35+hs*.14):0;
   { const lp=cat.pitch*.85; legs[0].rotation.x+=(sw+lp-legs[0].rotation.x)*.4; legs[3].rotation.x+=(sw+lp-legs[3].rotation.x)*.4; legs[1].rotation.x+=(-sw+lp-legs[1].rotation.x)*.4; legs[2].rotation.x+=(-sw+lp-legs[2].rotation.x)*.4; }
   if(!cat.onGround){ legs[0].rotation.x=legs[1].rotation.x=-.7; legs[2].rotation.x=legs[3].rotation.x=.7; }
   if(cat.swipe>0){ cat.swipe-=dt; legs[1].rotation.x=-1.5*Math.sin(Math.max(0,cat.swipe)/.28*Math.PI); }
@@ -5530,11 +5951,85 @@ function update(dt){
     cat.pitch+=((pt+.8*rear)-cat.pitch)*Math.min(1,dt*(cat.onGround?9:14));
     cat.vis=cat.onGround?cat.vis+(vy-cat.vis)*Math.min(1,dt*16):py; if(Math.abs(cat.vis-py)>.6) cat.vis=py;
     catModel.position.set(cat.pos.x,cat.vis+(.1*rear-.055*napK)*A.sc,cat.pos.z); catModel.rotation.set(-cat.pitch,cat.yaw,0); }
+}
+function updateKitchenOwner(dt){
+  { const o=owner, sl=!!S.night; if(sl!==o.sl){ o.sl=sl; o.colK.y0=sl?-9:0; o.colK.y1=sl?-8:1.6; o.colB.y0=sl?F2+.65:-9; o.colB.y1=sl?F2+.88:-8; o.pet=0; o.k=0; o.knife.visible=!sl; o.knife2.visible=sl; if(!sl){ o.g.rotation.set(0,Math.PI,0); o.g.position.set(-.62,0,-5.1); } }
+    if(sl){ o.g.quaternion.copy(o.qS); o.g.position.set(-3.06,F2+.75+Math.sin(time*1.3)*.004,3.7); o.up.rotation.x=0; o.head.rotation.set(-.1,.25,0); o.legs.forEach(l=>{ l.hip.rotation.x=0; l.knee.rotation.x=0; l.foot.rotation.x=0; }); o.arms.forEach((a,i)=>{ a.sh.rotation.set(.1,0,(i?-1:1)*.12); a.el.rotation.x=-.15; }); } }
+  if(!S.night) { const o=owner, dx=cat.pos.x-o.g.position.x, dz=cat.pos.z-o.g.position.z, dd=Math.hypot(dx,dz), lp=(a,b,t)=>a+(b-a)*t;
+    if(o.pet>0){ o.pet-=dt; o.yawT=Math.atan2(dx,dz); } o.k+=((o.pet>.4?1:0)-o.k)*Math.min(1,dt*3.5); const k=o.k, ch=Math.sin(time*.45)>-.3?1:0;
+    o.g.rotation.y=angLerp(o.g.rotation.y,o.pet>.4?o.yawT:Math.PI,Math.min(1,dt*5)); o.up.rotation.x=.07+k*1.03;
+    o.legs.forEach(l=>{ l.hip.rotation.x=-.35*k; l.knee.rotation.x=.7*k; }); o.plant();
+    const L=o.arms[0], R=o.arms[1]; R.sh.rotation.set(lp(-.3,-.75,k),.3*(1-k),0); R.el.rotation.x=lp(-1.0,-.55,k)+(k<.1?ch*Math.sin(time*11)*.11:0);
+    L.sh.rotation.set(lp(-.15,-1.3,k),-.3*(1-k),0); L.el.rotation.x=lp(-1.2,-.12,k)+k*Math.sin(time*7)*.14; o.knife.visible=k<.25; o.knife2.visible=!o.knife.visible;
+    let hy=0; if(dd<1.8&&cat.pos.y<1.2){ let a=Math.atan2(dx,dz)-o.g.rotation.y; while(a>Math.PI) a-=2*Math.PI; while(a<-Math.PI) a+=2*Math.PI; hy=Math.max(-1.15,Math.min(1.15,a)); }
+    o.head.rotation.y+=(hy*(1-k)-o.head.rotation.y)*Math.min(1,dt*5); o.head.rotation.x=lp(.28,-.35,k); }
+  const man=residents.man;man.gesture=Math.max(0,man.gesture-dt);
+  if(!S.night&&man.motion==='wave'&&man.gesture>0){
+    const wave=Math.sin(Math.PI*man.gesture/1.05);
+    owner.knife.visible=false;owner.knife2.visible=true;
+    owner.arms[0].sh.rotation.set(-.08,0,2.05*wave);owner.arms[0].el.rotation.set(-.35,0,.17*Math.sin(time*8)*wave);
+  }
+  owner.dress(time,S.night);
+}
+function update(dt){
+  time+=dt;tvScreen.visible=!S.night;if(tvScreen.visible)riverProgramme.tick(dt);
+  fan.rotation.y+=dt*7.5; fan2.rotation.y+=dt*5; sfan.blades.rotation.z+=dt*24; sfan.head.rotation.y=sfan.yaw+Math.sin(time*.45)*.7; robot.brush.rotation.y+=dt*14;
+  { const d=new Date(), sc=d.getSeconds(), mn=d.getMinutes()+sc/60, hr=d.getHours()%12+mn/60; clocks.forEach(c=>{ c.s.rotation.z=-sc*Math.PI/30; c.m.rotation.z=-mn*Math.PI/30; c.h.rotation.z=-hr*Math.PI/6; }); }
+  puddles.forEach(m=>{ if(m.scale.x<1){ const k=Math.min(1,m.scale.x+dt*.9); m.scale.set(k,k*.8,1); } }); if(S.lock>0) S.lock-=dt;
+  const human=isResident();
+  // --- 输入 ---
+  let fw=0, rt=0; const K=S.keys;
+  if(K.KeyW||K.ArrowUp) fw+=1; if(K.KeyS||K.ArrowDown) fw-=1; if(K.KeyD||K.ArrowRight) rt+=1; if(K.KeyA||K.ArrowLeft) rt-=1;
+  fw-=S.joy.y; rt+=S.joy.x; let mag=Math.min(1,Math.hypot(fw,rt)); if(S.lock>0||!$('modal').hidden) mag=0;
+  const run = K.ShiftLeft||K.ShiftRight||Math.hypot(S.joy.x,S.joy.y)>.92;
+  let cy=S.yaw; if(S.view==='cctv'){ const c=CAMS[S.cam]; cy=Math.atan2(c[2][0]-c[1][0],c[2][2]-c[1][2]); }
+  let tx=0,tz=0; if(mag>.05){ const l=Math.hypot(fw,rt); const f=fw/l, r=rt/l; const sp=(run?A.run:A.walk)*mag;
+    tx=(Math.sin(cy)*f-Math.cos(cy)*r)*sp; tz=(Math.cos(cy)*f+Math.sin(cy)*r)*sp; }
+  const acc=Math.min(1,dt*(cat.onGround?12:4)); cat.vel.x+=(tx-cat.vel.x)*acc; cat.vel.z+=(tz-cat.vel.z)*acc;
+  const hs=Math.hypot(cat.vel.x,cat.vel.z); cat.moving=hs>.25;
+  if(S.view==='1st') cat.yaw=S.yaw; else if(mag>.05) cat.yaw=angLerp(cat.yaw,Math.atan2(tx,tz),Math.min(1,dt*10));
+  // --- 水平移动（分步、滑动碰撞） ---
+  const steps=Math.max(1,Math.ceil(hs*dt/.07)), sx=cat.vel.x*dt/steps, sz=cat.vel.z*dt/steps;
+  // 身体一个圆，头和屁股各一个小圆：头不会再伸进墙、显示器或家具里
+  const hfx=Math.sin(cat.yaw),hfz=Math.cos(cat.yaw);
+  const npcHit=(x,z)=>petIds.some(id=>{
+    const p=rest[id];return id!==S.role&&Math.abs(p.y-cat.pos.y)<.53&&Math.hypot(x-p.x,z-p.z)<A.r+ANIMALS[id].r;
+  });
+  const stepHeight=human?.25:.3,bodyHit=(x,z)=>blocked(x,z,cat.pos.y,A.r,A.h,stepHeight);
+  const noseHit=(x,z)=>!human&&blocked(x+hfx*A.nose,z+hfz*A.nose,cat.pos.y,A.pr,A.h+.08,A.ps);
+  const rumpHit=(x,z)=>!human&&blocked(x-hfx*A.rump,z-hfz*A.rump,cat.pos.y,A.pr,A.h-.02,A.ps);
+  const px0=cat.pos.x, pz0=cat.pos.z, canGo=(x,z)=>!bodyHit(x,z) && !(npcHit(x,z)&&!npcHit(cat.pos.x,cat.pos.z)) && !((noseHit(x,z)&&!noseHit(cat.pos.x,cat.pos.z))||(!(cat.free>0)&&rumpHit(x,z)&&!rumpHit(cat.pos.x,cat.pos.z)));
+  for(let i=0;i<steps;i++){
+    const nx=Math.max(-4.84,Math.min(4.84,cat.pos.x+sx)); if(canGo(nx,cat.pos.z)) cat.pos.x=nx; else cat.vel.x=0;
+    const nz=Math.max(-5.84,Math.min(10.82,cat.pos.z+sz)); if(canGo(cat.pos.x,nz)) cat.pos.z=nz; else cat.vel.z=0;
+  }
+  cat.free=(cat.free||0)-dt; if(mag>.05&&Math.hypot(cat.pos.x-px0,cat.pos.z-pz0)<1e-4){ cat.stuckT=(cat.stuckT||0)+dt; if(cat.stuckT>.3){ cat.free=.7; cat.stuckT=0; if(bodyHit(cat.pos.x,cat.pos.z)){ esc: for(let r=.08;r<.9;r+=.08) for(let a=0;a<12;a++){ const ex=cat.pos.x+Math.sin(a*Math.PI/6)*r, ez=cat.pos.z+Math.cos(a*Math.PI/6)*r; if(Math.abs(ex)<4.84&&ez>-5.84&&ez<10.82&&!bodyHit(ex,ez)){ cat.pos.x=ex; cat.pos.z=ez; break esc; } } } } } else cat.stuckT=0;
+  { const nb=noseHit(cat.pos.x,cat.pos.z), rb=rumpHit(cat.pos.x,cat.pos.z);   // 原地转身时头或屁股顶到东西：把身体挤开
+    if(nb!==rb){ const d=dt*1.4*(nb?-1:1), bx=cat.pos.x+hfx*d, bz=cat.pos.z+hfz*d; if(!bodyHit(bx,bz)&&Math.abs(bx)<4.84&&bz>-5.84&&bz<10.82){ cat.pos.x=bx; cat.pos.z=bz; } } }
+  // --- 跳跃与重力 ---
+  cat.jumpBuf-=dt; cat.air = cat.onGround?0:cat.air+dt;
+  if(cat.jumpBuf>0 && cat.air<.12 && S.lock<=0){ cat.vel.y=A.jump; cat.onGround=false; cat.air=1; cat.jumpBuf=0; sfx.jump(); }
+  const y0=cat.pos.y; cat.vel.y-=17*dt; cat.pos.y+=cat.vel.y*dt;
+  if(cat.vel.y>0){ for(let i=0;i<colliders.length;i++){ const b=colliders[i]; if(b.y0>=y0+(human?A.h-.01:.3) && b.y0<cat.pos.y+A.h && overlapXZ(b,cat.pos.x,cat.pos.z,.1)){ cat.pos.y=b.y0-A.h; cat.vel.y=0; } } }
+  let sup=supportAt(cat.pos.x,cat.pos.z,Math.max(y0,cat.pos.y),.1,(cat.onGround||cat.vel.y<=0)?stepHeight:0);
+  const rd=Math.hypot(cat.pos.x-robot.x,cat.pos.z-robot.z); const onRobot = S.role==='cat' && rd<.22 && Math.max(y0,cat.pos.y)<.4; if(onRobot) sup=Math.max(sup,.096);
+  if(cat.pos.y<=sup && cat.vel.y<=0){ if(!cat.onGround && cat.vel.y<-4){ sfx.land(); cat.dip=Math.min(.09,-cat.vel.y*.012); } cat.pos.y=sup; cat.vel.y=0; cat.onGround=true; }
+  else if(cat.pos.y>sup+.02) cat.onGround=false;
+  // --- 动画 ---
+  if(cat.moving&&cat.onGround) cat.walk+=dt*(human?4.8+hs*1.7:6+hs*3.2);
+  { const ph=Math.floor(cat.walk/Math.PI); if(ph!==cat.lastPh){ cat.lastPh=ph; if(cat.moving&&cat.onGround) sfx.step(inRect(3.6,5,-2.2,2.05),hs>3.4); } }
+  if(!human)animatePet(dt,hs,hfx,hfz);
+  else{
+    updateResident(S.role,dt);cat.vis=cat.pos.y;
+    if(blob.visible)blob.position.set(cat.pos.x,supportAt(cat.pos.x,cat.pos.z,cat.pos.y+.05,.05,0)+.018,cat.pos.z);
+  }
   cat.dip*=Math.pow(.001,dt);
-  { const o=S.animal==='cat'?'dog':'cat', n=RIGS[o], r=rest[o], dg=o==='dog'; let d=Math.atan2(cat.pos.x-r.x,cat.pos.z-r.z)-r.yaw; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI;   // 另一只坐着，头跟着你转
-    n.head.rotation.y+=(Math.max(-1.1,Math.min(1.1,d))-n.head.rotation.y)*Math.min(1,dt*3); posePetTail(n,1,0,false,time*(dg?5:1.6),dg?.8:1);
+  for(const o of petIds){if(o===S.role)continue;const n=RIGS[o],r=rest[o],dg=o==='dog'; let d=Math.atan2(cat.pos.x-r.x,cat.pos.z-r.z)-r.yaw; while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI;   // 另一只坐着，头跟着你转
+    const petting=residents[S.role]?.target===o?residents[S.role].gesture:0;
+    n.head.rotation.x=.68-.59*Math.sin(Math.PI*Math.min(1,petting/1.05));
+    n.head.rotation.y+=(Math.max(-1.1,Math.min(1.1,d))-n.head.rotation.y)*Math.min(1,dt*3); posePetTail(n,1,0,false,time*(dg?5:1.6)+petting*4,petting?2:dg?.8:1);
     n.eyes[0].scale.y=n.eyes[1].scale.y=((time+1.7)%5.1)<.12?.1:1; }
-  fpPaw.visible = S.view==='1st' && (cat.swipe>0||cat.rear>0); if(fpPaw.visible){ if(cat.rear>0) fpPaw.rotation.set(.1+Math.sin(time*13)*.55,.25,0); else { const k=1-cat.swipe/.28; fpPaw.rotation.set(.9-1.5*Math.sin(k*Math.PI),.5-k*.9,0); } }
+  fpPaw.visible = !human && S.view==='1st' && (cat.swipe>0||cat.rear>0); if(fpPaw.visible){ if(cat.rear>0) fpPaw.rotation.set(.1+Math.sin(time*13)*.55,.25,0); else { const k=1-cat.swipe/.28; fpPaw.rotation.set(.9-1.5*Math.sin(k*Math.PI),.5-k*.9,0); } }
   // --- 可推倒的东西 ---
   knock.forEach(k=>{ if(k.state===3){ k.delay-=dt; if(k.delay<=0){ k.state=1; k.vel.set(k.push[0]*1.7,1.3,k.push[1]*1.7); k.spin.set(k.push[1]*7,2,-k.push[0]*7); sfx.clink(); } return; }
     if(k.state!==1) return; const p=k.mesh.position; k.vel.y-=13*dt;
@@ -5550,7 +6045,7 @@ function update(dt){
   // --- 扫地机器人 ---
   { const ox=robot.x, oz=robot.z; if(robot.spin>0){ robot.spin-=dt; robot.a+=dt*3.5; }
     else { const nx=robot.x+Math.sin(robot.a)*.45*dt, nz=robot.z+Math.cos(robot.a)*.45*dt;
-      const np=rest[S.animal==='cat'?'dog':'cat']; if(Math.abs(nx)>4.75||Math.abs(nz)>5.7||blocked(nx,nz,0,.2,.1,.02)||(np.y<.3&&Math.hypot(nx-np.x,nz-np.z)<.5)) robot.spin=.4+Math.random()*.9; else { robot.x=nx; robot.z=nz; } }
+      const besidePet=petIds.some(id=>id!==S.role&&rest[id].y<.3&&Math.hypot(nx-rest[id].x,nz-rest[id].z)<.5); if(Math.abs(nx)>4.75||Math.abs(nz)>5.7||blocked(nx,nz,0,.2,.1,.02)||besidePet) robot.spin=.4+Math.random()*.9; else { robot.x=nx; robot.z=nz; } }
     robot.g.position.set(robot.x,0,robot.z); robot.g.rotation.y=robot.a;
     if(onRobot && cat.onGround && Math.abs(cat.pos.y-.096)<.02){ const cx=cat.pos.x+robot.x-ox, cz=cat.pos.z+robot.z-oz; if(!blocked(cx,cz,cat.pos.y,.16,.32,.3)){ cat.pos.x=cx; cat.pos.z=cz; }
       if(!cat.moving){ cat.ride+=dt; if(cat.ride>2) credit('robot'); } } else cat.ride=0; }
@@ -5569,23 +6064,16 @@ function update(dt){
       g.drop.rotation.y=Math.sin(time*31)*Math.min(1,g.dropT/3)*1.1+g.u*3; if(g.dropT<=0) g.drop.visible=false; }
     g.call-=dt; if(g.call<0){ g.call=16+Math.random()*22; if(g.state!==2&&d<7) sfx.cicak(); } }
   // --- 人 ---
-  { const o=owner, sl=!!S.night; if(sl!==o.sl){ o.sl=sl; o.colK.y0=sl?-9:0; o.colK.y1=sl?-8:1.6; o.colB.y0=sl?F2+.65:-9; o.colB.y1=sl?F2+.88:-8; o.pet=0; o.k=0; o.knife.visible=!sl; o.knife2.visible=sl; if(!sl){ o.g.rotation.set(0,Math.PI,0); o.g.position.set(-.62,0,-5.1); } }
-    if(sl){ o.g.quaternion.copy(o.qS); o.g.position.set(-3.06,F2+.75+Math.sin(time*1.3)*.004,3.7); o.up.rotation.x=0; o.head.rotation.set(-.1,.25,0); o.legs.forEach(l=>{ l.hip.rotation.x=0; l.knee.rotation.x=0; l.foot.rotation.x=0; }); o.arms.forEach((a,i)=>{ a.sh.rotation.set(.1,0,(i?-1:1)*.12); a.el.rotation.x=-.15; }); } }
-  if(!S.night) { const o=owner, dx=cat.pos.x-o.g.position.x, dz=cat.pos.z-o.g.position.z, dd=Math.hypot(dx,dz), lp=(a,b,t)=>a+(b-a)*t;
-    if(o.pet>0){ o.pet-=dt; o.yawT=Math.atan2(dx,dz); } o.k+=((o.pet>.4?1:0)-o.k)*Math.min(1,dt*3.5); const k=o.k, ch=Math.sin(time*.45)>-.3?1:0;
-    o.g.rotation.y=angLerp(o.g.rotation.y,o.pet>.4?o.yawT:Math.PI,Math.min(1,dt*5)); o.up.rotation.x=.07+k*1.03;
-    o.legs.forEach(l=>{ l.hip.rotation.x=-.35*k; l.knee.rotation.x=.7*k; }); o.plant();
-    const L=o.arms[0], R=o.arms[1]; R.sh.rotation.set(lp(-.3,-.75,k),.3*(1-k),0); R.el.rotation.x=lp(-1.0,-.55,k)+(k<.1?ch*Math.sin(time*11)*.11:0);
-    L.sh.rotation.set(lp(-.15,-1.3,k),-.3*(1-k),0); L.el.rotation.x=lp(-1.2,-.12,k)+k*Math.sin(time*7)*.14; o.knife.visible=k<.25; o.knife2.visible=!o.knife.visible;
-    let hy=0; if(dd<1.8&&cat.pos.y<1.2){ let a=Math.atan2(dx,dz)-o.g.rotation.y; while(a>Math.PI) a-=2*Math.PI; while(a<-Math.PI) a+=2*Math.PI; hy=Math.max(-1.15,Math.min(1.15,a)); }
-    o.head.rotation.y+=(hy*(1-k)-o.head.rotation.y)*Math.min(1,dt*5); o.head.rotation.x=lp(.28,-.35,k); }
+  if(S.role!=='man'&&!residents.man.pose)updateKitchenOwner(dt);
+  else if(S.role!=='man')updateResident('man',dt);
+  if(S.role!=='woman')updateResident('woman',dt);
   { const w=walker, L=w.arms[0], R=w.arms[1];
     if(w.wave>0){ w.wave-=dt; w.g.rotation.y=angLerp(w.g.rotation.y,Math.atan2(cat.pos.x-w.x,cat.pos.z-WALK_Z),Math.min(1,dt*6)); w.legs.forEach(l=>{ l.hip.rotation.x*=.8; l.knee.rotation.x*=.8; });
       R.sh.rotation.set(0,0,-2.5+Math.sin(time*10)*.28); R.el.rotation.x=-.3; L.sh.rotation.set(0,0,0); L.el.rotation.x=-.15; }
     else { w.x+=w.dir*1.15*dt; w.ph+=dt*5.1; if(Math.abs(w.x)>16) w.dir=-w.dir; w.g.rotation.y=angLerp(w.g.rotation.y,w.dir*Math.PI/2,Math.min(1,dt*6));
       w.legs.forEach((l,i)=>{ const s=i?-1:1; l.hip.rotation.x=-Math.sin(w.ph)*s*.42; l.knee.rotation.x=.12+.65*Math.max(0,Math.cos(w.ph)*s); w.arms[i].sh.rotation.set(Math.sin(w.ph)*s*.4,0,0); w.arms[i].el.rotation.x=-.3; }); }
     w.plant(); w.g.position.y+=nearPathHeight(w.x); w.g.position.x=w.x; }
-  owner.dress(time,S.night);walker.dress(time,false);
+  walker.dress(time,false);
   // --- 小鸟 ---
   { const b=bird; b.t-=dt; if(b.fly<=0 && b.t<0){ b.fly=1; b.t=7+Math.random()*7; }
     if(b.fly>0){ b.fly-=dt/3.2; const k=1-Math.max(0,b.fly), a=k*Math.PI*2; b.g.position.set(BIRD_HOME.x+Math.sin(a)*2.6,BIRD_HOME.y+Math.sin(k*Math.PI)*1.6,BIRD_HOME.z+(1-Math.cos(a))*1.6); b.g.rotation.y=a+Math.PI/2;
@@ -5594,26 +6082,28 @@ function update(dt){
   // --- 雨 ---
   if(rain.visible){ const p=rain.geometry.attributes.position, a=p.array; for(let i=0;i<a.length;i+=6){ a[i+1]-=14*dt; a[i+4]-=14*dt; if(a[i+4]<0){ a[i+1]+=10; a[i+4]+=10; } } p.needsUpdate=true; }
   // --- 区域任务 ---
-  if(cat.onGround){
+  if(!human&&cat.onGround){
     if(cat.pos.y<.1 && inRect(2.85,3.32,.45,.9)) credit('box');
     if(cat.pos.y>=1.3 && cat.pos.y<1.5 && inRect(1.25,2.85,7.75,9.75)) credit('car');
     if(cat.pos.y>=4.05 && cat.pos.y<4.3 && inRect(-2.05,1.05,5.4,5.95)){ zoneT+=dt; if(zoneT>1.2){ if(prog.bird<1){ sfx.chirp(); bird.t=-1; } credit('bird'); } if(Math.random()<dt*.35) sfx.chirp(); } else zoneT=0;
   }
   current = (S.lock>0)?null:findInteract();
-  const pr=$('prompt'); if(current&&$('modal').hidden){ const html=(isTouch?'🐾 ':'<kbd>E</kbd>')+current.label; if(pr.dataset.h!==html){ pr.innerHTML=html; pr.dataset.h=html; } pr.hidden=false; } else pr.hidden=true;
+  const pr=$('prompt'); if(current&&$('modal').hidden){ const html=(isTouch?(human?'✋ ':'🐾 '):'<kbd>E</kbd>')+current.label; if(pr.dataset.h!==html){ pr.innerHTML=html; pr.dataset.h=html; } pr.hidden=false; } else pr.hidden=true;
   // --- 摄像机 ---
   let active=cam, targetFov=62;
+  const actor=human?residents[S.role]:null;
+  const leaning=actor?.motion==='reach'?Math.sin(Math.PI*Math.min(1,actor.gesture/1.05)):0;
   if(S.view==='1st'){
-    fpY+=(A.eye-cat.dip+.13*cat.rear-.13*cat.eatK+(cat.moving&&cat.onGround?Math.sin(cat.walk*2)*.008:0)-fpY)*Math.min(1,dt*18); const pp=S.pitch+.25*cat.rear-.55*cat.eatK;
+    fpY+=(A.eye-.55*leaning-cat.dip+.13*cat.rear-.13*cat.eatK+(cat.moving&&cat.onGround?Math.sin(cat.walk*2)*.008:0)-fpY)*Math.min(1,dt*18); const pp=S.pitch-.48*leaning+.25*cat.rear-.55*cat.eatK;
     camSmooth.y+=(cat.pos.y-camSmooth.y)*Math.min(1,dt*16);
     cam.position.set(cat.pos.x+Math.sin(S.yaw)*.09*A.sc, camSmooth.y+fpY, cat.pos.z+Math.cos(S.yaw)*.09*A.sc);
     cam.lookAt(cam.position.x+Math.sin(S.yaw)*Math.cos(pp), cam.position.y+Math.sin(pp), cam.position.z+Math.cos(S.yaw)*Math.cos(pp));
     targetFov = S.vision==='cat'?A.fov : S.vision==='split'?74 : 62;
   } else if(S.view==='3rd'){
-    const hx=cat.pos.x, hy=cat.pos.y+.32*A.sc, hz=cat.pos.z, el=Math.max(-.15,Math.min(1.25,.32-S.pitch));
+    const hx=cat.pos.x, hy=cat.pos.y+(human?.98-.24*leaning:.32*A.sc), hz=cat.pos.z, el=Math.max(-.15,Math.min(1.25,.32-S.pitch));
     let dx=0, dy=1, dz=0, dist=-1; const full=1.7*A.cam;   // 身后空间不够时，镜头改从上方看，而不是钻进身体或墙里
     for(const cd of [[0,0],[0,.5],[0,1.0],[.9,.25],[-.9,.25],[1.8,.3],[-1.8,.3],[Math.PI,.3]]){ const e=Math.min(1.42,el+cd[1]), yw=S.yaw+cd[0], x=-Math.sin(yw)*Math.cos(e), y=Math.sin(e), z=-Math.cos(yw)*Math.cos(e), d=rayHit(hx,hy,hz,x,y,z,full)-.12; if(d>dist){ dist=d; dx=x; dy=y; dz=z; } if(d>=full*.6) break; }   // 依次试：正后方、抬高、左右两侧、正前方，取最开阔的机位
-    dist=Math.max(.25,dist); catModel.visible=dist>.4*A.sc;
+    dist=Math.max(.25,dist); (human?residents[S.role].rig.g:catModel).visible=dist>(human?.41:.4*A.sc);
     const want=new THREE.Vector3(hx+dx*dist,Math.max(.06,hy+dy*dist),hz+dz*dist);
     for(let k=0;k<7&&nearSolid(want.x,want.y,want.z,.16);k++){ dist=Math.max(.2,dist*.8); want.set(hx+dx*dist,Math.max(.06,hy+dy*dist),hz+dz*dist); }   // 镜头离墙和天花板太近就拉近，避免看穿
     if(cam.position.distanceTo(want)>3) cam.position.copy(want); else { cam.position.lerp(want,Math.min(1,dt*14)); const lx=cam.position.x-hx, ly=cam.position.y-hy, lz=cam.position.z-hz, ll=Math.hypot(lx,ly,lz)||1;
@@ -5626,7 +6116,7 @@ function update(dt){
   if(Math.abs(cam.fov-targetFov)>.05){ cam.fov+=(targetFov-cam.fov)*Math.min(1,dt*6); cam.updateProjectionMatrix(); }
   // 猫静止不动时才凸显运动物体
   const moved = active.position.distanceTo(lastEye)>.0015 || Math.abs(S.yaw+S.pitch*3-lastYaw)>.0008; lastEye.copy(active.position); lastYaw=S.yaw+S.pitch*3;
-  still = moved?0:Math.min(1,still+dt*2.5); const u=postMat.uniforms; u.uMotion.value=(S.hq&&S.view!=='cctv')?still:0; u.uTime.value=time; u.uDog.value=S.animal==='dog'?1:0;
+  still = moved?0:Math.min(1,still+dt*2.5); const u=postMat.uniforms; u.uMotion.value=(!human&&S.hq&&S.view!=='cctv')?still:0; u.uTime.value=time; u.uDog.value=S.animal==='dog'?1:0;
   u.uSplit.value = S.view==='cctv'?0 : S.vision==='cat'?0 : S.vision==='human'?1 : S.split;
   u.uNear.value=active.near; u.uFar.value=active.far;
   return active;
@@ -5642,11 +6132,12 @@ function frame(){
   renderer.render(postScene,postCam);
   const t=rtA; rtA=rtB; rtB=t;
 }
-window.__cat = { S, cat, setView, setVision, credit, interact, robot, gecko, knock, bird, cam, update, switchAnimal, rest, owner, walker, findInteract:()=>current };   // 调试用
+window.__cat = { S, cat, chooseRole, residents, setView, setVision, credit, interact, robot, gecko, knock, bird, cam, update, switchAnimal, rest, owner, walker, findInteract:()=>current };   // 调试用
 col(-3.38,-2.84,F2,F2+.1,-.5,.04);   // 办公椅五星脚
 // 圆柱和球形物件：等全部摆好（包括旋转）之后，再按最终姿态取包围盒加碰撞
 world.updateMatrixWorld(true); autoCol.forEach(m=>{ if(m===yarn.mesh||!m.parent) return; const b=new THREE.Box3().setFromObject(m); if(b.max.y-b.min.y<.012) return; colliders.push({x0:b.min.x,x1:b.max.x,y0:b.min.y,y1:b.max.y,z0:b.min.z,z1:b.max.z}); });
 allMats.forEach(m=>{ if(m.map&&!m.bumpMap&&m.map.image){ const im=m.map.image; if(im===texFabric.image){ m.bumpMap=m.map; m.bumpScale=.00065; m.needsUpdate=true; } else if(im===texWood.image||im===texPlank.image){ m.bumpMap=m.map; m.bumpScale=.005; m.needsUpdate=true; } } });   // 布纹和木纹带一点凹凸
+setIntro(true);
 renderTodo(); resize(); syncUI(); frame();
 })();
 </script>
