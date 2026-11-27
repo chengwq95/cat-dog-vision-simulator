@@ -6,9 +6,13 @@ A static, single-page 3D toy for seeing the world the way a pet does. Explore a 
 
 ## Preview
 
+The playable owners have contemporary Japanese everyday styling. She wears a blue floral midi dress and has long, dark hair draped over one shoulder. He wears a plain indigo shirt, wire glasses and a cotton apron. The portraits below were taken in the living room from the same camera positions before and after the rebuild.
+
+![The male and female owners before and after the rebuild, with the new models on the right](docs/household-characters.jpg)
+
 Choose from four characters on the start screen. On a phone, the complete game title stays visible above the choices and in the toolbar during play. [Compare the mobile screens.](docs/mobile-role-picker.jpg)
 
-The family now has a cane console in the hall, a tea trolley beside the dining room, a lounge chair in the living room and a sewing table and linen chest upstairs. [See the playable owners and their home.](docs/family-home.jpg)
+The home has a cane console in the hall, a tea trolley beside the dining room, a lounge chair in the living room and a sewing table and linen chest upstairs. [See the original furnishing update.](docs/family-home.jpg)
 
 The orange-and-white tabby and Shiba Inu, before and after the model rebuild. Each row shows the same animal from the same camera angle.
 
@@ -79,7 +83,7 @@ On a touchscreen, use the left stick to walk or push it to the edge to run. Swip
 
 ## How to use
 
-No install or build step. Open the live site in a phone or desktop browser with WebGL, or serve the folder with any static server. On desktop you can also open `index.html` directly. Everything is in that one file: the house, animals, people and textures are all generated in code, and sound is made with the Web Audio API. Three.js r128 is loaded from cdnjs, so an internet connection is needed the first time.
+Open the live site in a phone or desktop browser with WebGL, or serve the repository with any static server. On desktop you can also open `index.html` directly with the `assets` folder alongside it. The page generates the house and the pets in Three.js and the sound with the Web Audio API. The two owners and their textures are bundled under `assets`. Three.js r128 loads from cdnjs on first use.
 
 ## Deploy to GitHub Pages
 
@@ -89,4 +93,4 @@ No install or build step. Open the live site in a phone or desktop browser with 
 
 ## License
 
-[MIT](LICENSE).
+The game code is available under the [MIT license](LICENSE). The character source art and bundled libraries have their own [credits and license notices](assets/CREDITS.md).

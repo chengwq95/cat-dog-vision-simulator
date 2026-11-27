@@ -218,6 +218,9 @@ body.choosing #topbar,body.choosing #right,body.choosing #touch,body.choosing #t
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/vendor/GLTFLoader.js"></script>
+<script src="assets/vendor/meshopt_decoder.js"></script>
+<script src="assets/household-models.js"></script>
 <script>
 /* ============ 中英文切换：界面文字在显示时翻译，切换后立刻生效 ============ */
 const I18N_EN = {"3D 引擎加载失败，请检查网络后刷新页面。": "The 3D engine failed to load. Check your connection and refresh the page.", "这台设备的浏览器不支持 WebGL，无法显示 3D 画面。": "This browser does not support WebGL, so the 3D scene cannot be shown.", "<b>CCTV</b>：主人正在手机上看监控。移动方向以监控画面为准。": "<b>CCTV</b>: your owner is watching the camera feed. Movement follows the camera view.", "<b>人类眼中的夜晚</b>：关灯后只剩神台红灯和窗外路灯。": "<b>Night for humans</b>: with the lights off, only the red altar lamp and the street light remain.", "<b>人类视觉</b>：全彩、清晰，但视野窄，夜里几乎看不见。": "<b>Human vision</b>: full colour and sharp, but a narrow field of view and almost blind at night.", "<b>全部完成！</b>今天也是称职的一天，主人回家会很“惊喜”。": "<b>All done!</b> Another productive day. Your owner is in for a “surprise”.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是狗狗视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, dog vision on the right.", "<b>左右对比</b>：拖动中间的圆钮，左边是人类视觉，右边是猫咪视觉。": "<b>Side by side</b>: drag the round handle. Human vision on the left, cat vision on the right.", "<b>狗狗的夜视</b>：狗也有照膜，比人亮得多，但不如猫。": "<b>Dog night vision</b>: dogs have a tapetum too. Much brighter than a human sees, but not as bright as a cat.", "<b>狗狗视觉</b>：同样分不清红绿，但比猫看得清楚一些，视野更宽；半米以内对不上焦。": "<b>Dog vision</b>: red and green also merge, but it is a little sharper than a cat and wider; nothing closer than half a metre is in focus.", "<b>猫咪的夜视</b>：照膜把路灯和神台的微光放大，屋里轮廓清晰可见。": "<b>Cat night vision</b>: the tapetum amplifies the faint street light and altar lamp, so the room is clearly visible.", "<b>猫咪视觉</b>：红绿坍缩成黄褐色，远处发糊，视野更宽。看看沙发上的四个抱枕。": "<b>Cat vision</b>: red and green collapse into yellow-brown, distance is blurry, the view is wider. Look at the four cushions on the sofa.", "壁虎断尾逃上了天花板！断掉的尾巴还在地上扭。过一会儿它会回来。": "The gecko dropped its tail and fled to the ceiling! The tail is still wriggling on the floor. It will be back in a while.", "切到「关灯夜晚」，人类视觉几乎全黑，猫咪视觉靠照膜把微光放大。": "Switch to “Lights off”: human vision is almost black, while cat vision amplifies faint light with the tapetum.", "狗也只有两种视锥细胞，红和绿都偏黄褐；蓝和黄看得最清楚。": "Dogs also have only two cone types. Red and green both look yellow-brown; blue and yellow are clearest.", "狗也有照膜，暗处比人亮得多，但不如猫。": "Dogs have a tapetum too: far brighter in the dark than a human sees, but less than a cat.", "狗的视力约为人的 1/4，远处细节发糊；半米以内反而对不上焦，要靠鼻子。": "A dog sees about a quarter as sharply as a human, so distant detail blurs; closer than half a metre it cannot focus and relies on its nose.", "狗的视野约 240°，比猫和人都宽。": "A dog sees about 240° around it, wider than both cats and humans.", "猫只有两种视锥细胞。沙发上的红、绿抱枕会变成相近的黄褐色，蓝和黄依然分明。": "Cats have only two cone types. The red and green cushions on the sofa turn a similar yellow-brown, while blue and yellow stay distinct.", "猫的视力约为人的 1/6，几米外的细节会散开；贴到鼻子前的东西也对不上焦。": "A cat sees about a sixth as sharply as a human. Detail a few metres away smears, and things right at its nose are out of focus too.", "猫的视野约 200°，画面边缘会被拉进来。": "A cat sees about 200° around it, so the edges of the picture are pulled in.", "眼睛离地约 50 厘米，是猫的两倍；但钻不进纸箱，也跳不上车顶。": "Eyes about 50 cm off the ground, twice a cat’s; but you cannot fit in the box or jump onto the car roof.", "停下不动时，吊扇、壁虎、小鸟会微微发亮。": "When you hold still, the ceiling fan, the gecko and the bird glow slightly.", "已切换到流畅模式（关闭阴影、降低分辨率）": "Switched to Smooth mode (shadows off, lower resolution)", "已切换到高画质": "Switched to High quality", "主人放下菜刀，弯腰摸了摸你。": "Your owner puts down the knife and bends over to pet you. ", "还顺手把碗添满了。": "They also topped up your bowl.", "路人停下来，朝你挥了挥手。": "The passer-by stops and waves at you.", "点击画面后移动鼠标环顾，Esc 释放": "Click the scene, then move the mouse to look around; Esc releases", "挥爪互动，没东西可玩时喵一声": "Swipe a paw to interact; meow when there is nothing to play with", "伸爪互动，没东西可玩时汪两声": "Reach out a paw to interact; bark when there is nothing to play with", "走动（按住 Shift 奔跑）": "Walk (hold Shift to run)", "跳上沙发、餐桌、床、车顶": "Jump onto the sofa, table, bed and car roof", "走动，推到底奔跑": "Walk; push all the way to run", "🐈 今天，你是一只橘白猫": "🐈 Today you are an orange-and-white cat", "🐕 今天，你是一只柴犬": "🐕 Today you are a Shiba Inu", "蹭蹭主人，讨个摸摸": "Rub against your owner for a pet", "到大门口跟路人打招呼": "Greet the passer-by at the gate", "把 3 样东西推下桌": "Knock 3 things off the table", "骑上扫地机器人兜风": "Ride the robot vacuum", "跳上车顶巡视领地": "Survey your territory from the car roof", "在主人床上打个盹": "Take a nap on your owner’s bed", "抓到墙上的壁虎": "Catch the gecko on the wall", "上二楼窗台看鸟": "Watch the bird from the upstairs windowsill", "拍一下毛线球": "Bat the ball of yarn", "在沙发上磨爪": "Scratch the sofa", "吃几口猫粮": "Eat some cat food", "钻进纸箱": "Crawl into the cardboard box", "比猫清楚，比人模糊": "Sharper than a cat, blurrier than a human", "切换猫 / 狗（Q）": "Switch cat / dog (Q)", "在猫和狗之间切换": "Switch between cat and dog", "猫狗视觉模拟器": "Cat & Dog Vision Simulator", "猫咪眼中的世界": "The world through a cat’s eyes", "狗狗眼中的世界": "The world through a dog’s eyes", "CAM 02 饭厅厨房": "CAM 02 DINING / KITCHEN", "CAM 03 主人房": "CAM 03 MASTER BEDROOM", "CAM 01 客厅": "CAM 01 LIVING ROOM", "CAM 04 车房": "CAM 04 CAR PORCH", "白天 / 关灯夜晚": "Day / lights off", "跳跃 / 挥爪互动": "Jump / paw", "盯住会动的东西": "Locks onto movement", "夜里也看得见": "Sees at night too", "夜里看得见": "Sees at night", "看远处是糊的": "Distance is blurry", "红绿分不清": "Red and green merge", "视野很宽": "Very wide view", "视野更宽": "Even wider view", "个头更高": "Taller", "朝路人喵一声": "Meow at the passer-by", "朝路人汪两声": "Bark at the passer-by", "把它推下去": "Knock it off", "拍毛线球": "Bat the yarn", "蹭蹭主人": "Rub your owner", "吃猫粮": "Eat cat food", "扑壁虎": "Pounce on the gecko", "打个盹": "Take a nap", "磨爪子": "Scratch", "关灯夜晚": "Lights off", "出发巡逻": "Start patrol", "开始巡视": "Start exploring", "CCTV 监控": "CCTV camera", "今日待办": "To-do today", "左下摇杆": "Left stick", "滑动画面": "Swipe", "环顾四周": "Look around", "第一人称": "1st person", "第三人称": "3rd person", "左右对比": "Side by side", "选择动物": "Choose animal", "猫咪视觉": "Cat vision", "狗狗视觉": "Dog vision", "人类视觉": "Human vision", "高画质": "High quality", "怎么玩": "How to play", "换成狗": "Be the dog", "换成猫": "Be the cat", "🐈 当猫": "🐈 Cat", "🐕 当狗": "🐕 Dog", "完成：<b>": "Done: <b>", "对比": "Compare", "下雨": "Rain", "白天": "Day", "画质": "Quality", "说明": "Help", "视角": "View", "视觉": "Vision", "鼠标": "Mouse", "空格": "Space", "流畅": "Smooth", "互动": "Paw", "跳跃": "Jump", "在家里走走看看，随时切换猫咪视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成狗。": "Wander around the house and switch between cat vision and human vision to see how different the same home looks. Press Q while playing to become the dog.", "在家里走走看看，随时切换狗狗视觉和人类视觉，看同一个家有什么不同。玩的时候按 Q 可以换成猫。": "Wander around the house and switch between dog vision and human vision to see how different the same home looks. Press Q while playing to become the cat.", "语言": "Language"};
@@ -280,10 +283,38 @@ function applyLang(){ document.documentElement.lang=LANG==='en'?'en':'zh-CN'; do
 applyLang();
 </script>
 <script>
-(function(){
+(async function(){
 'use strict';
 const $ = id => document.getElementById(id);
 if (!window.THREE) { const d=document.createElement('div'); d.id='err'; d.textContent='3D 引擎加载失败，请检查网络后刷新页面。'; document.body.appendChild(d); return; }
+
+// Decode the character asset while the house is being built. Its script container also works from file://.
+async function loadHouseholdModels(){
+  if(typeof householdModelGLB!=='string'||!THREE.GLTFLoader||typeof MeshoptDecoder==='undefined')return null;
+  try{
+    let bytes;
+    if(typeof Uint8Array.fromBase64==='function'){
+      bytes=Uint8Array.fromBase64(householdModelGLB);
+    }else{
+      const decoded=atob(householdModelGLB);
+      bytes=new Uint8Array(decoded.length);
+      for(let i=0;i<decoded.length;i++)bytes[i]=decoded.charCodeAt(i);
+    }
+    householdModelGLB=null;
+    const loader=new THREE.GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+    const gltf=await new Promise((resolve,reject)=>loader.parse(bytes.buffer,'',resolve,reject));
+    // The GLB stores skinned meshes at scene level. Give each actor its meshes and skeleton together.
+    for(const node of gltf.scene.children.slice()){
+      const role=node.userData.housemate;
+      if(role)gltf.scene.getObjectByName(role).add(node);
+    }
+    return gltf.scene;
+  }catch(error){
+    console.warn('Could not load the household models',error);
+    return null;
+  }
+}
+const householdModelPromise=loadHouseholdModels();
 
 /* ============ 1. 状态 ============ */
 const coarsePointer=matchMedia('(pointer: coarse)').matches;
@@ -5067,6 +5098,55 @@ const hairGrain=canvasTex(256,(c,s)=>{
   }
 });
 const hairCloth=mat(0xffffff,{vertexColors:true,map:hairGrain,roughness:.85});
+function plantHumanFeet(group,legs){
+  let drop=Infinity;
+  for(const leg of legs){
+    const hip=leg.hip.rotation.x,shin=hip+leg.knee.rotation.x;
+    leg.foot.rotation.x=-shin;
+    drop=Math.min(drop,.43*(1-Math.cos(hip))+.42*(1-Math.cos(shin)));
+  }
+  group.position.y=-drop;
+}
+
+// Keep the joints used by the controls, camera, petting IK and scheduled activities.
+function rigHousemate(model,role,M_,solid){
+  const bone=name=>model.getObjectByName(role+'_'+name);
+  const legs=['L','R'].map(side=>{
+    const foot=bone('foot'+side);
+    return {hip:bone('hip'+side),knee:bone('knee'+side),foot,ankle:foot};
+  });
+  const arms=['L','R'].map(side=>({sh:bone('upper'+side),el:bone('elbow'+side)}));
+  const up=bone('chest'),head=bone('head');
+  const eyelids=[],dayWear=[],materials=new Set();
+  // Covers the animated poses, including a raised hand. The bind-pose bounds are too small for a bent arm.
+  const poseBounds=new THREE.Sphere(new THREE.Vector3(0,.85,.06),1.25);
+  model.traverse(mesh=>{
+    if(!mesh.isMesh)return;
+    mesh.castShadow=!mesh.material.transparent;
+    mesh.geometry.boundingSphere=poseBounds.clone();
+    mesh.frustumCulled=true;
+    if(mesh.morphTargetDictionary?.blink!==undefined)eyelids.push(mesh);
+    if(/_(apron|glasses|slipper)/.test(mesh.name))dayWear.push(mesh);
+    materials.add(mesh.material);
+  });
+  for(const material of materials){
+    if(!allMats.includes(material))reg(material);
+  }
+  model.name=role==='man'?'Kitchen owner':'Woman of the house';
+  world.add(model);
+  const blinkOffset=role==='woman'?1.18:0,blinkPeriod=role==='woman'?4.74:4.31;
+  function dress(t,sleeping){
+    const phase=(t+blinkOffset)%blinkPeriod;
+    const closed=sleeping?1:Math.max(0,1-Math.abs(phase-.17)/.10);
+    for(const mesh of eyelids)mesh.morphTargetInfluences[mesh.morphTargetDictionary.blink]=closed;
+    if(role==='man'){
+      for(const mesh of dayWear)mesh.visible=!sleeping;
+      for(const leg of legs)leg.ankle.visible=!sleeping;
+    }
+  }
+  return {g:model,up,head,arms,legs,plant:()=>plantHumanFeet(model,legs),dress,M_,solid};
+}
+const authoredHousehold=await householdModelPromise;
 function buildHuman(o) {
   const g=new THREE.Group(),SK=C(o.skin||0xc79474),SH=C(o.shirt),PA=C(o.pants),HR=C(o.hair||0x302821);
   const M_=(geo,par,x=0,y=0,z=0,material=HM)=>{
@@ -5077,8 +5157,24 @@ function buildHuman(o) {
     for(let i=0;i<colors.length;i+=3)c.toArray(colors,i);
     geo.setAttribute('color',new THREE.BufferAttribute(colors,3));return geo;
   };
+  const role=o.short?'man':o.woman?'woman':null;
+  const authored=role&&authoredHousehold?.getObjectByName(role);
+  if(authored)return rigHousemate(authored,role,M_,solid);
   const joint=(par,x,y,z)=>{const j=new THREE.Group();j.position.set(x,y,z);par.add(j);return j;};
   const cloth=mat(0xffffff,{vertexColors:true,map:rep(texFabric,2,2),roughness:.96});
+  const dressCloth=o.woman?mat(0xffffff,{map:rep(canvasTex(128,(ctx,s)=>{
+    ctx.fillStyle='#3a609b';ctx.fillRect(0,0,s,s);
+    for(let row=0;row<4;row++)for(let col=0;col<4;col++){
+      const x=12+col*32+(row%2)*6,y=13+row*32+3*Math.sin(col+row);
+      ctx.save();ctx.translate(x,y);ctx.rotate(col*1.3+row*.9);
+      ctx.fillStyle='#8caaa4';ctx.beginPath();ctx.ellipse(3,6,1.4,3.5,-.6,0,2*Math.PI);ctx.fill();
+      ctx.fillStyle=(col+row)%3?'#e6e4ce':'#c5d8e6';
+      for(let i=0;i<5;i++){
+        ctx.rotate(2*Math.PI/5);ctx.beginPath();ctx.ellipse(0,2.1,1.35,2.15,0,0,2*Math.PI);ctx.fill();
+      }
+      ctx.fillStyle='#ccac74';ctx.beginPath();ctx.arc(0,0,1,0,2*Math.PI);ctx.fill();ctx.restore();
+    }
+  }),3,2),roughness:.94}):cloth;
   const suit=(rows,base,seam)=>{
     const small=rows.every(row=>row[2]<.021&&row[3]<.021);
     return loft(rows,(t,a)=>{
@@ -5104,6 +5200,9 @@ function buildHuman(o) {
         [.004,-.302,.063,.065],[.004,-.334,.064,.064]],PA,0,0,0,cloth);
       shape(hip,[[.003,-.313,.055,.055],[.006,-.358,.050,.051],[.006,-.413,.049,.053],[.004,-.449,.044,.043]],SK);
       ellipse(knee,0,.002,.005,.047,.052,.049,SK);shape(knee,calves,SK);
+    } else if(o.woman){
+      shape(hip,[[0,.030,.072,.081],[0,-.100,.078,.084],[.005,-.260,.060,.067],[.004,-.444,.046,.049]],SK);
+      ellipse(knee,0,.002,.005,.047,.050,.049,SK);shape(knee,calves,SK);
     } else {
       shape(hip,[[0,.033,.069,.078],[0,-.067,.081,.090],[.003,-.225,.068,.073],
         [.009,-.348,.057,.061],[.006,-.44,.056,.057]],PA,0,0,0,cloth);
@@ -5151,7 +5250,7 @@ function buildHuman(o) {
   M_(solid(surfaceGrid(closedShirt?64:20,54,(u,v)=>{
     const y=-.084+.586*v,[z,w,d]=section(y),a=closedShirt?u*Math.PI*2:(u-.5)*2*(shirtOpening(v)+.025);
     return [w*Math.sin(a),y,z+d*Math.cos(a)];
-  }),inner),up,0,0,0,cloth);
+  }),inner),up,0,0,0,dressCloth);
   const apparel=[];
   if(o.short){
     const bib=joint(up,0,0,0),skirt=joint(up,0,.064,0);apparel.push(bib,skirt);
@@ -5188,16 +5287,11 @@ function buildHuman(o) {
     cord(bib,[[-.016,.065,-.123],[-.036,.049,-.132],[-.058,-.029,-.138]],.004,tape);
     cord(bib,[[.012,.065,-.123],[.033,.037,-.140],[.025,-.048,-.142]],.004,tape);
   }else if(o.woman){
-    // A gathered linen blouse with a piped collar and block-printed hem.
-    const piping=C(0xe5c6a0),print=C(0xdfb28b);
+    const piping=C(0xb6c6d2);
     const sleeveLine=(a,y,lift)=>{const [z,w,d]=section(y);return [(w+lift)*Math.sin(a),y,z+(d+lift)*Math.cos(a)];};
     cord(up,Array.from({length:40},(_,i)=>{const a=i*Math.PI/20;return sleeveLine(a,.471-.029*Math.max(0,Math.cos(a))**3,.002);}),.004,piping,true);
     for(const side of [-1,1])cord(up,[[side*.010,.443,front(side*.010,.443,.002)],[side*.012,.392,front(side*.012,.392,.003)],[side*.006,.338,front(side*.006,.338,.003)]],.0022,piping);
     for(const y of [.345,.375,.405])ellipse(up,0,y,front(0,y,.005),.0036,.0036,.0018,piping);
-    for(let i=0;i<28;i++){
-      const a=i/28*Math.PI*2;
-      cord(up,[sleeveLine(a-.062,-.046,.0025),sleeveLine(a,-.030,.003),sleeveLine(a+.062,-.046,.0025)],.0028,print);
-    }
   }else{
     const trim=SH.clone().multiplyScalar(.76);
     for(const s of [-1,1]){
@@ -5362,7 +5456,7 @@ function buildHuman(o) {
     }
     cord(grooming,[[-.008,.095,faceZ(-.008,.095)+.007],[0,.099,faceZ(0,.099)+.006],[.008,.095,faceZ(.008,.095)+.007]],.0017,metal);
   }else if(o.woman){
-    const highlight=HR.clone().lerp(C(0x956f59),.23),clip=C(0xc79762);
+    const highlight=HR.clone().lerp(C(0x795c53),.22),clip=C(0xc79762);
     for(const side of [-1,1]){
       // Side-parted locks sweep from the crown behind each ear, then taper beside the cheek.
       function swept(u,v){
@@ -5376,13 +5470,6 @@ function buildHuman(o) {
         const taper=.011*(1-v**2);return [p[0]+side*.006*Math.sin(Math.PI*v),y,p[2]+(u-.5)*2*taper];
       },side<0);M_(solid(strand,HR),head,0,0,0,hairCloth);
     }
-    ellipse(head,0,.090,-.096,.058,.057,.041,HR);
-    const bun=ellipse(head,0,.091,-.133,.051,.044,.036,HR);bun.rotation.z=.27;
-    for(let i=0;i<7;i++){
-      const a=i*.82;cord(head,Array.from({length:14},(_,k)=>{const b=a+k*.15;
-        return [.047*Math.cos(b),.09+.038*Math.sin(b),-.132-.027*Math.sin(k/13*Math.PI)];}),.0018,highlight);
-    }
-    cord(head,[[-.041,.105,-.155],[0,.121,-.166],[.046,.127,-.146]],.0029,clip);
     for(const side of [-1,1])ellipse(head,side*.076,.056,-.004,.005,.005,.005,clip);
   }else{
     // Swept front pieces, an elastic and a gathered ponytail with a tapered curl.
@@ -5399,7 +5486,7 @@ function buildHuman(o) {
   const arms=[1,-1].map(side=>{
     const sh=joint(up,side*.166,.441,0),el=joint(sh,side*.012,-.266,0);
     const sleeve=shape(sh,[[0,.045,.009,.014],[0,.028,.039,.045],[0,.005,.052,.057],
-      [-.002,-.047,.054,.055],[0,-.107,.049,.050],[0,-.138,.047,.046]],SH,side*.008,0,0,cloth);
+      [-.002,-.047,.054,.055],[0,-.107,.049,.050],[0,-.138,.047,.046]],SH,side*.008,0,0,dressCloth);
     const shoulder=sleeve.geometry.attributes.position;
     for(let i=0;i<shoulder.count;i++){
       shoulder.setX(i,shoulder.getX(i)-side*.039*smooth(-.014,.045,shoulder.getY(i)));
@@ -5420,9 +5507,43 @@ function buildHuman(o) {
     return {sh,el};
   });
   world.add(g);
-  const plant=()=>{let drop=1;for(const l of legs){const a=l.hip.rotation.x,b=a+l.knee.rotation.x;
-    l.foot.rotation.x=-b;drop=Math.min(drop,.43*(1-Math.cos(a))+.42*(1-Math.cos(b)));}g.position.y=-drop;};
+  const plant=()=>plantHumanFeet(g,legs);
   const joints=[];g.traverse(n=>{if(n.isGroup)joints.push(n);});joints.forEach(batchFinishes);
+  if(o.woman){
+    // The fallback keeps the dress and long hair attached across moving joints.
+    function drape(name,geometry,base,joints,weights){
+      const ids=[],values=[],position=geometry.attributes.position;
+      for(let i=0;i<position.count;i++){
+        const [index,weight]=weights(position.getX(i),position.getY(i));
+        ids.push(...index);values.push(...weight);
+      }
+      geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(ids,4));
+      geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(values,4));
+      const material=reg(base.clone());material.skinning=true;material.side=THREE.DoubleSide;
+      const mesh=new THREE.SkinnedMesh(geometry,material);
+      mesh.name=name;mesh.castShadow=true;g.add(mesh);g.updateMatrixWorld(true);
+      mesh.bind(new THREE.Skeleton(joints));
+    }
+    const skirt=surfaceGrid(64,24,(u,v)=>{
+      const a=2*Math.PI*u,t=1-v,fold=t*.006*Math.cos(11*a+t);
+      return [Math.sin(a)*(.161+.081*t+fold),.355+.640*v+.005*t*Math.cos(6*a),
+        -.004+Math.cos(a)*(.124+.050*t+fold)];
+    });
+    drape('woman_floral_dress',skirt,dressCloth,[up,legs[0].hip,legs[1].hip,legs[0].knee,legs[1].knee],(x,y)=>{
+      const left=smooth(-.10,.10,x),waist=smooth(.73,.99,y),shin=.56*(1-smooth(.35,.56,y));
+      if(waist>0)return [[0,1,2,0],[waist,(1-waist)*left,(1-waist)*(1-left),0]];
+      return [[1,2,3,4],[(1-shin)*left,(1-shin)*(1-left),shin*left,shin*(1-left)]];
+    });
+    const fall=surfaceGrid(48,32,(u,v)=>{
+      const a=1.19+(2*Math.PI-2.38)*u,back=(1-Math.cos(a))*.5;
+      return [Math.sin(a)*(.080+.044*Math.sin(v*2.1)),
+        1.584-v*(.476+.155*back)+.006*v*Math.cos(7*a),
+        -.013+Math.cos(a)*(.086+.028*v)-.086*smooth(.07,.55,v)+.005*v*Math.cos(9*a)];
+    });
+    drape('woman_long_hair',solid(fall,HR),hairCloth,[head,up],(x,y)=>{
+      const h=smooth(1.34,1.51,y);return [[0,1,0,0],[h,1-h,0,0]];
+    });
+  }
   g.name=o.short?'Kitchen owner':o.woman?'Woman of the house':'Passing neighbour';
   function dress(time,sleeping){
     const phase=(time+(o.tail?1.26:0))%(o.tail?4.17:3.69);
@@ -5436,7 +5557,7 @@ function buildHuman(o) {
   }
   return {g,up,head,arms,legs,plant,dress,M_,solid};
 }
-const owner = buildHuman({shirt:0x78958b,pants:0x454b4c,hair:0x403c36,skin:0xbc8768,shoe:0x635a4f,short:true}); owner.g.position.set(-.62,0,-5.1); owner.g.rotation.y=Math.PI; owner.pet=0; owner.k=0; owner.yawT=Math.PI;
+const owner = buildHuman({shirt:0x4a5c71,pants:0x404855,hair:0x302d30,skin:0xbc8768,shoe:0x635a4f,short:true}); owner.g.position.set(-.62,0,-5.1); owner.g.rotation.y=Math.PI; owner.pet=0; owner.k=0; owner.yawT=Math.PI;
 owner.colK={x0:-.82,x1:-.42,y0:0,y1:1.6,z0:-5.3,z1:-4.9}; owner.colB={x0:-4.75,x1:-3.0,y0:-9,y1:-8,z0:3.48,z1:3.92}; colliders.push(owner.colK,owner.colB);
 owner.qS=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,0,-1),new THREE.Vector3(-Math.cos(.05),Math.sin(.05),0),new THREE.Vector3(Math.sin(.05),Math.cos(.05),0)));
 { const o=owner, st=C(0xc9cdd1), bk=C(0x15161a), e=o.arms[1].el; o.knife=new THREE.Group(); e.add(o.knife); o.M_(o.solid(new THREE.BoxGeometry(.022,.1,.022),bk),o.knife,0,-.29,0); o.M_(o.solid(new THREE.BoxGeometry(.004,.17,.045),st),o.knife,0,-.41,-.02);
@@ -5444,7 +5565,7 @@ owner.qS=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBa
 }
 const walker = buildHuman({shirt:0xae6047,pants:0x465669,hair:0x302820,skin:0xad795f,tail:true,shoe:0xd4c8ae}); walker.x=-13; walker.dir=1; walker.ph=0; walker.wave=0; walker.g.position.set(-13,nearPathHeight(-13),WALK_Z); walker.g.rotation.y=Math.PI/2;
 // Residents use the same movement solver as the pets, with adult eye and clearance heights.
-const woman=buildHuman({woman:true,shirt:0xad695d,pants:0x56666b,hair:0x39322f,skin:0xb88063,shoe:0xc4ae8e});
+const woman=buildHuman({woman:true,shirt:0x3a609b,pants:0x394c69,hair:0x302a2b,skin:0xb88063,shoe:0xc4ae8e});
 woman.g.scale.set(.94,.97,.95);
 function patternBook(){
   const g=new THREE.Group();g.name='Open pattern book';g.position.set(0,.202,.295);g.rotation.x=-.46;woman.up.add(g);
@@ -5496,15 +5617,17 @@ function humanPose(r,p,pace,phase,reach,wave){
   const bend=handTarget?reach*THREE.MathUtils.clamp((.87-handTarget.y+p.y)/.50,.08,1.18):0;
   let yaw=p.yaw;
   if(handTarget&&r!==residents[S.role])yaw=angLerp(yaw,Math.atan2(handTarget.x-p.x,handTarget.z-p.z),reach);
-  rig.g.rotation.set(0,yaw,0);rig.up.rotation.set(reach*.82+.065*pace,0,0);
-  rig.head.rotation.set(reach*.24+.025*Math.sin(phase*.5),0,0);
+  const rest=(1-pace)*(1-reach)*(1-wave),rhythm=Math.sin(phase),side=r===residents.woman?-1:1;
+  rig.g.rotation.set(0,yaw,0);
+  rig.up.rotation.set(reach*.82+.065*pace,-.065*rhythm*pace+side*.022*rest,side*.012*rest);
+  rig.head.rotation.set(reach*.24+.018*Math.sin(phase*.5),.040*rhythm*pace+side*.016*rest,0);
   rig.legs.forEach((l,i)=>{
     const swing=Math.sin(phase+i*Math.PI),lift=Math.max(0,Math.cos(phase+i*Math.PI));
-    l.hip.rotation.set(-swing*pace*.48-bend*.96,0,0);
-    l.knee.rotation.set((.07+.64*lift)*pace+bend*1.88,0,0);
+    l.hip.rotation.set(-swing*pace*.48-bend*.96+(i?-.032:.018)*rest,0,0);
+    l.knee.rotation.set((.07+.64*lift)*pace+bend*1.88+(i?.055:.012)*rest,0,0);
     const a=rig.arms[i];
     a.sh.rotation.set(swing*pace*.41-reach*(i?1.04:.28),0,(i?-1:1)*(.08+.05*pace));
-    a.el.rotation.set(-.11-.19*pace-reach*(i?.26:.16),0,0);
+    a.el.rotation.set(-.11-.19*pace-reach*(i?.26:.16)-(i?.07:.025)*rest,0,0);
   });
   if(wave>0){const arm=rig.arms[1];arm.sh.rotation.set(-.10,0,-.09-wave*2.1);arm.el.rotation.set(-.18-wave*.25,0,Math.sin(time*11)*.23*wave);}
   rig.plant();rig.g.position.set(p.x,p.y+rig.g.position.y*rig.g.scale.y,p.z);

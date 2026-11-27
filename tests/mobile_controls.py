@@ -38,6 +38,15 @@ def run(url):
             game = Path(__file__).resolve().parents[1] / "index.html"
             url = "http://game.test/"
             page.route(url, lambda route: route.fulfill(path=game, content_type="text/html; charset=utf-8"))
+            scripts = {
+                url + asset.relative_to(game.parent).as_posix(): asset
+                for asset in (game.parent / "assets").rglob("*.js")
+            }
+
+            def serve_script(route):
+                route.fulfill(path=scripts[route.request.url], content_type="application/javascript")
+
+            page.route(url + "assets/**", serve_script)
 
             def serve_three(route):
                 with urlopen(route.request.url, timeout=30) as source:
@@ -48,6 +57,16 @@ def run(url):
         page.wait_for_function(
             "window.__cat && document.querySelectorAll('#todo-list li').length", timeout=120000
         )
+        # Both normal player models should be loaded, including their eyelid morphs.
+        assert page.evaluate("""Object.values(__cat.residents).every(({rig}) => {
+            let hasFace = false;
+            rig.g.traverse(mesh => {
+                if (mesh.isSkinnedMesh && mesh.morphTargetDictionary?.blink !== undefined) hasFace = true;
+            });
+            return hasFace;
+        })""")
+        assert page.evaluate("""['woman_long_hair', 'woman_floral_dress'].every(name =>
+            __cat.residents.woman.rig.g.getObjectByName(name)?.isSkinnedMesh)""")
         assert page.locator("#game-title").inner_text() == page.title()
         assert page.locator("#modal .pick button").count() == 4
         page.locator("#go").tap()
