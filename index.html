@@ -5108,6 +5108,12 @@ function plantHumanFeet(group,legs){
   group.position.y=-drop;
 }
 
+function humanBlink(t,offset){
+  const clock=t+offset;
+  const phase=(clock+.28*Math.sin(clock*.64))%4.43;
+  return smooth(.02,.085,phase)*(1-smooth(.097,.225,phase));
+}
+
 // Keep the joints used by the controls, camera, petting IK and scheduled activities.
 function rigHousemate(model,role,M_,solid){
   const bone=name=>model.getObjectByName(role+'_'+name);
@@ -5115,9 +5121,15 @@ function rigHousemate(model,role,M_,solid){
     const foot=bone('foot'+side);
     return {hip:bone('hip'+side),knee:bone('knee'+side),foot,ankle:foot};
   });
-  const arms=['L','R'].map(side=>({sh:bone('upper'+side),el:bone('elbow'+side)}));
+  const arms=['L','R'].map(side=>{
+    const sh=bone('upper'+side),el=bone('elbow'+side);
+    const hand=bone('hand'+side)||new THREE.Group();
+    if(!hand.parent){hand.position.set(0,-.23,0);el.add(hand);}
+    return {sh,el,hand};
+  });
   const up=bone('chest'),head=bone('head');
-  const eyelids=[],dayWear=[],materials=new Set();
+  const faces=[],eyes=['L','R'].map(side=>bone('eye'+side)).filter(Boolean);
+  const dayWear=[],materials=new Set();
   // Covers the animated poses, including a raised hand. The bind-pose bounds are too small for a bent arm.
   const poseBounds=new THREE.Sphere(new THREE.Vector3(0,.85,.06),1.25);
   model.traverse(mesh=>{
@@ -5125,7 +5137,7 @@ function rigHousemate(model,role,M_,solid){
     mesh.castShadow=!mesh.material.transparent;
     mesh.geometry.boundingSphere=poseBounds.clone();
     mesh.frustumCulled=true;
-    if(mesh.morphTargetDictionary?.blink!==undefined)eyelids.push(mesh);
+    if(mesh.morphTargetDictionary?.blink!==undefined)faces.push(mesh);
     if(/_(apron|glasses|slipper)/.test(mesh.name))dayWear.push(mesh);
     materials.add(mesh.material);
   });
@@ -5134,11 +5146,15 @@ function rigHousemate(model,role,M_,solid){
   }
   model.name=role==='man'?'Kitchen owner':'Woman of the house';
   world.add(model);
-  const blinkOffset=role==='woman'?1.18:0,blinkPeriod=role==='woman'?4.74:4.31;
-  function dress(t,sleeping){
-    const phase=(t+blinkOffset)%blinkPeriod;
-    const closed=sleeping?1:Math.max(0,1-Math.abs(phase-.17)/.10);
-    for(const mesh of eyelids)mesh.morphTargetInfluences[mesh.morphTargetDictionary.blink]=closed;
+  const blinkOffset=role==='woman'?1.73:.46;
+  function dress(t,sleeping,smile=0,eyeYaw=0,eyePitch=0){
+    const closed=sleeping?1:humanBlink(t,blinkOffset);
+    for(const mesh of faces){
+      const targets=mesh.morphTargetDictionary;
+      mesh.morphTargetInfluences[targets.blink]=closed;
+      if(targets.smile!==undefined)mesh.morphTargetInfluences[targets.smile]=sleeping?0:smile;
+    }
+    for(const eye of eyes)eye.rotation.set(eyePitch,eyeYaw,0,'YXZ');
     if(role==='man'){
       for(const mesh of dayWear)mesh.visible=!sleeping;
       for(const leg of legs)leg.ankle.visible=!sleeping;
@@ -5372,6 +5388,7 @@ function buildHuman(o) {
   faceGeo.setAttribute('color',new THREE.Float32BufferAttribute(faceColor,3));M_(faceGeo,head);
   function faceZ(x,y){return headPoint(Math.asin(THREE.MathUtils.clamp(x/sectionsAt(y)[0],-.999,.999)),y)[2];}
   const mouthWidth=o.short?.025:.024,smile=x=>.0362+.0015*(x/mouthWidth)**2;
+  const mouth=joint(head,0,0,0);
   for(const top of [false,true]){
     const lip=surfaceGrid(36,8,(u,v)=>{
       const n=2*u-1,x=n*mouthWidth,taper=Math.max(0,1-n*n);
@@ -5379,9 +5396,9 @@ function buildHuman(o) {
       const y=smile(x)+(top?cupid:-.0054)*v*taper;
       return [x,y,faceZ(x,y)+taper*(.0006+.0020*Math.sin(Math.PI*v))];
     },!top);
-    M_(solid(lip,SK.clone().lerp(LIP,top?.65:.48)),head);
+    M_(solid(lip,SK.clone().lerp(LIP,top?.65:.48)),mouth);
   }
-  cord(head,Array.from({length:20},(_,i)=>{const x=(i/19-.5)*mouthWidth*1.84,y=smile(x);
+  cord(mouth,Array.from({length:20},(_,i)=>{const x=(i/19-.5)*mouthWidth*1.84,y=smile(x);
     return [x,y,faceZ(x,y)+.0011*(1-(x/mouthWidth)**2)];}),.00052,SK.clone().lerp(C(0x653e38),.44));
   for(const side of [-1,1]){
     const ear=ellipse(head,side*.073,.080,-.006,.012,.021,.014,SK);
@@ -5497,14 +5514,15 @@ function buildHuman(o) {
     shape(sh,[[0,-.119,.044,.044],[.002,-.164,.043,.045],[0,-.224,.035,.039],[0,-.275,.030,.032]],SK,side*.012);
     shape(el,[[0,.021,.029,.033],[0,-.029,.038,.040],[.003,-.082,.037,.041],[.001,-.159,.026,.031],
       [-.002,-.221,.020,.025],[-.001,-.249,.020,.026]],SK);
-    ellipse(el,0,-.268,.002,.019,.045,.034,SK);
+    const hand=joint(el,0,-.23,0);
+    ellipse(hand,0,-.038,.002,.019,.045,.034,SK);
     for(let i=0;i<4;i++) {
       const length=[.058,.065,.061,.048][i],z=.022-i*.015;
-      shape(el,[[z,-.282,.014,.009],[z,-.307,.012,.009],[z+.001,-.300-length*.64,.010,.007],
-        [z+.003,-.300-length,.006,.005],[z+.004,-.303-length,.002,.003]],SK,-side*.004);
+      shape(hand,[[z,-.052,.014,.009],[z,-.077,.012,.009],[z+.001,-.070-length*.64,.010,.007],
+        [z+.003,-.070-length,.006,.005],[z+.004,-.073-length,.002,.003]],SK,-side*.004);
     }
-    ellipse(el,-side*.013,-.275,.031,.011,.033,.012,SK).rotation.x=-.35;
-    return {sh,el};
+    ellipse(hand,-side*.013,-.045,.031,.011,.033,.012,SK).rotation.x=-.35;
+    return {sh,el,hand};
   });
   world.add(g);
   const plant=()=>plantHumanFeet(g,legs);
@@ -5545,10 +5563,13 @@ function buildHuman(o) {
     });
   }
   g.name=o.short?'Kitchen owner':o.woman?'Woman of the house':'Passing neighbour';
-  function dress(time,sleeping){
-    const phase=(time+(o.tail?1.26:0))%(o.tail?4.17:3.69);
-    const open=sleeping?.018:Math.max(.035,Math.min(1,Math.abs(phase-.14)/.105));
-    for(const lid of lids)lid.scale.y=open;
+  function dress(time,sleeping,smile=0,eyeYaw=0,eyePitch=0){
+    const closed=sleeping?1:humanBlink(time,o.tail?2.89:o.woman?1.73:.46);
+    for(const lid of lids){
+      lid.scale.y=Math.max(.025,(1-closed)*(1-.09*smile));
+      lid.position.x=.009*eyeYaw;lid.position.y=.091-.006*eyePitch;
+    }
+    mouth.scale.x=1+.07*smile;mouth.position.y=.0018*smile;
     if(o.short){
       for(const garment of apparel)garment.visible=!sleeping;
       apparel[1].rotation.x=-up.rotation.x*.76;
@@ -5560,8 +5581,26 @@ function buildHuman(o) {
 const owner = buildHuman({shirt:0x4a5c71,pants:0x404855,hair:0x302d30,skin:0xbc8768,shoe:0x635a4f,short:true}); owner.g.position.set(-.62,0,-5.1); owner.g.rotation.y=Math.PI; owner.pet=0; owner.k=0; owner.yawT=Math.PI;
 owner.colK={x0:-.82,x1:-.42,y0:0,y1:1.6,z0:-5.3,z1:-4.9}; owner.colB={x0:-4.75,x1:-3.0,y0:-9,y1:-8,z0:3.48,z1:3.92}; colliders.push(owner.colK,owner.colB);
 owner.qS=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(new THREE.Vector3(0,0,-1),new THREE.Vector3(-Math.cos(.05),Math.sin(.05),0),new THREE.Vector3(Math.sin(.05),Math.cos(.05),0)));
-{ const o=owner, st=C(0xc9cdd1), bk=C(0x15161a), e=o.arms[1].el; o.knife=new THREE.Group(); e.add(o.knife); o.M_(o.solid(new THREE.BoxGeometry(.022,.1,.022),bk),o.knife,0,-.29,0); o.M_(o.solid(new THREE.BoxGeometry(.004,.17,.045),st),o.knife,0,-.41,-.02);
-  o.knife2=new THREE.Group(); world.add(o.knife2); o.knife2.position.set(-.5,.925,-5.6); o.knife2.rotation.set(Math.PI/2,0,1.2); o.M_(o.solid(new THREE.BoxGeometry(.022,.1,.022),bk),o.knife2,0,.1,0); o.M_(o.solid(new THREE.BoxGeometry(.004,.17,.045),st),o.knife2,0,-.03,0); o.knife2.visible=false;
+{ const o=owner;
+  o.knife=new THREE.Group();o.arms[1].hand.add(o.knife);o.knife.position.set(0,-.060,0);
+  o.M_(o.solid(new THREE.BoxGeometry(.022,.1,.022),C(0x15161a)),o.knife);
+  o.M_(o.solid(new THREE.BoxGeometry(.004,.17,.045),C(0xc9cdd1)),o.knife,0,-.12,-.02);
+  o.knife2=o.knife.clone();world.add(o.knife2);
+  o.knife2.rotation.set(Math.PI/2,0,1.2);
+  o.counterRotation=o.knife2.quaternion.clone();
+  o.counterPosition=new THREE.Vector3(0,.10,0).applyQuaternion(o.counterRotation).add(new THREE.Vector3(-.5,.925,-5.6));
+  o.knife2.position.copy(o.counterPosition);o.knife2.visible=false;
+}
+function restUtensil(amount){
+  const held=owner.knife,prop=owner.knife2;
+  held.visible=amount===0;prop.visible=amount>0;
+  if(!prop.visible)return;
+  if(amount===1){
+    prop.position.copy(owner.counterPosition);prop.quaternion.copy(owner.counterRotation);
+  }else{
+    held.getWorldPosition(prop.position).lerp(owner.counterPosition,amount);
+    held.getWorldQuaternion(prop.quaternion).slerp(owner.counterRotation,amount);
+  }
 }
 const walker = buildHuman({shirt:0xae6047,pants:0x465669,hair:0x302820,skin:0xad795f,tail:true,shoe:0xd4c8ae}); walker.x=-13; walker.dir=1; walker.ph=0; walker.wave=0; walker.g.position.set(-13,nearPathHeight(-13),WALK_Z); walker.g.rotation.y=Math.PI/2;
 // Residents use the same movement solver as the pets, with adult eye and clearance heights.
@@ -5580,7 +5619,12 @@ function patternBook(){
     }));
     part(g,surfaceGrid(12,3,(u,v)=>[side*(.002+.137*u),.004+.010*Math.sin(u*Math.PI),(.5-v)*.170],side<0),mat(0xffffff,{map:tex,roughness:.93,side:THREE.DoubleSide}));
   }
-  batchFinishes(g);return g;
+  batchFinishes(g);
+  const support=woman.arms[0];
+  support.sh.rotation.set(-.22,0,-.17);support.el.rotation.x=-1.23;
+  support.hand.attach(g);
+  support.sh.rotation.set(0,0,0);support.el.rotation.x=0;
+  return g;
 }
 const readingBook=patternBook();
 
@@ -5607,7 +5651,74 @@ function setBodyBounds(bounds,p){
   if(!p){bounds.y0=-9;bounds.y1=-8;return;}
   Object.assign(bounds,{x0:p.x-.19,x1:p.x+.19,y0:p.y,y1:p.y+1.61,z0:p.z-.16,z1:p.z+.16});
 }
-function humanPose(r,p,pace,phase,reach,wave){
+const greetingDuration=2.20,replyDelay=.28;
+const mix=THREE.MathUtils.lerp,clamp=THREE.MathUtils.clamp;
+const angleTo=(from,to)=>Math.atan2(Math.sin(to-from),Math.cos(to-from));
+
+// Local arm poses with the elbow below the shoulder and the open palm facing the listener.
+const raisedArms=[1,-1].map(side=>{
+  const upper=new THREE.Vector3(side*.70,-.48,.52).normalize();
+  const shoulder=new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(side*.012,-.266,0).normalize(),upper);
+  const y=new THREE.Vector3(-side*.13,-.94,-.30).normalize();
+  const x=new THREE.Vector3(.10,0,-side);
+  const z=new THREE.Vector3().crossVectors(x,y).normalize();x.crossVectors(y,z);
+  const forearm=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(x,y,z));
+  return {shoulder,elbow:shoulder.clone().invert().multiply(forearm)};
+});
+function notice(rig,point,eyeHeight,reply=false){
+  const from=rig.g.rotation.y,p=rig.g.position;
+  rig.hello={from,turn:angleTo(from,Math.atan2(point.x-p.x,point.z-p.z)),point,eyeHeight,reply,moved:false};
+}
+function waveStroke(t,reply){
+  if(reply)return .76*smooth(.68,.98,t)-1.14*smooth(.98,1.24,t)+.38*smooth(1.24,1.57,t);
+  return smooth(.65,.93,t)-1.72*smooth(.93,1.15,t)+1.23*smooth(1.15,1.40,t)-.51*smooth(1.40,1.66,t);
+}
+function greetPose(rig,t,armIndex,ground,controlled,baseEyeYaw,baseEyePitch){
+  const hello=rig.hello,arm=rig.arms[armIndex],raised=raisedArms[armIndex],side=armIndex?-1:1;
+  const attention=smooth(.015,.16,t)*(1-smooth(1.84,greetingDuration,t));
+  const look=smooth(.07,.41,t)*(1-smooth(1.62,2.18,t));
+  const pivot=.52*smooth(.13,.52,t)+.48*smooth(.43,.85,t);
+  if(controlled){
+    if(t>.36&&cat.moving)hello.moved=true;
+    if(!hello.moved&&S.view!=='1st')rig.g.rotation.y=cat.yaw=hello.from+hello.turn*pivot;
+  }else{
+    const body=pivot*(1-smooth(1.58,greetingDuration,t));
+    rig.g.rotation.y+=angleTo(rig.g.rotation.y,hello.from+hello.turn)*body;
+  }
+  const dx=hello.point.x-rig.g.position.x,dz=hello.point.z-rig.g.position.z;
+  const yaw=angleTo(rig.g.rotation.y,Math.atan2(dx,dz));
+  const pitch=Math.atan2(ground+1.55*rig.g.scale.y-hello.point.y-hello.eyeHeight,Math.max(.25,Math.hypot(dx,dz)));
+  const nod=smooth(.22,.54,t)*(1-smooth(.55,.95,t));
+  rig.up.rotation.y+=clamp(yaw*.35,-.31,.31)*look;
+  rig.up.rotation.x+=.075*nod;rig.up.rotation.z-=side*.030*look;
+  rig.head.rotation.y=mix(rig.head.rotation.y,clamp(yaw-rig.up.rotation.y,-.80,.80),look);
+  rig.head.rotation.x=mix(rig.head.rotation.x,clamp(pitch*.70,-.30,.48),look)+(hello.reply?.19:.11)*nod;
+  const lift=smooth(.19,.74,t)*(1-smooth(1.40,2.04,t));
+  const bend=smooth(.26,.79,t)*(1-smooth(1.50,2.11,t));
+  arm.sh.quaternion.slerp(raised.shoulder,lift*(hello.reply?.91:1));
+  arm.el.quaternion.slerp(raised.elbow,bend*(hello.reply?.96:1));
+  arm.el.rotateX(side*.105*waveStroke(t,hello.reply));
+  arm.hand.rotation.x+=side*(.33*waveStroke(t-.065,hello.reply)+.055*bend);
+  arm.hand.rotation.y+=side*.12*bend;
+  // Transfer weight between the feet as the pelvis pivots, then settle back into the base stance.
+  if(!controlled||!hello.moved){
+    const stride=Math.min(1,Math.abs(hello.turn)/1.25);
+    rig.legs.forEach((leg,i)=>{
+      const lead=i===(hello.turn>0?0:1);
+      const a=t-(lead?0:.27),b=t-(lead?1.60:1.78);
+      let step=smooth(.11,.27,a)*(1-smooth(.27,.52,a));
+      if(!controlled)step+=smooth(0,.12,b)*(1-smooth(.12,.36,b));
+      leg.hip.rotation.x-=stride*step*.17;leg.knee.rotation.x+=stride*step*.33;
+    });
+    rig.plant();rig.g.position.y=ground+rig.g.position.y*rig.g.scale.y;
+  }
+  const smile=smooth(.12,.74,t)*(1-smooth(1.54,greetingDuration,t));
+  const eyeYaw=mix(baseEyeYaw,clamp(yaw-rig.up.rotation.y-rig.head.rotation.y,-.25,.25),attention);
+  const eyePitch=mix(baseEyePitch,clamp(pitch-rig.up.rotation.x-rig.head.rotation.x,-.16,.18),attention);
+  rig.dress(time,false,.04+.74*smile,eyeYaw,eyePitch);
+}
+
+function humanPose(r,p,pace,phase,reach){
   const rig=r.rig;
   let handTarget=reach>0?r.bowl:null;
   if(reach>0&&r.target){
@@ -5617,22 +5728,25 @@ function humanPose(r,p,pace,phase,reach,wave){
   const bend=handTarget?reach*THREE.MathUtils.clamp((.87-handTarget.y+p.y)/.50,.08,1.18):0;
   let yaw=p.yaw;
   if(handTarget&&r!==residents[S.role])yaw=angLerp(yaw,Math.atan2(handTarget.x-p.x,handTarget.z-p.z),reach);
-  const rest=(1-pace)*(1-reach)*(1-wave),rhythm=Math.sin(phase),side=r===residents.woman?-1:1;
+  const rest=(1-pace)*(1-reach),rhythm=Math.sin(phase),side=r===residents.woman?-1:1;
+  const breath=Math.sin(time*1.64+side*1.2),balance=.70*Math.sin(time*.62+side)+.30*Math.sin(time*.27-side);
   rig.g.rotation.set(0,yaw,0);
-  rig.up.rotation.set(reach*.82+.065*pace,-.065*rhythm*pace+side*.022*rest,side*.012*rest);
-  rig.head.rotation.set(reach*.24+.018*Math.sin(phase*.5),.040*rhythm*pace+side*.016*rest,0);
+  rig.up.rotation.set(reach*.82+.065*pace+.015*breath*rest,
+    -.090*rhythm*pace+(.024*side+.025*balance)*rest,.027*rhythm*pace+.030*balance*rest);
+  rig.head.rotation.set(reach*.24+.014*Math.cos(phase*2)*pace-.011*breath*rest,
+    .055*rhythm*pace+(.028*side+.066*balance)*rest,-.55*rig.up.rotation.z);
   rig.legs.forEach((l,i)=>{
     const swing=Math.sin(phase+i*Math.PI),lift=Math.max(0,Math.cos(phase+i*Math.PI));
-    l.hip.rotation.set(-swing*pace*.48-bend*.96+(i?-.032:.018)*rest,0,0);
-    l.knee.rotation.set((.07+.64*lift)*pace+bend*1.88+(i?.055:.012)*rest,0,0);
+    const shift=(i?1:-1)*balance*.022;
+    l.hip.rotation.set(-swing*pace*.48-bend*.96+((i?-.032:.018)+shift)*rest,0,0);
+    l.knee.rotation.set((.07+.64*lift)*pace+bend*1.88+(.048-shift)*rest,0,0);
     const a=rig.arms[i];
-    a.sh.rotation.set(swing*pace*.41-reach*(i?1.04:.28),0,(i?-1:1)*(.08+.05*pace));
+    a.sh.rotation.set(swing*pace*.41-reach*(i?1.04:.28)+.022*breath*rest,0,(i?-1:1)*(.08+.05*pace+.013*balance*rest));
     a.el.rotation.set(-.11-.19*pace-reach*(i?.26:.16)-(i?.07:.025)*rest,0,0);
+    a.hand.rotation.set(.052*Math.sin(phase+i*Math.PI-.45)*pace,(i?-1:1)*.034*rest,0);
   });
-  if(wave>0){const arm=rig.arms[1];arm.sh.rotation.set(-.10,0,-.09-wave*2.1);arm.el.rotation.set(-.18-wave*.25,0,Math.sin(time*11)*.23*wave);}
   rig.plant();rig.g.position.set(p.x,p.y+rig.g.position.y*rig.g.scale.y,p.z);
   if(handTarget)reachFor(rig,handTarget,reach);
-  rig.dress(time,false);
 }
 // Solve the two arm segments in upper-body space so the palm meets the moving head or bowl.
 function reachFor(rig,point,amount){
@@ -5656,7 +5770,7 @@ function chooseRole(id,fromPicker=false){
   // Keep a stable landing if the role picker was opened mid-jump.
   const y=cat.onGround?cat.pos.y:supportAt(cat.pos.x,cat.pos.z,cat.pos.y,.10,0);
   const saved={x:cat.pos.x,y,z:cat.pos.z,yaw:cat.yaw};
-  if(wasHuman){const r=residents[old];r.pose=saved;r.gesture=0;r.rig.g.visible=true;setBodyBounds(r.body,saved);humanPose(r,saved,0,0,0,0);}
+  if(wasHuman){const r=residents[old];r.pose=saved;r.gesture=0;r.rig.g.visible=true;setBodyBounds(r.body,saved);humanPose(r,saved,0,0,0);}
   else {rest[old]=saved;npcSit(RIGS[old],saved);lastPetVision=S.vision;}
   if(cat.pose==='nap'&&cat.poseT>0){clearTimeout(napTimer);$('nap').classList.remove('show');}
   if(wasHuman!==isHuman){
@@ -5665,38 +5779,54 @@ function chooseRole(id,fromPicker=false){
   S.role=id;let p;
   if(isHuman){
     const r=residents[id];p=r.pose||restPosition(id);r.pose=null;r.gesture=0;r.rig.g.visible=true;
-    if(id==='man'){owner.sl=false;owner.pet=owner.k=0;owner.knife.visible=false;owner.knife2.visible=true;setBodyBounds(owner.colB,null);}
+    if(id==='man'){owner.sl=false;owner.pet=owner.k=0;restUtensil(1);setBodyBounds(owner.colB,null);}
     setBodyBounds(r.body,null);A=residentBodies[id];S.vision='human';
   }else {p=rest[id];S.animal=id;A=ANIMALS[id];useRig(RIGS[id]);S.vision=lastPetVision;}
   cat.pos.set(p.x,p.y,p.z);cat.vel.set(0,0,0);cat.yaw=S.yaw=p.yaw;cat.vis=camSmooth.y=p.y;fpY=A.eye;S.pitch=-.07;
   Object.assign(cat,{onGround:true,jumpBuf:0,air:0,pitch:0,sit:0,idle:0,pose:'',poseT:0,poseEnd:null,swipe:0,tailK:0,rear:0,eatK:0,ride:0,free:0,stuckT:0,moving:false,dip:0});
   S.lock=0;zoneT=0;current=null;$('prompt').hidden=true;resetInput();blob.scale.setScalar(isHuman?1.3:A.sc);
-  if(isHuman){humanPose(residents[id],p,0,0,0,0);if(id==='woman')readingBook.visible=false;fpPaw.visible=false;}
+  if(isHuman){humanPose(residents[id],p,0,0,0);if(id==='woman')readingBook.visible=false;fpPaw.visible=false;}
   renderTodo();fillIntro();syncUI();
   if(!fromPicker){if(isHuman)sfx.ui();else (id==='dog'?sfx.bark:sfx.meow)();describe();}
 }
 function updateResident(id,dt){
   const r=residents[id],inControl=S.role===id;
   r.gesture=Math.max(0,r.gesture-dt);
-  const beat=Math.sin(Math.PI*Math.min(1,r.gesture/1.05));
-  if(id==='woman')readingBook.visible=!inControl&&!r.pose&&!S.night&&r.gesture<=0;
-  if(inControl){
-    const pace=cat.onGround?Math.min(1,Math.hypot(cat.vel.x,cat.vel.z)/2):.15;
-    humanPose(r,{x:cat.pos.x,y:cat.pos.y,z:cat.pos.z,yaw:cat.yaw},pace,cat.walk,r.motion==='reach'?beat:0,r.motion==='wave'?beat:0);
-  }else{
-    const p=r.pose||restPosition(id);
-    humanPose(r,p,0,time*4,r.motion==='reach'?beat:0,r.motion==='wave'?beat:0);
-    if(id==='woman'&&!r.gesture){
-      r.rig.head.rotation.y=.11*Math.sin(time*.43);
-      if(readingBook.visible){
-        r.rig.head.rotation.x=.37+.023*Math.sin(time*.62);
-        r.rig.arms.forEach((arm,i)=>{const side=i?-1:1;
-          arm.sh.rotation.set(-.22,0,-side*.17);arm.el.rotation.set(-1.23-.055*Math.sin(time*.7+i),0,0);
-        });
-      }
+  const waving=r.motion==='wave'&&r.gesture>0;
+  const reaching=r.motion==='reach'&&r.gesture>0;
+  const reach=reaching?Math.sin(Math.PI*Math.min(1,r.gesture/1.05)):0;
+  const p=inControl?{x:cat.pos.x,y:cat.pos.y,z:cat.pos.z,yaw:cat.yaw}:r.pose||restPosition(id);
+  const pace=inControl?(cat.onGround?Math.min(1,Math.hypot(cat.vel.x,cat.vel.z)/2):.15):0;
+  humanPose(r,p,pace,inControl?cat.walk:0,reach);
+  const rig=r.rig,reading=id==='woman'&&!inControl&&!r.pose&&!S.night&&!reaching;
+  if(id==='woman')readingBook.visible=reading;
+  let eyePitch=0,eyeYaw=.045*Math.sin(time*.61+(id==='woman'?1.2:0));
+  if(reading){
+    const scan=Math.sin(time*.93);
+    rig.head.rotation.x=.36+.022*Math.sin(time*.68);
+    rig.head.rotation.y=.055*scan;eyePitch=.085;eyeYaw=.065*scan;
+    rig.arms.forEach((arm,i)=>{
+      arm.sh.rotation.set(-.22+.012*Math.sin(time*1.6),0,i?.17:-.17);
+      arm.el.rotation.set(-1.23-.026*Math.sin(time*.7+i),0,0);
+    });
+  }
+  if(!inControl){
+    if(!reaching){
+      const dx=cat.pos.x-p.x,dz=cat.pos.z-p.z,d=Math.hypot(dx,dz);
+      const yaw=angleTo(p.yaw,Math.atan2(dx,dz));
+      const near=(1-smooth(1,2,d))*(1-smooth(.75,1.45,Math.abs(yaw)))*(1-smooth(.35,.70,Math.abs(cat.pos.y-p.y)));
+      const interest=near*(reading?smooth(-.1,.8,Math.sin(time*.64)):1);
+      r.interest=(r.interest||0)+(interest-(r.interest||0))*(1-Math.exp(-dt*3.8));
+      rig.head.rotation.y=mix(rig.head.rotation.y,clamp(yaw*.66,-.70,.70),r.interest);
+      const pitch=Math.atan2(p.y+1.5-cat.pos.y-A.eye,Math.max(.35,d));
+      rig.head.rotation.x=mix(rig.head.rotation.x,clamp(pitch*.63,-.18,.48),r.interest);
+      eyePitch=mix(eyePitch,clamp(pitch*.25,-.12,.16),r.interest);
+      eyeYaw=mix(eyeYaw,clamp(yaw*.25,-.20,.20),r.interest);
     }
     setBodyBounds(r.body,p);
   }
+  if(waving)greetPose(rig,greetingDuration-r.gesture,1,p.y,inControl,eyeYaw,eyePitch);
+  else rig.dress(time,false,reaching?.18*reach:.04,eyeYaw,eyePitch);
 }
 // 小鸟（停在车房顶棚上）
 const bird = { g:new THREE.Group(), t:0, fly:0, wings:[] }; world.add(bird.g);
@@ -5965,14 +6095,15 @@ let current=null;
 const inRect=(x0,x1,z0,z1)=>cat.pos.x>x0&&cat.pos.x<x1&&cat.pos.z>z0&&cat.pos.z<z1;
 function residentAction(){
   let closest=null,range=Infinity;
-  function offer(p,reach,label,act){
+  function offer(p,reach,label,act,turnImmediately=true){
     const dx=p.x-cat.pos.x,dz=p.z-cat.pos.z,dy=p.y-cat.pos.y,d=Math.hypot(dx,dz);
     if(Math.abs(dy)>.85||d>=reach||d>=range)return;
     const vertical=dy-.32,len=Math.hypot(d,vertical);
     if(len>.28&&rayHit(cat.pos.x,cat.pos.y+.64,cat.pos.z,dx/len,vertical/len,dz/len,len)<len-.28)return;
-    range=d;closest={label,act,pos:[p.x,p.z]};
+    range=d;closest={label,act,pos:turnImmediately?[p.x,p.z]:null};
   }
   const actor=residents[S.role];
+  if(actor.gesture>0)return null;
   for(const id of petIds){
     const isCat=id==='cat',pet=rest[id],bowl=feedingStations[id];
     offer(pet,.98,isCat?'摸摸猫':'摸摸狗',()=>{
@@ -5987,11 +6118,15 @@ function residentAction(){
     });
   }
   const other=S.role==='man'?'woman':'man',r=residents[other];
-  if(other!=='man'||!owner.sl){
+  if(r.gesture<=0&&(other!=='man'||(!owner.sl&&owner.pet<=0))){
     offer(locateResident(other),1.65,other==='woman'?'向女主人打招呼':'向男主人打招呼',()=>{
-      actor.motion=r.motion='wave';actor.gesture=r.gesture=1.05;actor.target=null;S.lock=1.05;
+      notice(actor.rig,r.rig.g.position,residentBodies[other].eye);
+      notice(r.rig,actor.rig.g.position,residentBodies[S.role].eye,true);
+      actor.motion=r.motion='wave';actor.target=r.target=null;
+      actor.gesture=greetingDuration;r.gesture=greetingDuration+replyDelay;
+      S.lock=.36;
       credit('familyHello');
-    });
+    },false);
   }
   return closest;
 }
@@ -6037,7 +6172,10 @@ function doRub(id='man'){
   const note=id==='woman'?'女主人俯身摸了摸你。':r.pose?'主人俯身摸了摸你。':'主人放下菜刀，弯腰摸了摸你。';
   setTimeout(()=>toast(note+(fill?'还顺手把碗添满了。':'')),600);
 }
-function doGreet(){ (S.animal==='dog'?sfx.bark:sfx.meow)(); walker.wave=2.6; credit('greet'); setTimeout(()=>toast('路人停下来，朝你挥了挥手。'),500); }
+function doGreet(){
+  (S.animal==='dog'?sfx.bark:sfx.meow)();notice(walker,catModel.position,A.eye);
+  walker.wave=greetingDuration+replyDelay;credit('greet');setTimeout(()=>toast('路人停下来，朝你挥了挥手。'),500);
+}
 let napTimer;
 function doNap(){ pose('nap',3.2); S.lock=3.2; $('nap').classList.add('show'); sfx.purr(); napTimer=setTimeout(()=>{ $('nap').classList.remove('show'); credit('nap'); },2600); }
 
@@ -6076,23 +6214,69 @@ function animatePet(dt,hs,hfx,hfz){
     catModel.position.set(cat.pos.x,cat.vis+(.1*rear-.055*napK)*A.sc,cat.pos.z); catModel.rotation.set(-cat.pitch,cat.yaw,0); }
 }
 function updateKitchenOwner(dt){
-  { const o=owner, sl=!!S.night; if(sl!==o.sl){ o.sl=sl; o.colK.y0=sl?-9:0; o.colK.y1=sl?-8:1.6; o.colB.y0=sl?F2+.65:-9; o.colB.y1=sl?F2+.88:-8; o.pet=0; o.k=0; o.knife.visible=!sl; o.knife2.visible=sl; if(!sl){ o.g.rotation.set(0,Math.PI,0); o.g.position.set(-.62,0,-5.1); } }
-    if(sl){ o.g.quaternion.copy(o.qS); o.g.position.set(-3.06,F2+.75+Math.sin(time*1.3)*.004,3.7); o.up.rotation.x=0; o.head.rotation.set(-.1,.25,0); o.legs.forEach(l=>{ l.hip.rotation.x=0; l.knee.rotation.x=0; l.foot.rotation.x=0; }); o.arms.forEach((a,i)=>{ a.sh.rotation.set(.1,0,(i?-1:1)*.12); a.el.rotation.x=-.15; }); } }
-  if(!S.night) { const o=owner, dx=cat.pos.x-o.g.position.x, dz=cat.pos.z-o.g.position.z, dd=Math.hypot(dx,dz), lp=(a,b,t)=>a+(b-a)*t;
-    if(o.pet>0){ o.pet-=dt; o.yawT=Math.atan2(dx,dz); } o.k+=((o.pet>.4?1:0)-o.k)*Math.min(1,dt*3.5); const k=o.k, ch=Math.sin(time*.45)>-.3?1:0;
-    o.g.rotation.y=angLerp(o.g.rotation.y,o.pet>.4?o.yawT:Math.PI,Math.min(1,dt*5)); o.up.rotation.x=.07+k*1.03;
-    o.legs.forEach(l=>{ l.hip.rotation.x=-.35*k; l.knee.rotation.x=.7*k; }); o.plant();
-    const L=o.arms[0], R=o.arms[1]; R.sh.rotation.set(lp(-.3,-.75,k),.3*(1-k),0); R.el.rotation.x=lp(-1.0,-.55,k)+(k<.1?ch*Math.sin(time*11)*.11:0);
-    L.sh.rotation.set(lp(-.15,-1.3,k),-.3*(1-k),0); L.el.rotation.x=lp(-1.2,-.12,k)+k*Math.sin(time*7)*.14; o.knife.visible=k<.25; o.knife2.visible=!o.knife.visible;
-    let hy=0; if(dd<1.8&&cat.pos.y<1.2){ let a=Math.atan2(dx,dz)-o.g.rotation.y; while(a>Math.PI) a-=2*Math.PI; while(a<-Math.PI) a+=2*Math.PI; hy=Math.max(-1.15,Math.min(1.15,a)); }
-    o.head.rotation.y+=(hy*(1-k)-o.head.rotation.y)*Math.min(1,dt*5); o.head.rotation.x=lp(.28,-.35,k); }
-  const man=residents.man;man.gesture=Math.max(0,man.gesture-dt);
-  if(!S.night&&man.motion==='wave'&&man.gesture>0){
-    const wave=Math.sin(Math.PI*man.gesture/1.05);
-    owner.knife.visible=false;owner.knife2.visible=true;
-    owner.arms[0].sh.rotation.set(-.08,0,2.05*wave);owner.arms[0].el.rotation.set(-.35,0,.17*Math.sin(time*8)*wave);
+  const o=owner,r=residents.man,asleep=!!S.night;
+  if(asleep!==o.sl){
+    o.sl=asleep;o.colK.y0=asleep?-9:0;o.colK.y1=asleep?-8:1.6;
+    o.colB.y0=asleep?F2+.65:-9;o.colB.y1=asleep?F2+.88:-8;
+    o.pet=o.k=0;o.workYaw=Math.PI;o.workLook=0;
+    if(asleep)r.gesture=0;
   }
-  owner.dress(time,S.night);
+  r.gesture=Math.max(0,r.gesture-dt);
+  if(asleep){
+    o.g.quaternion.copy(o.qS);o.g.position.set(-3.06,F2+.75+Math.sin(time*1.3)*.004,3.7);
+    o.up.rotation.set(.010*Math.sin(time*1.3),0,0);o.head.rotation.set(-.1,.25,0);
+    for(const leg of o.legs){leg.hip.rotation.set(0,0,0);leg.knee.rotation.set(0,0,0);leg.foot.rotation.set(0,0,0);}
+    o.arms.forEach((arm,i)=>{arm.sh.rotation.set(.1,0,(i?-1:1)*.12);arm.el.rotation.set(-.15,0,0);arm.hand.rotation.set(0,0,0);});
+    restUtensil(1);o.dress(time,true);return;
+  }
+  const dx=cat.pos.x+.62,dz=cat.pos.z+5.1,d=Math.hypot(dx,dz),bearing=Math.atan2(dx,dz);
+  o.pet=Math.max(0,o.pet-dt);
+  o.k+=((o.pet>.4?1:0)-o.k)*(1-Math.exp(-dt*3.5));
+  o.workYaw=angLerp(o.workYaw??Math.PI,o.pet>.4?bearing:Math.PI,1-Math.exp(-dt*5));
+  const k=o.k,t=greetingDuration-r.gesture,waving=r.motion==='wave'&&r.gesture>0;
+  const pause=waving?smooth(0,.26,t)*(1-smooth(1.85,greetingDuration,t)):0;
+  const breath=Math.sin(time*1.55),rhythm=Math.sin(time*9.4+.42*Math.sin(time*1.7));
+  const work=rhythm*smooth(-.65,.10,Math.sin(time*.77))*(1-pause)*(1-k);
+  o.g.position.set(-.62,0,-5.1);o.g.rotation.set(0,o.workYaw,0);
+  o.up.rotation.set(.07+k*1.03+.012*breath,.025*work,.012*Math.sin(time*.58));
+  for(const leg of o.legs){leg.hip.rotation.set(-.35*k,0,0);leg.knee.rotation.set(.7*k,0,0);}
+  o.plant();
+  const [left,right]=o.arms;
+  right.sh.rotation.set(mix(-.3,-.75,k)-.06*pause,.3*(1-k),0);
+  right.el.rotation.set(mix(-1,-.55,k)+work*.11+.23*pause,0,0);
+  right.hand.rotation.set(.045*work,0,0);
+  left.sh.rotation.set(mix(-.15,-1.3,k),-.3*(1-k),0);
+  left.el.rotation.set(mix(-1.2,-.12,k)+k*Math.sin(time*7)*.14,0,0);left.hand.rotation.set(0,0,0);
+  const near=(1-smooth(1.0,1.9,d))*(1-smooth(.35,.85,Math.abs(cat.pos.y)));
+  const glance=clamp(angleTo(o.workYaw,bearing),-.9,.9)*near*(1-k);
+  o.workLook=(o.workLook||0)+(glance-(o.workLook||0))*(1-Math.exp(-dt*4.2));
+  o.head.rotation.set(mix(.28,-.35,k)-.11*near+.012*breath,o.workLook,0);
+  if(waving)greetPose(o,t,0,0,false,o.workLook*.15,.07);
+  else o.dress(time,false,.04+.16*k,o.workLook*.15,.07*(1-k));
+  restUtensil(Math.max(pause,smooth(.04,.25,k)));
+}
+function updateNeighbour(dt){
+  const w=walker;
+  w.wave=Math.max(0,w.wave-dt);
+  const t=greetingDuration-w.wave;
+  const pace=w.wave>0?1-smooth(-.12,.26,t)+smooth(1.83,greetingDuration,t):1;
+  w.x+=w.dir*1.15*dt*pace;w.ph+=dt*5.1*pace;
+  if(Math.abs(w.x)>16){w.x=clamp(w.x,-16,16);w.dir=-w.dir;}
+  w.heading=angLerp(w.heading??Math.PI/2,w.dir*Math.PI/2,1-Math.exp(-dt*6));
+  w.g.rotation.set(0,w.heading,0);w.g.position.x=w.x;
+  const swing=Math.sin(w.ph)*pace,breath=Math.sin(time*1.59+2);
+  w.up.rotation.set(.035*pace+.013*breath,-.075*swing,.022*swing);
+  w.head.rotation.set(-.018*breath,.045*swing,-.011*swing);
+  w.legs.forEach((leg,i)=>{
+    const side=i?-1:1,arm=w.arms[i];
+    leg.hip.rotation.set(-swing*side*.42,0,0);
+    leg.knee.rotation.set(.045+pace*(.075+.65*Math.max(0,Math.cos(w.ph)*side)),0,0);
+    arm.sh.rotation.set(swing*side*.4,0,side*.06);arm.el.rotation.set(-.18-.12*pace,0,0);
+    arm.hand.rotation.set(.046*Math.sin(w.ph+i*Math.PI-.4)*pace,0,0);
+  });
+  const ground=nearPathHeight(w.x);w.plant();w.g.position.y+=ground;
+  if(w.wave>0)greetPose(w,t,1,ground,false,.035*swing,0);
+  else w.dress(time,false,.04,.035*swing,0);
 }
 function update(dt){
   time+=dt;tvScreen.visible=!S.night;if(tvScreen.visible)riverProgramme.tick(dt);
@@ -6190,13 +6374,7 @@ function update(dt){
   if(S.role!=='man'&&!residents.man.pose)updateKitchenOwner(dt);
   else if(S.role!=='man')updateResident('man',dt);
   if(S.role!=='woman')updateResident('woman',dt);
-  { const w=walker, L=w.arms[0], R=w.arms[1];
-    if(w.wave>0){ w.wave-=dt; w.g.rotation.y=angLerp(w.g.rotation.y,Math.atan2(cat.pos.x-w.x,cat.pos.z-WALK_Z),Math.min(1,dt*6)); w.legs.forEach(l=>{ l.hip.rotation.x*=.8; l.knee.rotation.x*=.8; });
-      R.sh.rotation.set(0,0,-2.5+Math.sin(time*10)*.28); R.el.rotation.x=-.3; L.sh.rotation.set(0,0,0); L.el.rotation.x=-.15; }
-    else { w.x+=w.dir*1.15*dt; w.ph+=dt*5.1; if(Math.abs(w.x)>16) w.dir=-w.dir; w.g.rotation.y=angLerp(w.g.rotation.y,w.dir*Math.PI/2,Math.min(1,dt*6));
-      w.legs.forEach((l,i)=>{ const s=i?-1:1; l.hip.rotation.x=-Math.sin(w.ph)*s*.42; l.knee.rotation.x=.12+.65*Math.max(0,Math.cos(w.ph)*s); w.arms[i].sh.rotation.set(Math.sin(w.ph)*s*.4,0,0); w.arms[i].el.rotation.x=-.3; }); }
-    w.plant(); w.g.position.y+=nearPathHeight(w.x); w.g.position.x=w.x; }
-  walker.dress(time,false);
+  updateNeighbour(dt);
   // --- 小鸟 ---
   { const b=bird; b.t-=dt; if(b.fly<=0 && b.t<0){ b.fly=1; b.t=7+Math.random()*7; }
     if(b.fly>0){ b.fly-=dt/3.2; const k=1-Math.max(0,b.fly), a=k*Math.PI*2; b.g.position.set(BIRD_HOME.x+Math.sin(a)*2.6,BIRD_HOME.y+Math.sin(k*Math.PI)*1.6,BIRD_HOME.z+(1-Math.cos(a))*1.6); b.g.rotation.y=a+Math.PI/2;
