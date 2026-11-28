@@ -10,6 +10,8 @@ The playable owners have contemporary Japanese everyday styling. She wears a blu
 
 ![The male and female owners before and after the rebuild, with the new models on the right](docs/household-characters.jpg)
 
+When one owner greets the other, their eyes meet before they wave. The reader keeps her book in one hand and gives a small nod. The cook sets his utensil on the worktop before waving back. [Watch the new and old greetings from the same camera angle.](docs/household-greeting.webp)
+
 Choose from four characters on the start screen. On a phone, the complete game title stays visible above the choices and in the toolbar during play. [Compare the mobile screens.](docs/mobile-role-picker.jpg)
 
 The home has a cane console in the hall, a tea trolley beside the dining room, a lounge chair in the living room and a sewing table and linen chest upstairs. [See the original furnishing update.](docs/family-home.jpg)

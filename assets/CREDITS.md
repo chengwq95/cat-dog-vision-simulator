@@ -15,7 +15,7 @@ The two Japanese characters were fitted to the simulator's existing player contr
 
 ## Editing the models
 
-`household-models.js` contains one self-contained glTF 2.0 binary with two skeletons, blink morphs and textures. Loading it as a script also supports opening the game from a local folder. To extract the GLB from the repository root, run the following in Node.js.
+`household-models.js` contains one self-contained glTF 2.0 binary with two 17-joint skeletons and their textures. Each owner has separate wrist and eye joints. The facial morphs combine MPFB's eyelid, mouth-corner, mouth-elevation and eye-slit targets into a blink and a smile. Loading the model as a script also supports opening the game from a local folder. To extract the GLB from the repository root, run the following in Node.js.
 
 ```js
 const fs = require('node:fs')

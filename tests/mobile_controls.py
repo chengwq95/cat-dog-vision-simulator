@@ -16,6 +16,41 @@ def center(locator):
     return box["x"] + box["width"] / 2, box["y"] + box["height"] / 2
 
 
+def check_kitchen_greeting(page):
+    # Step the simulation between samples so slow phone rendering cannot skip the reply.
+    checks = page.evaluate("""() => {
+        const {cat, owner, residents, S, setView, update} = window.__cat;
+        const step = n => { for (let i = 0; i < n; i++) update(1 / 60); };
+        const face = id => residents[id].rig.g.getObjectByName(id + '_skin');
+        const smile = id => face(id).morphTargetInfluences[face(id).morphTargetDictionary.smile];
+        const height = joint => joint.getWorldPosition(new THREE.Vector3()).y;
+        step(70);
+        cat.pos.set(-0.04, 0, -4.80);
+        cat.vel.set(0, 0, 0);
+        setView('1st');
+        step(2);
+        const yaw = S.yaw;
+        const result = {prompt: __cat.findInteract()?.label === '向男主人打招呼'};
+        document.getElementById('b-paw').dispatchEvent(new PointerEvent('pointerdown'));
+        step(16);
+        result.replyIsDelayed = smile('woman') > smile('man') + 0.06;
+        step(61);
+        const arm = owner.arms[0];
+        result.freeHandRaised = height(arm.hand) > height(arm.el) + 0.10;
+        result.bothSmile = smile('woman') > 0.5 && smile('man') > 0.5;
+        result.utensilOnCounter = owner.knife2.visible && !owner.knife.visible;
+        const angles = [];
+        for (let i = 0; i < 30; i++) { angles.push(arm.hand.rotation.x); step(1); }
+        result.wristMoves = Math.max(...angles) - Math.min(...angles) > 0.15;
+        step(65);
+        result.returnsToWork = owner.knife.visible && !owner.knife2.visible && residents.man.gesture === 0;
+        result.cameraStaysPut = Math.abs(S.yaw - yaw) < 0.001;
+        setView('3rd');
+        return result;
+    }""")
+    assert all(checks.values()), checks
+
+
 def run(url):
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
@@ -57,13 +92,11 @@ def run(url):
         page.wait_for_function(
             "window.__cat && document.querySelectorAll('#todo-list li').length", timeout=120000
         )
-        # Both normal player models should be loaded, including their eyelid morphs.
-        assert page.evaluate("""Object.values(__cat.residents).every(({rig}) => {
-            let hasFace = false;
-            rig.g.traverse(mesh => {
-                if (mesh.isSkinnedMesh && mesh.morphTargetDictionary?.blink !== undefined) hasFace = true;
-            });
-            return hasFace;
+        assert page.evaluate("""Object.entries(__cat.residents).every(([id, {rig}]) => {
+            const face = rig.g.getObjectByName(id + '_skin');
+            return face?.isSkinnedMesh && face.morphTargetDictionary.blink !== undefined &&
+                face.morphTargetDictionary.smile !== undefined && ['L', 'R'].every(side =>
+                    ['hand', 'eye'].every(part => rig.g.getObjectByName(id + '_' + part + side)?.isBone));
         })""")
         assert page.evaluate("""['woman_long_hair', 'woman_floral_dress'].every(name =>
             __cat.residents.woman.rig.g.getObjectByName(name)?.isSkinnedMesh)""")
@@ -147,12 +180,13 @@ def run(url):
         page.wait_for_function("__cat.findInteract()?.label === '摸摸猫'")
         page.locator("#b-paw").tap()
         page.wait_for_function("document.getElementById('todo-count').textContent === '1/5'")
+        check_kitchen_greeting(page)
         page.locator("#t-controls").tap()
         page.locator("#t-roles").tap()
         page.locator("#pick-man").tap()
         page.locator("#go").tap()
         page.wait_for_function("__cat.S.role === 'man'")
-        assert page.locator("#todo-count").inner_text() == "1/5"
+        assert page.locator("#todo-count").inner_text() == "2/5"
         page.locator("#t-controls").tap()
         page.locator("#t-roles").tap()
         page.locator("#pick-cat").tap()
